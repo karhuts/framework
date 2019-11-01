@@ -1,7 +1,7 @@
 <?php
-namespace Tools;
+namespace Karthus\Tools;
 
-use Service\Tools;
+use Karthus\Service\Tools;
 
 /**
  * Class Logger

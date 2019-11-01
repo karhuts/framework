@@ -1,7 +1,7 @@
 <?php
-namespace Tools\Client;
+namespace Karthus\Tools\Client;
 
-use Service\Tools;
+use Karthus\Service\Tools;
 
 /**
  * Class Http

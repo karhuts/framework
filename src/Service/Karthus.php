@@ -1,5 +1,5 @@
 <?php
-namespace Service;
+namespace Karthus\Service;
 
 /**
  * Class Karthus

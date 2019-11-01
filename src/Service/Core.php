@@ -1,5 +1,5 @@
 <?php
-namespace Service;
+namespace Karthus\Service;
 
 use Swoole\Server;
 
@@ -30,7 +30,7 @@ abstract class Core{
     private $httpContentType = 'application/json';
     protected $jobs  = null;
     /**
-     * @var \Service\Request
+     * @var \Karthus\Service\Request
      */
     public $request;
 

@@ -1,7 +1,7 @@
 <?php
-namespace Service;
+namespace Karthus\Service;
 
-use Tools\Logger;
+use Karthus\Tools\Logger;
 
 /**
  * Class Apps
@@ -20,7 +20,7 @@ abstract class Apps implements AppsBasic {
     protected $logger = null;
 
     /**
-     * @var \Service\Request
+     * @var \Karthus\Service\Request
      */
     protected $request= null;
     protected $body   = '';
