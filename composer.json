@@ -10,7 +10,7 @@
         "ext-json": "*",
         "ext-apcu": ">=5.1.7",
         "ext-redis": ">=5.0",
-        "ext-qconf": ">1.2.2",
+        "ext-qconf": "*",
         "ext-swoole": ">=4.1",
         "psr/log": "^1.1.2",
         "nikic/fast-route": "^1.3",
