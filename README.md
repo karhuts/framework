@@ -4,7 +4,7 @@
 
 A simple Framework For Swoole
 
-#安装说明
+## 安装说明
 
 - 使用BlueCity私有`composer`,更新 `composer.json`
 
@@ -24,7 +24,7 @@ composer require min/karthus
 ```
 
 
-#使用说明
+## 使用说明
 
 ```php 
 try {
