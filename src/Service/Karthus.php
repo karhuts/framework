@@ -48,10 +48,10 @@ class Karthus extends Core{
         $_path  = "$method:$path";
 
         //开始遍历
-        $routers = $this->getRouter();
         $matched = false;
+        $routers = $this->getRouter($path);
         foreach ($routers as $pattern => $handlerName) {
-            $pattern = strtr($pattern, \Service\Karthus::$tokens);
+            $pattern = strtr($pattern, self::$tokens);
             if (!preg_match("#^$pattern$#is", $_path, $matches)) {
                 continue;
             }
@@ -86,7 +86,6 @@ class Karthus extends Core{
                 $matches_data[$varname] = $value;
             }
         }
-
         $this->request->setParams($matches_data);
 
         $targetModel    = $handlerName['class'];
@@ -99,18 +98,23 @@ class Karthus extends Core{
         }
 
         $targetClass    = new $targetModel();
-        $method_action  = isset($handlerName['action']) && $handlerName['action']
-            ? strval($handlerName['action']) : 'execute';
 
         //先看有没有前置init方法，有我就直接运行
         if(method_exists($targetClass, 'init')){
-            call_user_func_array(array($targetClass, 'init'), []);
+            $ret        = call_user_func_array(array($targetClass, 'init'), []);
+            if(!empty($ret)){
+                $this->httpResponse($ret['code'], $ret);
+                return;
+            }
         }
 
         //先看有没有authentication方法，有我就直接运行
         if(method_exists($targetClass, 'authentication')){
             call_user_func_array(array($targetClass, 'authentication'), []);
         }
+
+        $method_action  = isset($handlerName['action']) && $handlerName['action']
+            ? strval($handlerName['action']) : 'execute';
 
         if(method_exists($targetClass, $method_action) === false){
             $this->httpResponse(HttpCode::API_CODE_NOT_FOUND, array(
@@ -136,7 +140,9 @@ class Karthus extends Core{
         }
 
         $this->httpResponse($sendData['code'], $sendData);
+        return;
     }
+
     /**
      * 初始化worker进程时执行的callback
      *
