@@ -6,6 +6,7 @@
     "homepage": "https://git.blued.cn/min/karthus",
     "require": {
         "php": ">=7.1",
+        "ext-acpu": ">=5.1.17",
         "ext-swoole": ">=4.1",
         "psr/log": "^1.1.2",
         "nikic/fast-route": "^1.3",

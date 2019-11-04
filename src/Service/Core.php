@@ -364,6 +364,25 @@ abstract class Core{
         $this->responses->header('content-type', $this->httpContentType);
         $this->responses->status($code);
 
+        $data['request_id']     = $this->request->getRequestID();
+        $data['request_time']   = $this->request->getRequestTime();
+        $data['response_time']  = microtime(true);
+
+        $__     = [];
+        if (isset($data['data'])) {
+            $__ = $data['data'];
+            if (empty($__)) {
+                $__ = [];
+            }
+        }
+        if (!empty($__) && is_array($__)) {
+            $n = count($__);
+            if (!isset($__[0]) || !isset($__[$n-1])) {
+                $__ = array($__);
+            }
+        }
+        $data['data'] = $__;
+
         if($this->is_json === true){
             $data['message']    = HttpCode::$ErrorCode[$data['code']] ?? '';
             $contents   = json_encode($data);
