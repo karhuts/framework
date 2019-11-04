@@ -3,7 +3,7 @@
     "description": "A simple Framework For Swoole",
     "type": "library",
     "version": "v1.0.3",
-    "keywords": ["swoole", "fraamework", "async", "karthus"],
+    "keywords": ["swoole", "framework", "async", "karthus"],
     "homepage": "https://git.blued.cn/min/karthus",
     "require": {
         "php": ">=7.1",
