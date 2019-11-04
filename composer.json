@@ -2,8 +2,14 @@
     "name": "min/karthus",
     "description": "A simple Framework For Swoole",
     "type": "library",
+    "keywords": ["swoole", "fraamework", "async", "karthus"],
+    "homepage": "https://git.blued.cn/min/karthus",
     "require": {
-        "php": ">=7.1"
+        "php": ">=7.1",
+        "ext-swoole": ">=4.1",
+        "psr/log": "^1.1.2",
+        "nikic/fast-route": "^1.3",
+        "psr/http-message": "^1.0.1"
     },
     "require-dev": {
         "php": ">=7.1"
@@ -11,7 +17,7 @@
     "license": "Apache License 2",
     "authors": [
         {
-            "name": "内裤叔叔",
+            "name": "min",
             "email": "min@blued.com"
         }
     ],
@@ -20,5 +26,9 @@
             "Karthus\\": "src/"
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "repositories": [{
+        "type": "composer",
+        "url": "https://composer.blued.cn"
+    }]
 }

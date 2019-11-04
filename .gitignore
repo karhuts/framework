@@ -1,3 +1,4 @@
 Karthus.pid
 /vendor/
 /.idea/
+composer.lock
