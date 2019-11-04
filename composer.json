@@ -2,6 +2,7 @@
     "name": "min/karthus",
     "description": "A simple Framework For Swoole",
     "type": "library",
+    "version": "1.0.10",
     "keywords": ["swoole", "fraamework", "async", "karthus"],
     "homepage": "https://git.blued.cn/min/karthus",
     "require": {
