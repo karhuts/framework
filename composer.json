@@ -31,5 +31,8 @@
     "repositories": [{
         "type": "composer",
         "url": "https://composer.blued.cn"
-    }]
+    }],
+    "support": {
+        "issues": "https://git.blued.cn/min/karthus/issues"
+    }
 }
