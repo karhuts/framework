@@ -29,7 +29,14 @@
         {
             "name": "Min",
             "email": "min@blued.com",
-            "homepage": "https://git.blued.cn/min"
+            "homepage": "https://git.blued.cn/min",
+            "role": "Developer"
+        },
+        {
+            "name": "Xu Zhaorong",
+            "email": "xuzhaorong@blued.com",
+            "homepage": "https://git.blued.cn/xuzhaorong",
+            "role": "Developer"
         }
     ],
     "autoload": {
@@ -43,6 +50,8 @@
         "url": "https://composer.blued.cn"
     }],
     "support": {
-        "issues": "https://git.blued.cn/min/karthus/issues"
+        "issues": "https://git.blued.cn/min/karthus/issues",
+        "email": "php@blued.com",
+        "source": "https://git.blued.cn/min/karthus/"
     }
 }
