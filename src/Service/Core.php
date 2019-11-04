@@ -85,7 +85,7 @@ abstract class Core{
      * @return $this
      */
     public function setPidFile(string $filename = ''){
-        $this->pidFile  = $filename ? $filename : __ROOT__ . '/'. $this->processName. '.pid';
+        $this->pidFile  = $filename ? $filename : './'. $this->processName. '.pid';
         return $this;
     }
 
