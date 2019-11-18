@@ -62,7 +62,7 @@ $service
 ## 路由说明
 
 
-```php 
+```php
 <?php
 namespace Config;
 use Karthus\Config\Router;
@@ -85,6 +85,22 @@ class R extends Router{
 ```
 
 路由处于 `Config/R.php` 中 
+## HttpCode 设置 
+//在Config 下建立 HttpCode 类 并继承HttpCodeBase
 
+```php
+
+<?php
+namespace Config;
+use Karthus\Service\HttpCodeBase;
+
+class HttpCode extends HttpCodeBase {
+    const PSP_ERRNO_OLD_PASSWORD_NOT_MATCH    = 4036404;
+    const PSP_ERRNO_INVALID_PASSWORD          = 4036405;
+    const API_ERRNO_FATAL_ERROR               = 500000;
+
+}
+
+``` 
 
 ## 其他请参考 `Apps/*.php` 中的案例

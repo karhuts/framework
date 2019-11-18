@@ -3,11 +3,11 @@ namespace Karthus\Service;
 
 /**
  * Http错误代码 class
- * Class HttpCode
+ * Class HttpCodeBase
  *
  * @package Service
  */
-class HttpCode{
+class HttpCodeBase{
 
     const API_CODE_OK           = 200;
     const API_CODE_CREATED      = 201;

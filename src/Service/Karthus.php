@@ -39,8 +39,8 @@ class Karthus extends Core{
         $method = strval($this->request->getMethod());
         $method = strtolower($method);
         if($path === ''){
-            $this->httpResponse(HttpCode::API_CODE_NOT_FOUND, array(
-                'code'      => HttpCode::API_CODE_NOT_FOUND,
+            $this->httpResponse(HttpCodeBase::API_CODE_NOT_FOUND, array(
+                'code'      => HttpCodeBase::API_CODE_NOT_FOUND,
                 'message'   => 'Api Not Found',
             ));
             return;
@@ -60,16 +60,16 @@ class Karthus extends Core{
         }
 
         if ($matched === false) {
-            $this->httpResponse(HttpCode::API_CODE_NOT_FOUND, array(
-                'code'      => HttpCode::API_CODE_NOT_FOUND,
+            $this->httpResponse(HttpCodeBase::API_CODE_NOT_FOUND, array(
+                'code'      => HttpCodeBase::API_CODE_NOT_FOUND,
                 'message'   => 'Api Not Found',
             ));
             return;
         }
 
         if(!isset($handlerName['class'])){
-            $this->httpResponse(HttpCode::API_CODE_NOT_FOUND, array(
-                'code'      => HttpCode::API_CODE_NOT_FOUND,
+            $this->httpResponse(HttpCodeBase::API_CODE_NOT_FOUND, array(
+                'code'      => HttpCodeBase::API_CODE_NOT_FOUND,
                 'message'   => 'Api Not Found',
             ));
             return;
@@ -90,8 +90,8 @@ class Karthus extends Core{
 
         $targetModel    = $handlerName['class'];
         if(class_exists($targetModel) === false){
-            $this->httpResponse(HttpCode::API_CODE_NOT_FOUND, array(
-                'code'      => HttpCode::API_CODE_NOT_FOUND,
+            $this->httpResponse(HttpCodeBase::API_CODE_NOT_FOUND, array(
+                'code'      => HttpCodeBase::API_CODE_NOT_FOUND,
                 'message'   => "Class[$targetModel] Not found",
             ));
             return;
@@ -117,8 +117,8 @@ class Karthus extends Core{
             ? strval($handlerName['action']) : 'execute';
 
         if(method_exists($targetClass, $method_action) === false){
-            $this->httpResponse(HttpCode::API_CODE_NOT_FOUND, array(
-                'code'      => HttpCode::API_CODE_NOT_FOUND,
+            $this->httpResponse(HttpCodeBase::API_CODE_NOT_FOUND, array(
+                'code'      => HttpCodeBase::API_CODE_NOT_FOUND,
                 'message'   => "Class[$targetModel] Action[$method_action] Not found",
             ));
             return;
@@ -132,8 +132,8 @@ class Karthus extends Core{
         }
 
         if(empty($sendData)){
-            $this->httpResponse(HttpCode::API_CODE_INTERNAL_SERVER_ERROR, array(
-                'code'      => HttpCode::API_CODE_INTERNAL_SERVER_ERROR,
+            $this->httpResponse(HttpCodeBase::API_CODE_INTERNAL_SERVER_ERROR, array(
+                'code'      => HttpCodeBase::API_CODE_INTERNAL_SERVER_ERROR,
                 'message'   => 'sendData Empty',
             ));
             return;

@@ -330,8 +330,8 @@ abstract class Core{
 
         //这两个特殊的请求头我不要了
         if($this->pathinfo === '/favicon.ico' || $this->pathinfo === ''){
-            $this->httpResponse(HttpCode::API_CODE_NOT_FOUND, array(
-                'code'      => HttpCode::API_CODE_NOT_FOUND,
+            $this->httpResponse(HttpCodeBase::API_CODE_NOT_FOUND, array(
+                'code'      => HttpCodeBase::API_CODE_NOT_FOUND,
                 'message'   => '',
                 'data'      => [],
             ));
@@ -384,7 +384,7 @@ abstract class Core{
         $data['data'] = $__;
 
         if($this->is_json === true){
-            $data['message']    = HttpCode::$ErrorCode[$data['code']] ?? '';
+            $data['message']    = HttpCodeBase::$ErrorCode[$data['code']] ?? '';
             $contents   = json_encode($data);
         }else{
             $contents   = $data['message'] ?? 'No Msg For U';
