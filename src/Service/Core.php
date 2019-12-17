@@ -29,6 +29,7 @@ abstract class Core{
     private $is_json = true;
     private $httpContentType = 'application/json';
     protected $jobs  = null;
+    private $defaultWorkerNum = 2;
     /**
      * @var \Karthus\Service\Request
      */
@@ -188,6 +189,7 @@ abstract class Core{
                     $this->settings['daemonize'] = true;
                 }
 
+                $this->_init();
                 $this->_run();
                 break;
             case 'reload':
@@ -236,6 +238,27 @@ abstract class Core{
         $this->server->on('shutdown', array($this, 'shutdown'));
         $this->server->on('workerError', array($this, 'workerError'));
         $this->server->start();
+    }
+
+    /**
+     * 初始化，
+     * 比如创建文件夹等
+     */
+    private function _init(){
+        // 首先需要检查 worker_num
+        if($this->settings['worker_num'] <= 0){
+            $this->settings['worker_num'] = $this->defaultWorkerNum;
+        }
+        // 检查各种日志目录是否已创建
+        $pidPath = dirname($this->pidFile);
+        if(is_dir($pidPath) === false){
+            @mkdir($pidPath, 0644, true);
+        }
+
+        $logPath = dirname($this->settings['log_file']);
+        if(is_dir($logPath) === false){
+            @mkdir($pidPath, 0644, true);
+        }
     }
 
     /***
@@ -330,8 +353,8 @@ abstract class Core{
 
         //这两个特殊的请求头我不要了
         if($this->pathinfo === '/favicon.ico' || $this->pathinfo === ''){
-            $this->httpResponse(HttpCodeBase::API_CODE_NOT_FOUND, array(
-                'code'      => HttpCodeBase::API_CODE_NOT_FOUND,
+            $this->httpResponse(HttpCode::API_CODE_NOT_FOUND, array(
+                'code'      => HttpCode::API_CODE_NOT_FOUND,
                 'message'   => '',
                 'data'      => [],
             ));
@@ -384,7 +407,7 @@ abstract class Core{
         $data['data'] = $__;
 
         if($this->is_json === true){
-            $data['message']    = HttpCodeBase::$ErrorCode[$data['code']] ?? '';
+            $data['message']    = HttpCode::$ErrorCode[$data['code']] ?? '';
             $contents   = json_encode($data);
         }else{
             $contents   = $data['message'] ?? 'No Msg For U';
