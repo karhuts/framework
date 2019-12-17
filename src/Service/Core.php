@@ -252,12 +252,12 @@ abstract class Core{
         // 检查各种日志目录是否已创建
         $pidPath = dirname($this->pidFile);
         if(is_dir($pidPath) === false){
-            @mkdir($pidPath, 0644, true);
+            @mkdir($pidPath, 0755, true);
         }
 
         $logPath = dirname($this->settings['log_file']);
         if(is_dir($logPath) === false){
-            @mkdir($pidPath, 0644, true);
+            @mkdir($pidPath, 0755, true);
         }
     }
 
