@@ -1,8 +1,6 @@
 <?php
 namespace Karthus\Service;
 
-use Karthus\Tools\Logger;
-
 /**
  * Class Request
  *
@@ -113,6 +111,18 @@ class Request{
         $queryString = $this->request->server['query_string'] ?? '';
 
         return $queryString;
+    }
+
+    /**
+     * 获取RemoteADDR
+     *
+     * @return string
+     */
+    public function getRemoteAddr(): string{
+        $remoteAddr     = $this->request->server['remote_addr'] ?? '';
+        $remoteAddr     = strval($remoteAddr);
+
+        return $remoteAddr;
     }
 
     /**
@@ -261,7 +271,6 @@ class Request{
         }elseif(preg_match('/^-([a-z]{1,})/i', $lang, $match)){
             return strval($match[1]);
         }else{
-            (new Logger())->error('Language not match'. $lang. $this->getUserAgent());
             return "";
         }
     }

@@ -30,8 +30,6 @@ abstract class Apps implements AppsBasic {
      */
     public function init() {
         $this->request      = Request::initRequest();
-        Tools::init($this->request, $this);
-        $this->logger       = new Logger();
         $this->params       = $this->request->getParams();
         $this->body         = $this->request->getBody();
     }
@@ -50,9 +48,7 @@ abstract class Apps implements AppsBasic {
         ];
     }
 
-    public function packagingHttpContent(int $code = 200, string $contents = ''): array{
-
-    }
+    public function packagingHttpContent(int $code = 200, string $contents = ''): array{}
 
     /**
      * 鉴权
