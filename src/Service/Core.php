@@ -123,6 +123,17 @@ abstract class Core{
         return $this;
     }
 
+    /**
+     * 设置蛮查询日志
+     *
+     * @param string $file
+     * @return Core
+     */
+    public function setSlowLogFile(string $file = ''): Core{
+        $this->settings['request_slowlog_file']  = $file;
+        return $this;
+    }
+
     /***
      * 设置worker数量
      *
