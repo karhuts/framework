@@ -1,7 +1,7 @@
 <?php
 namespace Karthus\Service;
 
-use Karthus\Tools\Logger;
+use Karthus\Logger\Logger;
 
 /**
  * Class Apps
@@ -15,12 +15,12 @@ abstract class Apps implements AppsBasic {
     protected $params = [];
 
     /**
-     * @var Logger
+     * @var Logger;
      */
     protected $logger = null;
 
     /**
-     * @var \Karthus\Service\Request
+     * @var Request
      */
     protected $request= null;
     protected $body   = '';
@@ -32,6 +32,7 @@ abstract class Apps implements AppsBasic {
         $this->request      = Request::initRequest();
         $this->params       = $this->request->getParams();
         $this->body         = $this->request->getBody();
+        $this->logger       = new Logger($this->request, $this->request->getLoggerDir());
     }
 
     /***

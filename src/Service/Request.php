@@ -11,23 +11,30 @@ class Request{
      * @var \Swoole\Http\Request;
      */
     private $request = null;
-    private static $instance = null;
     private $params = [];
 
-    public function __construct(\Swoole\Http\Request $request = null) {
+    private static $loggerDir = null;
+    private static $instance = null;
+
+    /***
+     * Request constructor.
+     *
+     * @param \Swoole\Http\Request $request
+     */
+    public function __construct(\Swoole\Http\Request $request) {
         $this->request = $request;
     }
 
 
-    /**
-     * 初始化
-     *
+    /***
      * @param \Swoole\Http\Request|null $request
+     * @param string                    $loggerDir
      * @return Request
      */
-    public static function initRequest(\Swoole\Http\Request $request = null): Request{
-        if(is_null($request) === false) {
-            self::$instance = new Request($request);
+    public static function initRequest(\Swoole\Http\Request $request = null, string $loggerDir = ""): Request{
+        if(self::$instance === false) {
+            self::$instance     = new Request($request);
+            self::$loggerDir    = $loggerDir;
         }
 
         return self::$instance;
@@ -38,6 +45,13 @@ class Request{
      */
     public function getBody(): string{
         return $this->request->rawContent();
+    }
+
+    /**
+     * @return string
+     */
+    public function getLoggerDir() : string {
+        return self::$loggerDir;
     }
 
     /***

@@ -30,8 +30,9 @@ abstract class Core{
     private $httpContentType = 'application/json';
     protected $jobs  = null;
     private $defaultWorkerNum = 2;
+    private $loggerDir = "";
     /**
-     * @var \Karthus\Service\Request
+     * @var Request
      */
     public $request;
 
@@ -161,6 +162,16 @@ abstract class Core{
         return $this;
     }
 
+    /***
+     * 设置日志
+     *
+     * @param string $dir
+     * @return Core
+     */
+    public function setLoggerDir(string $dir = ""): Core{
+        $this->loggerDir = $dir;
+        return $this;
+    }
 
     /***
      * @param string $name
@@ -449,7 +460,7 @@ abstract class Core{
      * @param \Swoole\Http\Response $response
      */
     private function initHttpRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response){
-        $this->request = Request::initRequest($request);
+        $this->request = Request::initRequest($request, $this->loggerDir);
         $this->responses = $response;
     }
 }
