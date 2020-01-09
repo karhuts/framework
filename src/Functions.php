@@ -63,6 +63,10 @@ function defer(callable $callable): void {
 
 /**
  * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
+ *
+ * @param callable $callback
+ * @param int      $flags
+ * @return bool
  */
 function run(callable $callback, int $flags = SWOOLE_HOOK_ALL): bool {
     if (Coroutine::inCoroutine()) {
@@ -72,4 +76,13 @@ function run(callable $callback, int $flags = SWOOLE_HOOK_ALL): bool {
     $result = Coroutine\Run($callback);
     Runtime::enableCoroutine(false);
     return $result;
+}
+
+
+/**
+ * @param $value
+ * @return mixed
+ */
+function value($value) {
+    return $value instanceof \Closure ? $value() : $value;
 }
