@@ -2,7 +2,7 @@
     "name": "min/karthus",
     "description": "A simple Framework For Swoole",
     "type": "library",
-    "version": "v1.0.9",
+    "version": "v1.0.10",
     "keywords": ["swoole", "framework", "async", "karthus"],
     "homepage": "https://git.blued.cn/min/karthus",
     "require": {
@@ -16,7 +16,8 @@
         "nikic/fast-route": "^1.3",
         "psr/http-message": "^1.0.1",
         "firebase/php-jwt": "v5.0.0",
-        "min/karthus-ext-logger": "^v0.1"
+        "min/karthus-ext-logger": "^v0.1",
+        "psr/container": "^1.0@dev"
     },
     "require-dev": {
     },

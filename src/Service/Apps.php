@@ -29,11 +29,11 @@ abstract class Apps implements AppsBasic {
      * 初始化.
      */
     public function init() {
-        $this->api          =
         $this->request      = Request::initRequest();
         $this->params       = $this->request->getParams();
         $this->body         = $this->request->getBody();
         $this->logger       = new Logger($this->request, $this->request->getLoggerDir());
+        $this->api          = new Api($this->request, $this->logger);
     }
 
     /***
