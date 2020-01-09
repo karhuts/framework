@@ -1,5 +1,7 @@
 <?php
 use \Karthus\Service\ApplicationContext;
+use \Swoole\Coroutine;
+use \Swoole\Runtime;
 
 /**
  * Call a callback with the arguments.
@@ -36,4 +38,38 @@ function make(string $name, array $parameters = []) {
     }
     $parameters = array_values($parameters);
     return new $name(...$parameters);
+}
+
+/***
+ * @param callable $callable
+ */
+function go(callable $callable):void {
+    Coroutine::create($callable);
+}
+
+/**
+ * @param callable $callable
+ */
+function co(callable $callable): void {
+    Coroutine::create($callable);
+}
+
+/**
+ * @param callable $callable
+ */
+function defer(callable $callable): void {
+    Coroutine::defer($callable);
+}
+
+/**
+ * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
+ */
+function run(callable $callback, int $flags = SWOOLE_HOOK_ALL): bool {
+    if (Coroutine::inCoroutine()) {
+        throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
+    }
+    Runtime::enableCoroutine(true, $flags);
+    $result = Coroutine\Run($callback);
+    Runtime::enableCoroutine(false);
+    return $result;
 }
