@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Karthus\Service;
 
 use Swoole\Coroutine as SwCoroutine;
+use function value;
 
 class Context {
 

@@ -4,6 +4,7 @@ namespace Karthus\Functions\Aop;
 
 use Karthus\Annotation\AnnotationCollector;
 use Karthus\Annotation\AspectCollector;
+use function value;
 
 class Aspect {
     /**

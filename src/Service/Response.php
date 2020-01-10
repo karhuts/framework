@@ -18,12 +18,13 @@ use Karthus\Exception\InvalidResponseException;
 use Karthus\Functions\ClearStatCache;
 use Karthus\Functions\Json;
 use Karthus\Functions\Strings;
-use Karthus\Stream\SwooleFileStream;
-use Karthus\Stream\SwooleStream;
+use Karthus\Http\Stream\SwooleFileStream;
+use Karthus\Http\Stream\SwooleStream;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use SimpleXMLElement;
+use function value;
 
 use function get_class;
 

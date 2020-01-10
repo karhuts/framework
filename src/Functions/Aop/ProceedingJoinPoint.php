@@ -5,6 +5,7 @@ use Closure;
 use Karthus\Annotation\AnnotationCollector;
 use Karthus\Annotation\AnnotationMetadata;
 use Karthus\Functions\ReflectionManager;
+use function value;
 
 class ProceedingJoinPoint {
     /**

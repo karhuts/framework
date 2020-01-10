@@ -5,6 +5,8 @@ namespace Karthus\Functions;
 
 use ArrayAccess;
 use InvalidArgumentException;
+use function data_get;
+use function value;
 
 /**
  * Most of the methods in this file come from illuminate/support,

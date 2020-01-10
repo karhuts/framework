@@ -34,6 +34,7 @@ use function preg_match;
 use function print_r;
 use function str_replace;
 use function trim;
+use function value;
 
 class DefinitionSource implements DefinitionSourceInterface {
     /**
