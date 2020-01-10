@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
+namespace Karthus;
 
+use Karthus\Exception\RuntimeException;
 use Karthus\Functions\Arr;
 use Karthus\Functions\Collection;
 use Karthus\Service\ApplicationContext;
