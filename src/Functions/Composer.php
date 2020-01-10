@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Karthus\Functions;
 
 use Composer\Autoload\ClassLoader;
+use Karthus;
 
 class Composer {
     /**

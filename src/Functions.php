@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use Karthus\Functions\Arr;
 use Karthus\Functions\Collection;
