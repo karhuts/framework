@@ -1,7 +1,10 @@
 <?php
-use \Karthus\Service\ApplicationContext;
-use \Swoole\Coroutine;
-use \Swoole\Runtime;
+
+use Karthus\Functions\Arr;
+use Karthus\Functions\Collection;
+use Karthus\Service\ApplicationContext;
+use Swoole\Coroutine;
+use Swoole\Runtime;
 
 /**
  * Call a callback with the arguments.
@@ -80,9 +83,48 @@ function run(callable $callback, int $flags = SWOOLE_HOOK_ALL): bool {
 
 
 /**
+ * 一个匿名函数
+ *
  * @param $value
  * @return mixed
  */
 function value($value) {
     return $value instanceof \Closure ? $value() : $value;
+}
+
+/**
+ * Get an item from an array or object using "dot" notation.
+ *
+ * @param array|int|string $key
+ * @param null|mixed       $default
+ * @param mixed            $target
+ * @return array|mixed
+ */
+function data_get($target, $key, $default = null) {
+    if (is_null($key)) {
+        return $target;
+    }
+    $key = is_array($key) ? $key : explode('.', is_int($key) ? (string) $key : $key);
+    while (! is_null($segment = array_shift($key))) {
+        if ($segment === '*') {
+            if ($target instanceof Collection) {
+                $target = $target->all();
+            } elseif (! is_array($target)) {
+                return value($default);
+            }
+            $result = [];
+            foreach ($target as $item) {
+                $result[] = data_get($item, $key);
+            }
+            return in_array('*', $key) ? Arr::collapse($result) : $result;
+        }
+        if (Arr::accessible($target) && Arr::exists($target, $segment)) {
+            $target = $target[$segment];
+        } elseif (is_object($target) && isset($target->{$segment})) {
+            $target = $target->{$segment};
+        } else {
+            return value($default);
+        }
+    }
+    return $target;
 }

@@ -3,7 +3,15 @@
     "description": "A simple Framework For Swoole",
     "type": "library",
     "version": "v1.0.12",
-    "keywords": ["swoole", "framework", "async", "karthus"],
+    "keywords": [
+        "swoole",
+        "framework",
+        "async",
+        "karthus",
+        "php",
+        "http",
+        "http-server"
+    ],
     "homepage": "https://git.blued.cn/min/karthus",
     "require": {
         "php": ">=7.1",
@@ -17,7 +25,11 @@
         "psr/http-message": "^1.0.1",
         "firebase/php-jwt": "v5.0.0",
         "min/karthus-ext-logger": "^v0.1",
-        "psr/container": "^1.0@dev"
+        "psr/container": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "ext-simplexml": "*",
+        "ext-ctype": "*",
+        "ext-mbstring": "*"
     },
     "require-dev": {
     },
@@ -41,7 +53,6 @@
             "Karthus\\": "src/"
         }
     },
-    "minimum-stability": "dev",
     "repositories": [{
         "type": "composer",
         "url": "https://composer.blued.cn"
