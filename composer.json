@@ -29,7 +29,10 @@
         "psr/http-server-middleware": "^1.0",
         "ext-simplexml": "*",
         "ext-ctype": "*",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "php-di/phpdoc-reader": "^2.1",
+        "doctrine/instantiator": "^1.3",
+        "nikic/php-parser": "^4.3"
     },
     "require-dev": {
     },

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Karthus\Annotation;
 
-use Hyperf\Di\MetadataCollector;
+use Karthus\Functions\MetadataCollector;
 
 class AnnotationCollector extends MetadataCollector {
     /**

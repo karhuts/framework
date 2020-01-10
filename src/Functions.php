@@ -128,3 +128,12 @@ function data_get($target, $key, $default = null) {
     }
     return $target;
 }
+
+
+/**
+ * @param null $value
+ * @return Collection
+ */
+function collect($value = null) {
+    return new Collection($value);
+}
