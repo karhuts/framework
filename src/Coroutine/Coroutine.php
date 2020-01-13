@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Karthus\Coroutine;
 
-use function call;
 use Swoole\Coroutine as SwooleCoroutine;
 use Throwable;
 

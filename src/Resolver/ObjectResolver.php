@@ -13,7 +13,6 @@ use Karthus\Exception\InvalidDefinitionException;
 use Karthus\Functions\ReflectionManager;
 use Karthus\Service\ProxyFactory;
 use Psr\Container\NotFoundExceptionInterface;
-use function value;
 
 class ObjectResolver implements ResolverInterface {
     /**

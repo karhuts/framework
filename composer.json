@@ -54,6 +54,9 @@
         }
     ],
     "autoload": {
+        "files": [
+            "src/Functions.php"
+        ],
         "psr-4": {
             "Karthus\\": "src/"
         }

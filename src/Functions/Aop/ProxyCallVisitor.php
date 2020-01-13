@@ -23,7 +23,6 @@ use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\TraitUse;
 use PhpParser\Node\Stmt\Use_;
 use PhpParser\NodeVisitorAbstract;
-use function value;
 
 class ProxyCallVisitor extends NodeVisitorAbstract {
     /**

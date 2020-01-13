@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Karthus\Service;
 
-use function make;
 use FastRoute\Dispatcher;
 use Karthus\Contract\Able\Sendable;
 use Karthus\Contract\ContainerInterface;

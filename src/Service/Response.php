@@ -24,7 +24,6 @@ use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use SimpleXMLElement;
-use function value;
 
 use function get_class;
 
