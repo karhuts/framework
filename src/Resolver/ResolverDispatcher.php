@@ -4,6 +4,8 @@ namespace Karthus\Resolver;
 
 use Karthus\Contract\DefinitionInterface;
 use Karthus\Contract\ResolverInterface;
+use Karthus\Definition\FactoryDefinition;
+use Karthus\Definition\ObjectDefinition;
 use Karthus\Exception\InvalidDefinitionException;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
