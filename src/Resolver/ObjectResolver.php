@@ -44,14 +44,16 @@ class ObjectResolver implements ResolverInterface {
         $this->proxyFactory = $container->get(ProxyFactory::class);
         $this->parameterResolver = new ParameterResolver($definitionResolver);
     }
+
     /**
      * Resolve a definition to a value.
      *
      * @param DefinitionInterface $definition object that defines how the value should be obtained
-     * @param array $parameters optional parameters to use to build the entry
-     * @throws InvalidDefinitionException
-     * @throws DependencyException
+     * @param array               $parameters optional parameters to use to build the entry
      * @return mixed value obtained from the definition
+     * @throws DependencyException*@throws \ReflectionException
+     * @throws InvalidDefinitionException
+     * @throws \ReflectionException
      */
     public function resolve(DefinitionInterface $definition, array $parameters = []) {
         if (! $definition instanceof ObjectDefinition) {
@@ -77,6 +79,7 @@ class ObjectResolver implements ResolverInterface {
     /**
      * @param                  $object
      * @param ObjectDefinition $objectDefinition
+     * @throws \ReflectionException
      */
     protected function injectProperties($object, ObjectDefinition $objectDefinition): void {
         // Property injections
@@ -91,6 +94,7 @@ class ObjectResolver implements ResolverInterface {
      * @return mixed
      * @throws InvalidDefinitionException
      * @throws DependencyException
+     * @throws \ReflectionException
      */
     private function createInstance(ObjectDefinition $definition, array $parameters) {
         // Check that the class is instantiable
