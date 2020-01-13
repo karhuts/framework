@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Karthus\Functions;
 
-use Hyperf\Di\MetadataCollector;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionMethod;
