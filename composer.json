@@ -73,10 +73,10 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "0.1-dev"
         },
-        "hyperf": {
-            "config": "Hyperf\\Config\\ConfigProvider"
+        "karthus": {
+            "config": "Karthus\\Config\\ConfigProvider"
         }
     }
 }
