@@ -67,21 +67,23 @@ function defer(callable $callable): void {
     Coroutine::defer($callable);
 }
 
-/**
- * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
- *
- * @param callable $callback
- * @param int      $flags
- * @return bool
- */
-function run(callable $callback, int $flags = SWOOLE_HOOK_ALL): bool {
-    if (Coroutine::inCoroutine()) {
-        throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
+if(!function_exists('run')){
+    /**
+     * Run callable in non-coroutine environment, all hook functions by Swoole only available in the callable.
+     *
+     * @param callable $callback
+     * @param int      $flags
+     * @return bool
+     */
+    function run(callable $callback, int $flags = SWOOLE_HOOK_ALL): bool {
+        if (Coroutine::inCoroutine()) {
+            throw new RuntimeException('Function \'run\' only execute in non-coroutine environment.');
+        }
+        Runtime::enableCoroutine(true, $flags);
+        $result = Coroutine\Run($callback);
+        Runtime::enableCoroutine(false);
+        return $result;
     }
-    Runtime::enableCoroutine(true, $flags);
-    $result = Coroutine\Run($callback);
-    Runtime::enableCoroutine(false);
-    return $result;
 }
 
 
@@ -132,11 +134,12 @@ function data_get($target, $key, $default = null) {
     return $target;
 }
 
-
-/**
- * @param null $value
- * @return Collection
- */
-function collect($value = null) {
-    return new Collection($value);
+if(!function_exists('collect')){
+    /**
+     * @param null $value
+     * @return Collection
+     */
+    function collect($value = null) {
+        return new Collection($value);
+    }
 }
