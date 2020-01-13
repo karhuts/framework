@@ -165,3 +165,59 @@ if(!function_exists('collect')){
         return new Collection($value);
     }
 }
+
+
+if(!function_exists("data_set")){
+    /**
+     * Set an item on an array or object using dot notation.
+     *
+     * @param mixed        $target
+     * @param array|string $key
+     * @param bool         $overwrite
+     * @param mixed        $value
+     * @return array|mixed
+     */
+    function data_set(&$target, $key, $value, $overwrite = true) {
+        $segments = is_array($key) ? $key : explode('.', $key);
+        if (($segment = array_shift($segments)) === '*') {
+            if (! Arr::accessible($target)) {
+                $target = [];
+            }
+            if ($segments) {
+                foreach ($target as &$inner) {
+                    data_set($inner, $segments, $value, $overwrite);
+                }
+            } elseif ($overwrite) {
+                foreach ($target as &$inner) {
+                    $inner = $value;
+                }
+            }
+        } elseif (Arr::accessible($target)) {
+            if ($segments) {
+                if (! Arr::exists($target, $segment)) {
+                    $target[$segment] = [];
+                }
+                data_set($target[$segment], $segments, $value, $overwrite);
+            } elseif ($overwrite || ! Arr::exists($target, $segment)) {
+                $target[$segment] = $value;
+            }
+        } elseif (is_object($target)) {
+            if ($segments) {
+                if (! isset($target->{$segment})) {
+                    $target->{$segment} = [];
+                }
+                data_set($target->{$segment}, $segments, $value, $overwrite);
+            } elseif ($overwrite || ! isset($target->{$segment})) {
+                $target->{$segment} = $value;
+            }
+        } else {
+            $target = [];
+            if ($segments) {
+                data_set($target[$segment], $segments, $value, $overwrite);
+            } elseif ($overwrite) {
+                $target[$segment] = $value;
+            }
+        }
+        return $target;
+    }
+}
