@@ -3,13 +3,8 @@ declare(strict_types=1);
 namespace Karthus\Coroutine;
 
 use Swoole\Coroutine as SwooleCoroutine;
-use Throwable;
 
-/**
- * @method static void defer(callable $callable)
- */
 class Coroutine {
-
     /**
      * @param $name
      * @param $arguments
@@ -21,6 +16,7 @@ class Coroutine {
         }
         return SwooleCoroutine::$name(...$arguments);
     }
+
     /**
      * Returns the current coroutine ID.
      * Returns -1 when running in non-coroutine context.
@@ -28,6 +24,62 @@ class Coroutine {
     public static function id(): int {
         return SwooleCoroutine::getCid();
     }
+
+    /**
+     * 创建协程
+     * @param callable $callback
+     * @param mixed ...$params
+     * @return int
+     */
+    public static function create(callable $callback, ...$params) {
+        $result =  SwooleCoroutine::create(function () use ($callback, $params) {
+            try {
+                // 执行闭包
+                call_user_func_array($callback, $params);
+            } catch (\Throwable $throwable) {
+                // 错误处理
+                if (!class_exists(\Karthus::class)) {
+                    throw $throwable;
+                }
+                // 错误处理
+                /** @var \Karthus\Console\Error $error */
+                $error = \Karthus::$app->context->get('error');
+                $error->handleException($throwable);
+            }
+        });
+        return is_int($result) ? $result : -1;
+    }
+
+
+    /**
+     * 延迟执行
+     * @param callable $callback
+     * @return void
+     */
+    public static function defer(callable $callback) {
+        SwooleCoroutine::defer(function () use ($callback) {
+            try {
+                // 执行闭包
+                call_user_func($callback);
+            } catch (\Throwable $throwable) {
+                if (!class_exists(\Karthus::class)) {
+                    throw $throwable;
+                }
+                // 错误处理
+                /** @var \Karthus\Console\Error $error */
+                $error = \Karthus::$app->context->get('error');
+                $error->handleException($throwable);
+            }
+        });
+    }
+
+    /**
+     * @return bool
+     */
+    public static function inCoroutine(): bool {
+        return Coroutine::id() > 0;
+    }
+
     /**
      * Returns the parent coroutine ID.
      * Returns -1 when running in the top level coroutine.
@@ -41,25 +93,5 @@ class Coroutine {
             return null;
         }
         return $cid;
-    }
-    /**
-     * @return int Returns the coroutine ID of the coroutine just created.
-     *             Returns -1 when coroutine create failed.
-     */
-    public static function create(callable $callable): int {
-        $result = SwooleCoroutine::create(function () use ($callable) {
-            try {
-                call($callable);
-            } catch (Throwable $throwable) {
-            }
-        });
-        return is_int($result) ? $result : -1;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function inCoroutine(): bool {
-        return Coroutine::id() > 0;
     }
 }

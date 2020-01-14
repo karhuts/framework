@@ -1,54 +1,151 @@
 <?php
-
 declare(strict_types=1);
-
-
 namespace Karthus\Router;
 
-/**
- * @method static addRoute($httpMethod, string $route, $handler, array $options = [])
- * @method static addGroup($prefix, callable $callback, array $options = [])
- * @method static get($route, $handler, array $options = [])
- * @method static post($route, $handler, array $options = [])
- * @method static put($route, $handler, array $options = [])
- * @method static delete($route, $handler, array $options = [])
- * @method static patch($route, $handler, array $options = [])
- * @method static head($route, $handler, array $options = [])
- */
+use Karthus\Exception\NotFoundException;
+use Karthus\Injector\BeanInjector;
+use PhpDocReader\AnnotationException;
+
 class Router {
     /**
+     * 默认变量规则
      * @var string
      */
-    protected static $serverName = 'http';
+    public $defaultPattern = '[\w-]+';
     /**
-     * @var DispatcherFactory
+     * 路由变量规则
+     * @var array
      */
-    protected static $factory;
+    public $patterns = [];
+    /**
+     * 全局中间件
+     * @var array
+     */
+    public $middleware = [];
+    /**
+     * 路由规则
+     * @var array
+     */
+    public $rules = [];
+    /**
+     * 转化后的路由规则
+     * @var array
+     */
+    protected $materials = [];
 
     /**
-     * @param $name
-     * @param $arguments
-     * @return mixed
+     * Router constructor.
+     * @param array $config
      */
-    public static function __callStatic($name, $arguments) {
-        $router = static::$factory->getRouter(static::$serverName);
-        return $router->{$name}(...$arguments);
+    public function __construct(array $config = []) {
+        try {
+            BeanInjector::inject($this, $config);
+        } catch (AnnotationException $e) {
+        } catch (\ReflectionException $e) {
+        }
     }
-
     /**
-     * @param string   $serverName
-     * @param callable $callback
+     * 解析
+     * 生成路由数据，将路由规则转换为正则表达式，并提取路由参数名
      */
-    public static function addServer(string $serverName, callable $callback) {
-        static::$serverName = $serverName;
-        call($callback);
-        static::$serverName = 'http';
+    public function parse(): void {
+        $rules           = $this->merge($this->rules, $this->middleware);
+        $this->materials = $this->convert($rules);
     }
-
     /**
-     * @param DispatcherFactory $factory
+     * 合并中间件、分组
+     * @param array $rules
+     * @param array $middleware
+     * @return array
      */
-    public static function init(DispatcherFactory $factory) {
-        static::$factory = $factory;
+    protected function merge(array $rules, array $middleware): array {
+        $data = [];
+        foreach ($rules as $url => $rule) {
+            $rule['middleware'] = $rule['middleware'] ?? [];
+            if (isset($rule['rules'])) {
+                // 分组处理
+                foreach ($rule['rules'] as $gUrl => $gRule) {
+                    $gUrl                = substr_replace($gUrl, $url . '/', strpos($gUrl, '/'), 1);
+                    $gRule['middleware'] = $gRule['middleware'] ?? [];
+                    $gRule['middleware'] = array_merge($middleware, $rule['middleware'], $gRule['middleware']);
+                    $data[$gUrl]         = $gRule;
+                }
+            } else {
+                $rule['middleware'] = array_merge($middleware, $rule['middleware']);
+            }
+            $data[$url] = $rule;
+        }
+        return $data;
+    }
+    /**
+     * 转换正则
+     * @param array $rules
+     * @return array
+     */
+    protected function convert(array $rules): array {
+        $materials = [];
+        foreach ($rules as $rule => $route) {
+            if ($blank = strpos($rule, ' ')) {
+                $method = substr($rule, 0, $blank);
+                $method = "(?:{$method}) ";
+                $rule   = substr($rule, $blank + 1);
+            } else {
+                $method = '(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS) ';
+            }
+            $fragment = explode('/', $rule);
+            $var      = [];
+            foreach ($fragment as $k => $v) {
+                preg_match('/{([\w-]+)}/i', $v, $matches);
+                if (empty($matches)) {
+                    continue;
+                }
+                list($fname) = $matches;
+                $fname = substr($fname, 1, -1);
+                if (isset($this->patterns[$fname])) {
+                    $fragment[$k] = str_replace('{' . $fname . '}', "({$this->patterns[$fname]})", $fragment[$k]);
+                } else {
+                    $fragment[$k] = str_replace('{' . $fname . '}', "({$this->defaultPattern})", $fragment[$k]);
+                }
+                $var[] = $fname;
+            }
+            $pattern     = '/^' . $method . implode('\/', $fragment) . '$/i';
+            $materials[] = [$pattern, $route, $var];
+        }
+        return $materials;
+    }
+    /**
+     * 匹配
+     * @param string $method
+     * @param string $pathInfo
+     * @return Result
+     * @throws \PhpDocReader\AnnotationException
+     * @throws \ReflectionException
+     */
+    public function match(string $method, string $pathInfo): Result {
+        // 由于路由歧义，会存在多条路由规则都可匹配的情况
+        $result = [];
+        foreach ($this->materials as $item) {
+            list($pattern, $route, $var) = $item;
+            if (preg_match($pattern, "{$method} {$pathInfo}", $matches)) {
+                $params = [];
+                // 提取路由查询参数
+                foreach ($var as $k => $v) {
+                    $params[$v] = $matches[$k + 1];
+                }
+                // 记录参数
+                $result[] = [$route, $params];
+            }
+        }
+        // 筛选有效的结果
+        foreach ($result as $item) {
+            list($route, $params) = $item;
+            $callback = array_shift($route);
+            if (is_callable($callback)) {
+                // 返回
+                return new Result($callback, $route['middleware'], $params);
+            }
+        }
+        throw new NotFoundException('Not Found (#404)');
     }
 }
+
