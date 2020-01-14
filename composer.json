@@ -64,7 +64,10 @@
         ],
         "psr-4": {
             "Karthus\\": "src/"
-        }
+        },
+        "classmap": [
+            "src/Karthus.php"
+        ]
     },
     "repositories": [{
         "type": "composer",
