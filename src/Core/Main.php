@@ -4,6 +4,8 @@ namespace Karthus\Core;
 
 use Karthus\Console\Application;
 use Karthus\Console\Error;
+use Karthus\Event\EventDispatcher;
+use Karthus\Event\Listeners\CommandListener;
 use Karthus\Http\Middleware\GlobalMiddleware;
 use Karthus\Http\Server\Server;
 use Karthus\Injector\BeanDefinition;
@@ -137,6 +139,19 @@ class Main {
                         8000,
                         // ssl
                         false,
+                    ],
+                ],
+                // 事件调度器
+                [
+                    // 名称
+                    'name'            => 'event',
+                    // 作用域
+                    'scope'           => BeanDefinition::SINGLETON,
+                    // 类路径
+                    'class'           => EventDispatcher::class,
+                    // 构造函数注入
+                    'constructorArgs' => [
+                        CommandListener::class,
                     ],
                 ],
             ],
