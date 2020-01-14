@@ -113,26 +113,48 @@ if(!function_exists('is_mac')){
     }
 }
 
-if(!function_exists('call')){
+if(!function_exists('env')){
     /**
-     * Call a callback with the arguments.
+     * Gets the value of an environment variable.
      *
-     * @param mixed $callback
-     * @param array $args
-     * @return null|mixed
+     * @param string     $key
+     * @param null|mixed $default
+     * @return array|bool|false|string|void
      */
-    function call($callback, array $args = []) {
-        $result = null;
-        if ($callback instanceof \Closure) {
-            $result = $callback(...$args);
-        } elseif (is_object($callback) || (is_string($callback) && function_exists($callback))) {
-            $result = $callback(...$args);
-        } elseif (is_array($callback)) {
-            [$object, $method] = $callback;
-            $result = is_object($object) ? $object->{$method}(...$args) : $object::$method(...$args);
-        } else {
-            $result = call_user_func_array($callback, $args);
+    function env($key, $default = null) {
+        $value = getenv($key);
+        if ($value === false) {
+            return value($default);
         }
-        return $result;
+        switch (strtolower($value)) {
+            case 'true':
+            case '(true)':
+                return true;
+            case 'false':
+            case '(false)':
+                return false;
+            case 'empty':
+            case '(empty)':
+                return '';
+            case 'null':
+            case '(null)':
+                return;
+        }
+        if (($valueLength = strlen($value)) > 1 && $value[0] === '"' && $value[$valueLength - 1] === '"') {
+            return substr($value, 1, -1);
+        }
+        return $value;
+    }
+}
+
+if (!function_exists('value')) {
+    /**
+     * Return the default value of the given value.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    function value($value) {
+        return $value instanceof \Closure ? $value() : $value;
     }
 }

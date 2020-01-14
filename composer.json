@@ -35,11 +35,12 @@
         "symfony/finder": "^4.4",
         "doctrine/annotations": "^1.8",
         "vlucas/phpdotenv": "^4.1",
-        "psr/event-dispatcher": "0.6.0",
+        "psr/event-dispatcher": "^0.6.0",
         "symfony/event-dispatcher": "^4.4",
         "psr/http-factory": "^1.0",
         "psr/http-server-handler": "^1.0",
-        "ext-posix": "*"
+        "ext-posix": "*",
+        "symfony/dotenv": "^4.4"
     },
     "require-dev": {
     },
