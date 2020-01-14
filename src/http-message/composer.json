@@ -1,0 +1,31 @@
+{
+    "name": "karthus/http-message",
+    "description": "Karthus Http Message",
+    "type": "framework",
+    "keywords": [
+        "framework",
+        "karthus",
+        "swoole",
+        "http",
+        "http-message"
+    ],
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Min",
+            "email": "min@blued.com",
+            "homepage": "https://git.blued.cn/min",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0",
+        "psr/http-factory": "^1.0",
+        "psr/http-message": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Karthus\\Http\\Message\\": "src/"
+        }
+    }
+}
