@@ -28,12 +28,6 @@ abstract class AbstractConnection {
      */
     public $database = '';
     /**
-     * 数据源格式
-     *
-     * @var string
-     */
-    public $dsn = '';
-    /**
      * 数据库用户名
      *
      * @var string
@@ -41,14 +35,9 @@ abstract class AbstractConnection {
     public $username = 'root';
     /*
      * 数据库密码
+     * @var string
      */
     public $password = '';
-    /**
-     * 驱动连接选项
-     *
-     * @var array
-     */
-    public $attributes = [];
     /**
      * 事件调度器
      *

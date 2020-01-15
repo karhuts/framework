@@ -13,7 +13,7 @@ class Connection extends AbstractConnection {
      * @throws \Throwable
      */
     public function query(string $sql) {
-        return $this->call(__FUNCTION__, ...$sql);
+        return $this->call(__FUNCTION__, [$sql]);
     }
 
     /**
@@ -24,7 +24,7 @@ class Connection extends AbstractConnection {
      * @throws \Throwable
      */
     public function execute(string $sql) {
-        return $this->call(__FUNCTION__, ...$sql);
+        return $this->call(__FUNCTION__, [$sql]);
     }
 
     /**
