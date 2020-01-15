@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Karthus\Core;
 
+use Karthus;
 use Karthus\Console\CommandLine\Flag;
 use Karthus\Http\Message\Response;
 use Karthus\Http\Message\ServerRequest;
@@ -157,13 +158,13 @@ class Run {
  | |/ /__ _ _ __| |_| |__  _   _ ___
  | ' // _` | '__| __| '_ \| | | / __|
  | . \ (_| | |  | |_| | | | |_| \__ \
- |_|\_\__,_|_|   \__|_| |_|\__,_|___/
+ |_|\_\__,_|_|   \__|_| |_|\__,_|___/\n
 EOL;
         println('Server         Name:      Karthus-httpd');
         println('System         Name:      ' . strtolower(PHP_OS));
         println("PHP            Version:   {$phpVersion}");
         println("Swoole         Version:   {$swooleVersion}");
-        println('Framework      Version:   ' . \Karthus::$version);
+        println('Framework      Version:   ' . Karthus::$version);
         println("Listen         Addr:      {$host}");
         println("Listen         Port:      {$port}");
     }
