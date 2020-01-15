@@ -234,7 +234,7 @@ class Main {
     public function setAutoLoading(string $path = ''): Main{
         //注册一个自动载入
         spl_autoload_register(function($name) use ($path){
-            $name   = str_replace("\\", DIRECTORY_SEPARATOR, $name);
+            $name       = str_replace("\\", DIRECTORY_SEPARATOR, $name);
             $filename   = "$path/$name.php";
 
             if(file_exists($filename)){
