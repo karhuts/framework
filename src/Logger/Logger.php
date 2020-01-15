@@ -108,8 +108,7 @@ class Logger implements LoggerInterface {
             return;
         }
         $message = static::interpolate($message, $context);
-        list($msec, $sec) = explode(' ', microtime());
-        $time   = date('Y-m-d H:i:s', $sec) . '.' . intval($msec * 1000);
+        $time   = date('Y-m-d H:i:s', time());
         $pid    = getmypid();
         $header = "[{$level}] {$time} <{$pid}>";
         switch ($level) { // 渲染颜色
