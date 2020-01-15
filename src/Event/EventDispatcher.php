@@ -3,9 +3,9 @@ declare(strict_types=1);
 namespace Karthus\Event;
 
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class EventDispatcher
@@ -39,7 +39,7 @@ class EventDispatcher implements EventDispatcherInterface {
      * @return object
      *   The Event that was passed, now modified by listeners.
      */
-    public function dispatch($event) {
+    public function dispatch(object $event) {
         foreach ($this->listenerProvider->getListenersForEvent($event) as $callback) {
             call_user_func($callback, $event);
             if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Karthus\Event;
+
 use Psr\EventDispatcher\ListenerProviderInterface;
 
 /**
@@ -27,7 +28,7 @@ class ListenerProvider implements ListenerProviderInterface {
      *   An iterable (array, iterator, or generator) of callables.  Each
      *   callable MUST be type-compatible with $event.
      */
-    public function getListenersForEvent($event): iterable {
+    public function getListenersForEvent(object $event): iterable {
         $class    = get_class($event);
         $iterable = [];
         foreach ($this->listeners as $listener) {
