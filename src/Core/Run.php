@@ -90,6 +90,7 @@ class Run {
      * @throws \Throwable
      */
     public function handle(ServerRequest $request, Response $response) {
+        $raw_response   = $response;
         // 路由匹配
         try {
             $method     = $request->getMethod();
@@ -119,7 +120,7 @@ class Run {
             $response->end();
         } catch (\Throwable $e) {
             // 500 处理
-            static::show500($e, $response);
+            static::show500($e, $raw_response);
             // 抛出错误，记录日志
             throw $e;
         }
