@@ -4,6 +4,8 @@ namespace Karthus\Core;
 
 use Karthus\Console\Application;
 use Karthus\Console\Error;
+use Karthus\Database\Connection;
+use Karthus\Database\Pool\ConnectionPool;
 use Karthus\Event\EventDispatcher;
 use Karthus\Event\Listeners\CommandListener;
 use Karthus\Http\Middleware\GlobalMiddleware;
@@ -210,6 +212,75 @@ class Main {
         ];
         return $this;
     }
+
+    /***
+     * 设置连接池
+     *
+     * @param string $pool_name
+     * @param array  $config
+     * @return Main
+     */
+    public function setDataBasePool(string $pool_name = 'dbPool',
+                                    array $config = []): Main{
+
+        $maxIdle        = $config['maxIdle'] ?? 5;
+        $maxActive      = $config['maxActive'] ?? 50;
+        $host           = $config['host'] ?? '127.0.0.1';
+        $port           = $config['port'] ?? 3306;
+        $password       = $config['password'] ?? '';
+        $username       = $config['username'] ?? '';
+        $database       = $config['database'] ?? 'blued';
+
+        $this->config['beans'][] = [
+            // 名称
+            'name'       => 'dbPool',
+            // 作用域
+            'scope'      => BeanDefinition::SINGLETON,
+            // 类路径
+            'class'      => ConnectionPool::class,
+            // 属性注入
+            'properties' => [
+                // 最多可空闲连接数
+                'maxIdle'         => $maxIdle,
+                // 最大连接数
+                'maxActive'       => $maxActive,
+                // 拨号器
+                'dialer'          => ['ref' => DatabaseDialer::class],
+                // 事件调度器
+                'eventDispatcher' => ['ref' => 'event'],
+            ],
+        ];
+        // Database连接池拨号
+        $this->config['beans'][] = [
+                // 类路径
+                'class' => DatabaseDialer::class,
+        ];
+        // Database连接
+        $this->config['beans'][]       = [
+            // 类路径
+            'class'      => Connection::class,
+            // 初始方法
+            'initMethod' => 'connect',
+            // 属性注入
+            'properties' => [
+                // 数据库IP
+                'host'            => $host,
+                // 数据库端口
+                'port'            => $port,
+                // 数据库用户名
+                'username'        => $username,
+                // 数据库密码
+                'password'        => $password,
+                // 数据库
+                'database'        => $database,
+                // 事件调度器
+                'eventDispatcher' => ['ref' => 'event'],
+            ],
+        ];
+
+        return $this;
+    }
+
 
     /***
      * 设置路由

@@ -39,7 +39,8 @@
         "psr/http-server-handler": "^1.0",
         "ext-posix": "*",
         "symfony/dotenv": "^4.4",
-        "hassankhan/config": "^2.1"
+        "hassankhan/config": "^2.1",
+        "ext-mysqli": "*"
     },
     "require-dev": {
     },

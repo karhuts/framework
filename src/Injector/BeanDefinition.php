@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Karthus\Injector;
 
+use Karthus\Exception\ScopeException;
 use PhpDocReader\AnnotationException;
 
 /**
