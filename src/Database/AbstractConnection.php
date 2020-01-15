@@ -33,8 +33,10 @@ abstract class AbstractConnection {
      * @var string
      */
     public $username = 'root';
-    /*
+
+    /**
      * 数据库密码
+     *
      * @var string
      */
     public $password = '';
@@ -75,13 +77,6 @@ abstract class AbstractConnection {
      * @var array
      */
     protected $_queryData = [];
-
-    /**
-     * 驱动连接选项
-     *
-     * @var array
-     */
-    protected $_attributes = [];
 
     /**
      * AbstractConnection constructor.
