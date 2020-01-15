@@ -19,6 +19,25 @@ use Karthus\Router\Router;
 use Symfony\Component\Dotenv\Dotenv;
 
 class Main {
+
+    /**
+     * APP名称
+     *
+     * @var string
+     */
+    private $app_name       = '';
+    /**
+     * APP版本号
+     *
+     * @var string
+     */
+    private $app_version    = '0.0.0';
+    /**
+     * 是否开启debug调试模式
+     *
+     * @var bool
+     */
+    private $app_debug      = false;
     private $evn_file = '';
     private $config   = [];
     private $routerPatterns = [
@@ -29,18 +48,21 @@ class Main {
     /**
      * Main constructor.
      *
-     * @param string $evn_file
-     * @param string $logger_dir
+     * @param string $appName
+     * @param string $version
+     * @param bool   $debug
      */
-    public function __construct(string $evn_file = '') {
-        $this->evn_file = $evn_file;
+    public function __construct(string $appName = '', string $version = '0.0.0', bool $debug = false) {
+        $this->app_version  = $version;
+        $this->app_name     = $appName;
+        $this->app_debug    = !!$debug;
         $this->config   = [
             // 应用名称
-            'appName'    => env('APP_NAME', 'Karthus'),
+            'appName'    => $this->app_name,
             // 应用版本
-            'appVersion' => env('APP_VERSION', '0.0.0'),
+            'appVersion' => $this->app_version,
             // 应用调试
-            'appDebug'   => env('APP_DEBUG', true),
+            'appDebug'   => $this->app_debug,
             // 协程配置
             'coroutine'  => [
                 true,
@@ -154,7 +176,8 @@ class Main {
      * @return Main
      */
     public function setAppName(String $appName = ''): Main {
-        $this->config['appName'] = $appName;
+        $this->app_name          = strval($appName);
+        $this->config['appName'] = $this->app_name;
         return $this;
     }
 
@@ -281,6 +304,32 @@ class Main {
         return $this;
     }
 
+    /**
+     * 是否开启DEBUG模式
+     *
+     * @param bool $debug
+     * @return Main
+     */
+    public function setDebug(bool $debug = false): Main{
+        $this->app_debug            = !!$debug;
+        $this->config['appDebug']   = $this->app_debug;
+        return $this;
+    }
+
+
+    /**
+     * 设置APP版本号
+     *
+     * @param string $version
+     * @return Main
+     */
+    public function setVersion(string $version = '0.0.0'): Main{
+        $this->app_version          = $version;
+        $this->config['appVersion'] = $this->app_version;
+        return $this;
+    }
+
+
 
     /***
      * 设置路由
@@ -315,10 +364,6 @@ class Main {
      * 运行
      */
     public function run(){
-        // 初始化环境变量
-        $env    = new Dotenv();
-        $env->load($this->evn_file);
-
         // Run application
         $app = new Application($this->config);
         $app->run();
