@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Karthus\Core;
 
+use Karthus\Core\Help\Json;
+use Karthus\Core\Help\Xml;
 use Karthus\Http\Message\Factory\StreamFactory;
 use Karthus\Http\Message\Response;
 
@@ -27,7 +29,7 @@ class ResponseTools {
      * @return Response
      */
     public static function json(Response $response, array $content) {
-        $body = (new StreamFactory())->createStream(JsonHelper::encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        $body = (new StreamFactory())->createStream(Json::encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         return $response
             ->withContentType('application/json', 'utf-8')
             ->withBody($body);
@@ -39,7 +41,7 @@ class ResponseTools {
      * @return Response
      */
     public static function xml(Response $response, array $content) {
-        $body = (new StreamFactory())->createStream(XmlHelper::encode($content));
+        $body = (new StreamFactory())->createStream(Xml::encode($content));
         return $response
             ->withContentType('application/xml', 'utf-8')
             ->withBody($body);
