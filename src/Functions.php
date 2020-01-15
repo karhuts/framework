@@ -4,7 +4,6 @@ declare(strict_types=1);
 use Karthus\Console\Application;
 use Karthus\Coroutine\Coroutine;
 use Karthus\Injector\ApplicationContext;
-use Swoole\Runtime;
 
 if(!function_exists('call')){
     /**
@@ -32,7 +31,10 @@ if(!function_exists('call')){
 
 
 if (!function_exists('println')) {
-    // 输出字符串并换行
+    /**
+     * 输出字符串并换行
+     * @param $strings
+     */
     function println($strings) {
         echo $strings . PHP_EOL;
     }
@@ -40,43 +42,57 @@ if (!function_exists('println')) {
 
 
 if (!function_exists('go')) {
-    // 创建协程
+    /**
+     * 创建协程
+     * @param       $function
+     * @param mixed ...$params
+     */
     function go($function, ...$params) {
         Coroutine::create($function, ...$params);
     }
 }
 
 if (!function_exists('co')) {
-    // 创建协程
+    /**
+     * 创建协程
+     * @param       $function
+     * @param mixed ...$params
+     */
     function co($function, ...$params) {
         Coroutine::create($function, ...$params);
     }
 }
 
 if (!function_exists('defer')) {
-    // 创建延迟执行
+    /**
+     * 创建延迟执行
+     *
+     * @param callable $callable
+     */
     function defer(callable $callable) {
         Coroutine::defer($callable);
     }
 }
 
-/**
- * 获取全局上下文对象
- * @return ApplicationContext
- */
 if (!function_exists('context')) {
+    /**
+     * 获取全局上下文对象
+     * @return ApplicationContext
+     */
     function context() {
         return app()->context;
     }
 }
 
-/**
- * 获取全局App对象
- * @return Application
- */
+
 if (!function_exists('app')) {
+    /**
+     * 获取全局App对象
+     *
+     * @return Application
+     */
     function app() {
-        return $GLOBALS['app'];
+        return Karthus::$app;
     }
 }
 

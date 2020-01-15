@@ -11,6 +11,7 @@ use Karthus\Injector\BeanInjector;
 use PhpDocReader\AnnotationException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Coroutine;
+use Swoole\Coroutine\Scheduler;
 
 /**
  * Class Application
@@ -275,13 +276,13 @@ class Application {
         list($enable, $options) = $this->coroutine;
         if ($enable) {
             // 环境效验
-            if (!extension_loaded('swoole') || !class_exists(\Swoole\Coroutine\Scheduler::class)) {
+            if (!extension_loaded('swoole') || !class_exists(Scheduler::class)) {
                 throw new \RuntimeException('Application has coroutine enabled, require swoole extension >= v4.4 to run. install: https://www.swoole.com/');
             }
             // 触发执行命令前置事件
             $this->eventDispatcher->dispatch(new CommandBeforeExecuteEvent($class));
             // 协程执行
-            $scheduler = new \Swoole\Coroutine\Scheduler;
+            $scheduler = new Scheduler;
             $scheduler->set($options);
             $scheduler->add(function () use ($class, $method) {
                 if ( Coroutine::getCid() == -1) {
