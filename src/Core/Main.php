@@ -256,7 +256,7 @@ class Main {
 
         $this->config['beans'][] = [
             // 名称
-            'name'       => 'dbPool',
+            'name'       => $pool_name,
             // 作用域
             'scope'      => BeanDefinition::SINGLETON,
             // 类路径
