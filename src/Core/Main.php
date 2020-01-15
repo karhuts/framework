@@ -30,8 +30,7 @@ class Main {
      * @param string $evn_file
      * @param string $logger_dir
      */
-    public function __construct(string $evn_file = '', string $logger_dir = '') {
-        $logger_dir     = $logger_dir == '' ? null : $logger_dir;
+    public function __construct(string $evn_file = '') {
         $this->evn_file = $evn_file;
         $this->config   = [
             // 应用名称
@@ -113,20 +112,6 @@ class Main {
                     // 类路径
                     'class' => StdoutHandler::class,
                 ],
-                // 日志文件处理器
-                [
-                    // 类路径
-                    'class'      => FileHandler::class,
-                    // 属性注入
-                    'properties' => [
-                        // 日志目录
-                        'dir'         => $logger_dir,
-                        // 日志轮转类型
-                        'rotate'      => FileHandler::ROTATE_DAY,
-                        // 最大文件尺寸
-                        'maxFileSize' => 0,
-                    ],
-                ],
                 // Http服务器
                 [
                     // 名称
@@ -195,6 +180,34 @@ class Main {
      */
     public function setRouterPatterns(array $patterns = []): Main{
         $this->routerPatterns   = empty($patterns) ? $this->routerPatterns : $patterns;
+        return $this;
+    }
+
+
+    /**
+     * 设置日志文件处理器配置
+     *
+     * @param string $logger_dir
+     * @param int    $rotate
+     * @param int    $maxFileSize
+     * @return Main
+     */
+    public function setLoggerConfig(string $logger_dir = '',
+                                    int $rotate = FileHandler::ROTATE_HOUR,
+                                    int $maxFileSize = 0): Main{
+        $this->config['beans'][]  = [
+            // 类路径
+            'class'             => FileHandler::class,
+            // 属性注入
+            'properties'        => [
+                // 日志目录
+                'dir'           => $logger_dir,
+                // 日志轮转类型
+                'rotate'        => $rotate,
+                // 最大文件尺寸
+                'maxFileSize'   => $maxFileSize,
+            ],
+        ];
         return $this;
     }
 
