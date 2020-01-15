@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 use Karthus\Console\Application;
 use Karthus\Coroutine\Coroutine;
+use Karthus\Database\Connection;
+use Karthus\Database\Pool\ConnectionPool;
 use Karthus\Injector\ApplicationContext;
 use Karthus\Logger\Logger;
 
@@ -186,5 +188,20 @@ if(!function_exists('logger')) {
         /** @var  $logger Logger */
         $logger =  context()->get('log');
         return $logger;
+    }
+}
+
+if(!function_exists('db_pool')){
+
+    /**
+     * 获取数据库连接池
+     *
+     * @param string $pool_name
+     * @return Connection
+     */
+    function db_pool(string $pool_name) {
+        /** @var  $pool ConnectionPool*/
+        $pool   = context()->get($pool_name);
+        return $pool->getConnection();
     }
 }

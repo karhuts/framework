@@ -111,11 +111,11 @@ abstract class AbstractConnectionPool {
     public function release($connection) {
         $id = spl_object_hash($connection);
         // 判断是否已释放
-        if (!isset($this->_actives[ $id ])) {
+        if (!isset($this->_actives[$id])) {
             return false;
         }
         // 移除登记
-        unset($this->_actives[ $id ]); // 注意：必须是先减 actives，否则会 maxActive - maxIdle <= 1 时会阻塞
+        unset($this->_actives[$id]); // 注意：必须是先减 actives，否则会 maxActive - maxIdle <= 1 时会阻塞
         // 入列
         return $this->push($connection);
     }
@@ -129,11 +129,11 @@ abstract class AbstractConnectionPool {
     public function discard($connection) {
         $id = spl_object_hash($connection);
         // 判断是否已丢弃
-        if (!isset($this->_actives[ $id ])) {
+        if (!isset($this->_actives[$id])) {
             return false;
         }
-        // 移除登记
-        unset($this->_actives[ $id ]); // 注意：必须是先减 actives，否则会 maxActive - maxIdle <= 1 时会阻塞
+        // 移除
+        unset($this->_actives[$id]); // 注意：必须是先减 actives，否则会 maxActive - maxIdle <= 1 时会阻塞
         // 入列一个新连接替代丢弃的连接
         $result = $this->push($this->createConnection());
         // 触发事件
