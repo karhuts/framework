@@ -24,12 +24,14 @@ class Main {
     ];
 
 
-    /***
+    /**
      * Main constructor.
      *
-     * @param String $evn_file
+     * @param string $evn_file
+     * @param string $logger_dir
      */
-    public function __construct(String $evn_file = '') {
+    public function __construct(string $evn_file = '', string $logger_dir = '') {
+        $logger_dir     = $logger_dir == '' ? null : $logger_dir;
         $this->evn_file = $evn_file;
         $this->config   = [
             // 应用名称
@@ -118,7 +120,7 @@ class Main {
                     // 属性注入
                     'properties' => [
                         // 日志目录
-                        'dir'         => env('LOGGER_DIR', '/data/logs/'),
+                        'dir'         => $logger_dir,
                         // 日志轮转类型
                         'rotate'      => FileHandler::ROTATE_DAY,
                         // 最大文件尺寸
