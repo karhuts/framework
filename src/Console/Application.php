@@ -9,8 +9,8 @@ use Karthus\Exception\NotFoundException;
 use Karthus\Injector\ApplicationContext;
 use Karthus\Injector\BeanInjector;
 use PhpDocReader\AnnotationException;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Swoole\Coroutine;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class Application
@@ -157,7 +157,7 @@ class Application {
         println('');
         println("Run '{$script}" . ($this->isSingleCommand ? '' : ' COMMAND') . " --help' for more information on a command.");
         println('');
-        println("Developed with Mix PHP framework. (mixphp.cn)");
+        println("Developed with Karthus PHP framework. (https://git.blued.cn/min/karthus)");
     }
     /**
      * 命令帮助
@@ -168,7 +168,7 @@ class Application {
         println("Usage: {$script} {$command} [opt...]");
         $this->printCommandOptions();
         println('');
-        println("Developed with Mix PHP framework. (mixphp.cn)");
+        println("Developed with Karthus PHP framework. (https://git.blued.cn/min/karthus)");
     }
     /**
      * 版本
