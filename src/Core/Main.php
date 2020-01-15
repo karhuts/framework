@@ -118,7 +118,7 @@ class Main {
                     // 属性注入
                     'properties' => [
                         // 日志目录
-                        'dir'         => __DIR__ . DIRECTORY_SEPARATOR . 'runtime' . DIRECTORY_SEPARATOR . 'logs',
+                        'dir'         => env('LOGGER_DIR', '/data/logs/'),
                         // 日志轮转类型
                         'rotate'      => FileHandler::ROTATE_DAY,
                         // 最大文件尺寸
