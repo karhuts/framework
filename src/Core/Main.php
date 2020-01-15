@@ -128,7 +128,7 @@ class Main {
                 // Http服务器
                 [
                     // 名称
-                    'name'            => 'Karthus-Server',
+                    'name'            => 'httpServer',
                     // 类路径
                     'class'           => Server::class,
                     // 构造函数注入
