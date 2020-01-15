@@ -140,7 +140,7 @@ class Router {
         foreach ($result as $item) {
             list($route, $params) = $item;
             $callback = array_shift($route);
-            if (is_callable($callback)) {
+            if (is_array($callback)) {
                 // 返回
                 return new Result($callback, $route['middleware'], $params);
             }

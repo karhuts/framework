@@ -96,7 +96,6 @@ class Run {
             $method     = strtoupper($method);
             $path_info  = $request->getServerParams()['path_info'] ?: '/';
             $path_info  = strval($path_info);
-
             $result     = $this->route->match($method, $path_info);
         } catch (\Throwable $e) {
             // 404 处理
