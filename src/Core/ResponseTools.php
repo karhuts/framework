@@ -29,8 +29,11 @@ class ResponseTools {
      * @return Response
      */
     public static function json(Response $response, array $content) {
-        $body = (new StreamFactory())->createStream(Json::encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        $status = $content['code'] ?? 200;
+        $status = intval($status);
+        $body   = (new StreamFactory())->createStream(Json::encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         return $response
+            ->withStatus($status)
             ->withContentType('application/json', 'utf-8')
             ->withBody($body);
     }

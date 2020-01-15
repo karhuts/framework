@@ -4,6 +4,7 @@ declare(strict_types=1);
 use Karthus\Console\Application;
 use Karthus\Coroutine\Coroutine;
 use Karthus\Injector\ApplicationContext;
+use Karthus\Logger\Logger;
 
 if(!function_exists('call')){
     /**
@@ -172,5 +173,18 @@ if (!function_exists('value')) {
      */
     function value($value) {
         return $value instanceof \Closure ? $value() : $value;
+    }
+}
+
+if(!function_exists('logger')) {
+    /**
+     * 获取日志
+     *
+     * @return Logger
+     */
+    function logger(){
+        /** @var  $logger Logger */
+        $logger =  context()->get('log');
+        return $logger;
     }
 }
