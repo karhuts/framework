@@ -9,6 +9,7 @@ use Karthus\Http\Server\Middleware\MiddlewareDispatcher;
 use Karthus\Http\Server\Server;
 use Karthus\Logger\Logger;
 use Karthus\Router\Router;
+use PhpDocReader\AnnotationException;
 
 class Run {
     /**
@@ -83,7 +84,7 @@ class Run {
      * 请求处理
      * @param ServerRequest $request
      * @param Response $response
-     * @throws \PhpDocReader\AnnotationException
+     * @throws AnnotationException
      * @throws \ReflectionException
      * @throws \Throwable
      */
@@ -127,7 +128,7 @@ class Run {
      * 404处理
      * @param \Throwable $e
      * @param Response $response
-     * @throws \PhpDocReader\AnnotationException
+     * @throws AnnotationException
      * @throws \ReflectionException
      */
     public static function show404(\Throwable $e, Response $response) {
@@ -137,7 +138,7 @@ class Run {
      * 500处理
      * @param \Throwable $e
      * @param Response $response
-     * @throws \PhpDocReader\AnnotationException
+     * @throws AnnotationException
      * @throws \ReflectionException
      */
     public static function show500(\Throwable $e, Response $response) {
@@ -152,14 +153,13 @@ class Run {
         $host          = $this->server->host;
         $port          = $this->server->port;
         echo <<<EOL
-                              ____
- ______ ___ _____ ___   _____  / /_ _____
-  / __ `__ \/ /\ \/ /__ / __ \/ __ \/ __ \
- / / / / / / / /\ \/ _ / /_/ / / / / /_/ /
-/_/ /_/ /_/_/ /_/\_\  / .___/_/ /_/ .___/
-                     /_/         /_/
+ _  __          _   _
+ | |/ /__ _ _ __| |_| |__  _   _ ___
+ | ' // _` | '__| __| '_ \| | | / __|
+ | . \ (_| | |  | |_| | | | |_| \__ \
+ |_|\_\__,_|_|   \__|_| |_|\__,_|___/
 EOL;
-        println('Server         Name:      mix-httpd');
+        println('Server         Name:      Karthus-httpd');
         println('System         Name:      ' . strtolower(PHP_OS));
         println("PHP            Version:   {$phpVersion}");
         println("Swoole         Version:   {$swooleVersion}");

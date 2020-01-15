@@ -37,7 +37,7 @@ class Main {
             // 应用版本
             'appVersion' => env('APP_VERSION', '0.0.0'),
             // 应用调试
-            'appDebug'   => env('APP_DEBUG', ''),
+            'appDebug'   => env('APP_DEBUG', true),
             // 协程配置
             'coroutine'  => [
                 true,
