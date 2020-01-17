@@ -4,7 +4,7 @@ namespace Karthus\Command\DefaultCommand;
 
 use Karthus\Command\CommandInterface;
 
-class Restart implements CommandInterface{
+class Config implements CommandInterface{
 
     /**
      * @inheritDoc

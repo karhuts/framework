@@ -2,7 +2,13 @@
 declare(strict_types=1);
 namespace Karthus\Command;
 
+use Karthus\Command\DefaultCommand\Config;
 use Karthus\Command\DefaultCommand\Help;
+use Karthus\Command\DefaultCommand\PhpUnit;
+use Karthus\Command\DefaultCommand\Reload;
+use Karthus\Command\DefaultCommand\Restart;
+use Karthus\Command\DefaultCommand\Start;
+use Karthus\Command\DefaultCommand\Stop;
 use Karthus\Component\Singleton;
 
 class Runner {
