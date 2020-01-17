@@ -10,6 +10,7 @@ use Karthus\Command\DefaultCommand\Restart;
 use Karthus\Command\DefaultCommand\Start;
 use Karthus\Command\DefaultCommand\Stop;
 use Karthus\Component\Singleton;
+use Karthus\Karthus\Core;
 
 class Runner {
     use Singleton;
@@ -42,7 +43,7 @@ class Runner {
         }else if($command != 'install'){
             //预先加载配置
             if(in_array('produce',$args)){
-                Core::getInstance()->setIsDev(false);
+                Core::getInstance()->setDev(false);
             }
             Core::getInstance()->initialize();
         }
