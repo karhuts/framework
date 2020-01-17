@@ -10,7 +10,7 @@ class Restart implements CommandInterface{
      * @inheritDoc
      */
     public function commandName(): string {
-        // TODO: Implement commandName() method.
+        return "restart";
     }
 
     /**

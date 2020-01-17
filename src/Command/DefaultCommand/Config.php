@@ -10,7 +10,7 @@ class Config implements CommandInterface{
      * @inheritDoc
      */
     public function commandName(): string {
-        // TODO: Implement commandName() method.
+        return "config";
     }
 
     /**
