@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 use Karthus\Helper\FileHelper;
 
 if(!function_exists('welcome')){
