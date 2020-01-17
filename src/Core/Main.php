@@ -4,6 +4,7 @@ namespace Karthus\Core;
 
 use Karthus\Console\Application;
 use Karthus\Console\Error;
+use Karthus\Core\Dialer\DatabaseDialer;
 use Karthus\Database\Connection;
 use Karthus\Database\Pool\ConnectionPool;
 use Karthus\Event\EventDispatcher;
@@ -16,7 +17,6 @@ use Karthus\Logger\Logger;
 use Karthus\Logger\MultiHandler;
 use Karthus\Logger\StdoutHandler;
 use Karthus\Router\Router;
-use Symfony\Component\Dotenv\Dotenv;
 
 class Main {
 

@@ -97,7 +97,7 @@ abstract class AbstractConnectionPool {
         }
         // 登记, 队列中出来的也需要登记，因为有可能是 discard 中创建的新连接
         $id = spl_object_hash($connection);
-        $this->_actives[ $id ] = ''; // 不可保存外部连接的引用，否则导致外部连接不析构
+        $this->_actives[$id] = ''; // 不可保存外部连接的引用，否则导致外部连接不析构
         // 返回
         return $connection;
     }

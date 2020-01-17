@@ -1,12 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Karthus\Core;
+namespace Karthus\Core\Dialer;
 
 use Karthus\Database\Connection;
 use Karthus\Pool\DialerInterface;
 
 /**
+ * 数据库拨号器
+ *
  * Class DatabaseDialer
  *
  * @package Karthus\Core
