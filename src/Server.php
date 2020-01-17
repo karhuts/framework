@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Karthus\Karthus;
+namespace Karthus;
 
 use Karthus\Component\Singleton;
 use Karthus\Event\EventRegister;

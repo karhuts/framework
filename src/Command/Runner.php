@@ -10,7 +10,7 @@ use Karthus\Command\DefaultCommand\Restart;
 use Karthus\Command\DefaultCommand\Start;
 use Karthus\Command\DefaultCommand\Stop;
 use Karthus\Component\Singleton;
-use Karthus\Karthus\Core;
+use Karthus\Core;
 
 class Runner {
     use Singleton;

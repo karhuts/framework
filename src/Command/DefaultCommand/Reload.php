@@ -3,8 +3,8 @@ declare(strict_types=1);
 namespace Karthus\Command\DefaultCommand;
 
 use Karthus\Command\CommandInterface;
-use Karthus\Karthus\Config;
-use Karthus\Karthus\Core;
+use Karthus\Config;
+use Karthus\Core;
 use Swoole\Process;
 
 class Reload implements CommandInterface {

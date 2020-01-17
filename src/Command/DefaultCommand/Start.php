@@ -3,10 +3,10 @@ declare(strict_types=1);
 namespace Karthus\Command\DefaultCommand;
 
 use Karthus\Command\CommandInterface;
-use Karthus\Karthus\Config;
-use Karthus\Karthus\Core;
-use Karthus\Karthus\Server;
-use Karthus\Karthus\SystemConst;
+use Karthus\Config;
+use Karthus\Core;
+use Karthus\Server;
+use Karthus\SystemConst;
 
 class Start implements CommandInterface{
 
