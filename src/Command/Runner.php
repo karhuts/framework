@@ -4,6 +4,7 @@ namespace Karthus\Command;
 
 use Karthus\Command\DefaultCommand\Config;
 use Karthus\Command\DefaultCommand\Help;
+use Karthus\Command\DefaultCommand\Install;
 use Karthus\Command\DefaultCommand\PhpUnit;
 use Karthus\Command\DefaultCommand\Reload;
 use Karthus\Command\DefaultCommand\Restart;
@@ -21,6 +22,7 @@ class Runner {
      * Runner constructor.
      */
     public function __construct() {
+        CommandContainer::getInstance()->set(new Install());
         CommandContainer::getInstance()->set(new Help());
         CommandContainer::getInstance()->set(new Start());
         CommandContainer::getInstance()->set(new Stop());

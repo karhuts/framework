@@ -1,4 +1,7 @@
 <?php
+
+use Karthus\Helper\FileHelper;
+
 if(!function_exists('welcome')){
 
     /**
@@ -61,5 +64,29 @@ if(!function_exists('getLocalIP')){
      */
     function getLocalIP(): array{
         return swoole_get_local_ip();
+    }
+}
+
+if(!function_exists('releaseResource')){
+    /**
+     * 释放资源
+     *
+     * @param $source
+     * @param $destination
+     */
+    function releaseResource($source, $destination){
+        clearstatcache();
+        $replace = true;
+        if (is_file($destination)) {
+            $filename = basename($destination);
+            echo "{$filename} has already existed, do you want to replace it? [ Y / N (default) ] : ";
+            $answer = strtolower(trim(strtoupper(fgets(STDIN))));
+            if (!in_array($answer, [ 'y', 'yes' ])) {
+                $replace = false;
+            }
+        }
+        if ($replace) {
+            FileHelper::copyFile($source, $destination);
+        }
     }
 }
