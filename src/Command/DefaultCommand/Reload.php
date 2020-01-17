@@ -39,6 +39,7 @@ class Reload implements CommandInterface {
         } else {
             return "PID file does not exist, please check whether to run in the daemon mode!";
         }
+
     }
 
     /**
