@@ -40,7 +40,9 @@
         "ext-posix": "*",
         "symfony/dotenv": "^4.4",
         "hassankhan/config": "^2.1",
-        "ext-mysqli": "*"
+        "ext-mysqli": "*",
+        "ext-zend-opcache": "*",
+        "ext-dom": "*"
     },
     "require-dev": {
     },
@@ -64,11 +66,9 @@
             "src/Functions.php"
         ],
         "psr-4": {
-            "Karthus\\": "src/"
-        },
-        "classmap": [
-            "src/Karthus.php"
-        ]
+            "Karthus\\": "src/",
+            "App\\": "App/"
+        }
     },
     "repositories": [{
         "type": "composer",
@@ -83,5 +83,8 @@
         "branch-alias": {
             "dev-master": "0.1-dev"
         }
-    }
+    },
+    "bin": [
+        "bin/karthus"
+    ]
 }

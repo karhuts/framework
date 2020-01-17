@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+use Karthus\Command\Runner;
+
+defined('IN_PHAR') or define('IN_PHAR', boolval(\Phar::running(false)));
+defined('RUNNING_ROOT') or define('RUNNING_ROOT', realpath(getcwd()));
+defined('KARTHUS_ROOT') or define('KARTHUS_ROOT', IN_PHAR ? \Phar::running() : realpath(getcwd()));
+
+$file   =   KARTHUS_ROOT.'/vendor/autoload.php';
+if (file_exists($file)) {
+    require $file;
+}else{
+    die("include composer autoload.php fail\n");
+}
+
+if(file_exists(KARTHUS_ROOT.'/bootstrap.php')){
+    require_once KARTHUS_ROOT.'/bootstrap.php';
+}
+
+$args = $argv;
+array_shift($args);
+$ret  = Runner::getInstance()->run($args);
+
+if(!empty($ret)){
+    echo $ret."\n";
+}
