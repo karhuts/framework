@@ -263,8 +263,7 @@ class Core {
                             $throwable, $request_psr, $response_psr);
                     }
                 }
-                $response_psr->__response();
-
+                $response_psr->response();
             });
         }
 

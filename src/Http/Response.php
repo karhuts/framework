@@ -5,15 +5,18 @@ namespace Karthus\Http;
 use Swoole\Http\Status;
 
 class Response extends Message\Response {
+    /**
+     * @var \Swoole\Http\Response|null
+     */
     private $response;
-    const STATUS_NOT_END = 0;
-    const STATUS_LOGICAL_END = 1;
-    const STATUS_REAL_END = 2;
-    const STATUS_RESPONSE_DETACH = 3;
+    public const STATUS_NOT_END         = 0;
+    public const STATUS_LOGICAL_END     = 1;
+    public const STATUS_REAL_END        = 2;
+    public const STATUS_RESPONSE_DETACH = 3;
 
-    private $sendFile = null;
-    private $isEndResponse = self::STATUS_NOT_END; //1 逻辑end  2真实end 3分离响应
-    private $isChunk = false;
+    private $sendFile       = null;
+    private $isEndResponse  = self::STATUS_NOT_END; //1 逻辑end  2真实end 3分离响应
+    private $isChunk        = false;
 
     /**
      * Response constructor.
@@ -26,6 +29,9 @@ class Response extends Message\Response {
         $this->withAddedHeader('Server','Karthus-Server');
     }
 
+    /**
+     * 结束
+     */
     public function end(){
         $this->isEndResponse = self::STATUS_LOGICAL_END;
     }
@@ -33,7 +39,7 @@ class Response extends Message\Response {
     /**
      * @return bool
      */
-    public function __response():bool {
+    public function response():bool {
         if($this->isEndResponse <= self::STATUS_REAL_END){
             $this->isEndResponse = self::STATUS_REAL_END;
             //结束处理
