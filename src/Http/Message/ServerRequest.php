@@ -34,10 +34,21 @@ class ServerRequest extends Request implements ServerRequestInterface {
         parent::__construct($method, $uri, $headers, $body, $protocolVersion);
     }
 
+    /**
+     * 获取服务器参数
+     *
+     * @return array
+     */
     public function getServerParams() {
         return $this->serverParams;
     }
 
+    /**
+     * 获取COOKIES
+     *
+     * @param null $name
+     * @return array|mixed|null
+     */
     public function getCookieParams($name = null) {
         if($name === null){
             return $this->cookieParams;
@@ -51,15 +62,31 @@ class ServerRequest extends Request implements ServerRequestInterface {
 
     }
 
+    /**
+     * 设置COOKIES
+     *
+     * @param array $cookies
+     * @return $this|ServerRequestInterface
+     */
     public function withCookieParams(array $cookies) {
         $this->cookieParams = $cookies;
         return $this;
     }
 
+    /**
+     * 获取REQUEST参数
+     *
+     * @return array
+     */
     public function getQueryParams() {
         return $this->queryParams;
     }
 
+    /**
+     * 获取具体request参数
+     * @param $name
+     * @return mixed|null
+     */
     public function getQueryParam($name){
         $data = $this->getQueryParams();
         if(isset($data[$name])){

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Karthus\Http\AbstractInterface;
 
+use FastRoute\RouteParser\Std;
 use Karthus\Http\Request;
 use Karthus\Http\Response;
 use Swoole\Http\Status;
@@ -177,22 +178,31 @@ abstract class Controller {
         return $this->response;
     }
 
+
     /**
-     * @param int  $statusCode
-     * @param null $result
-     * @param null $msg
+     * 输出JSON
+     *
+     * @param int   $status
+     * @param array $data
+     * @param bool  $isEnd
      * @return bool
      */
-    protected function writeJson($statusCode = 200, $result = null, $msg = null) {
+    protected function writeJson(int $status = 200, array $data = array(),bool $isEnd = true) {
         if (!$this->response()->isEndResponse()) {
-            $data = Array(
-                "code"      => $statusCode,
-                "result"    => $result,
-                "msg"       => $msg
+            $requestParam   = $this->request()->getRequestParam();
+            $request_id     = $requestParam['request_id'] ?? '-';
+            $request_time   = $requestParam['request_time_float'] ?? 0;
+            $output = array(
+                'code'          => $data['code'] ? intval($data['code']) : $status,
+                'message'       => $data['message'] ? strval($data['message']) : Status::getReasonPhrase($status),
+                'data'          => $data['data'] ? $data['data'] : new \stdClass(),
+                'request_id'    => $request_id,
+                'request_time'  => floatval($request_time),
+                'response_time' => microtime(true),
             );
             $this->response()->write(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
             $this->response()->withHeader('Content-type', 'application/json; charset=utf-8');
-            $this->response()->withStatus($statusCode);
+            $this->response()->withStatus($status);
             return true;
         } else {
             return false;

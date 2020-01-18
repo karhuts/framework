@@ -56,7 +56,7 @@ class Request extends ServerRequest{
     }
 
     /**
-     * @return Server
+     * @return \Swoole\Http\Request
      */
     public function getSwooleRequest() {
         return $this->request;
