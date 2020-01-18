@@ -19,6 +19,9 @@ class Server {
      * @var \Swoole\Server $swooleServer
      */
     private $swooleServer;
+    /**
+     * @var EventRegister
+     */
     private $mainServerEventRegister;
     private $subServer = [];
     private $subServerRegister = [];

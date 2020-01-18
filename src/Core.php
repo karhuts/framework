@@ -57,7 +57,9 @@ class Core {
             $conf['SERVER_TYPE']
         );
         //hook 全局的mainServerCreate事件
-        EasySwooleEvent::mainServerCreate(Server::getInstance()->getMainEventRegister());
+        KarthusEvent::mainServerCreate(
+            Server::getInstance()->getMainEventRegister()
+        );
         $this->extraHandler();
         return $this;
     }

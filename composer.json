@@ -42,7 +42,8 @@
         "hassankhan/config": "^2.1",
         "ext-mysqli": "*",
         "ext-zend-opcache": "*",
-        "ext-dom": "*"
+        "ext-dom": "*",
+        "ext-libxml": "*"
     },
     "require-dev": {
     },

@@ -1,10 +1,15 @@
 <?php
+declare(strict_types=1);
 namespace App\HttpController;
 
 use Karthus\Http\AbstractInterface\Controller;
 
 class Index extends Controller {
 
-    public function index() {
-    }
+    /**
+     * 默认执行的function
+     *
+     * @return mixed|void
+     */
+    public function execute() {}
 }

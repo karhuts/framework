@@ -30,21 +30,20 @@ class Install implements CommandInterface {
         );
 
         releaseResource(__DIR__ . '/../../Resource/KarthusEvent.php', KARTHUS_ROOT . '/KarthusEvent.php');
-        releaseResource(__DIR__ . '/../../Resource/Http/Index.php', KARTHUS_ROOT . '/App/Controller/Index.php');
-        releaseResource(__DIR__ . '/../../Resource/Config.php', KARTHUS_ROOT . '/dev.php');
-        releaseResource(__DIR__ . '/../../Resource/Config.php', KARTHUS_ROOT . '/produce.php');
-
+        releaseResource(__DIR__ . '/../../Resource/Http/Index.php', KARTHUS_ROOT . '/Apps/Controller/Index.php');
+        releaseResource(__DIR__ . '/../../Resource/Config.php', KARTHUS_ROOT . '/Config/dev.php');
+        releaseResource(__DIR__ . '/../../Resource/Config.php', KARTHUS_ROOT . '/Config/produce.php');
 
         echo chr(27)."[42minstall success,enjoy! ".chr(27)."[0m \n";
 
         $arr = json_decode(file_get_contents(KARTHUS_ROOT.'/composer.json'),true);
-        $arr['autoload']['psr-4']['App\\'] = "App/";
+        $arr['autoload']['psr-4']['Apps\\'] = "Apps/";
         FileHelper::createFile(KARTHUS_ROOT.'/composer.json',
             json_encode($arr,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)
         );
 
-        @exec('composer dump-autoload');
         echo chr(27)."[42mdonot forget run composer dump-autoload ".chr(27)."[0m \n";
+        @exec('composer dump-autoload');
         return "";
     }
 

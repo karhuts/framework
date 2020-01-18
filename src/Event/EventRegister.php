@@ -41,10 +41,28 @@ class EventRegister extends MultiContainer{
      */
     public function __construct() {
         parent::__construct([
-            'start','shutdown','workerStart','workerStop','workerExit','timer',
-            'connect','receive','packet','close','bufferFull','bufferEmpty','task',
-            'finish','pipeMessage','workerError','managerStart','managerStop',
-            'request','handShake','message','open'
+            'start',
+            'shutdown',
+            'workerStart',
+            'workerStop',
+            'workerExit',
+            'timer',
+            'connect',
+            'receive',
+            'packet',
+            'close',
+            'bufferFull',
+            'bufferEmpty',
+            'task',
+            'finish',
+            'pipeMessage',
+            'workerError',
+            'managerStart',
+            'managerStop',
+            'request',
+            'handShake',
+            'message',
+            'open',
         ]);
     }
 }
