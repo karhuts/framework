@@ -19,6 +19,9 @@ class Server {
      * @var \Swoole\Server $swooleServer
      */
     private $swooleServer;
+    /**
+     * @var EventRegister
+     */
     private $mainServerEventRegister;
     private $subServer = [];
     private $subServerRegister = [];
@@ -47,28 +50,29 @@ class Server {
     }
 
     /**
-     * 创建
+     * 创建服务器
      *
-     * @param        $port
-     * @param        $type
+     * @param int    $port
+     * @param int    $type
      * @param string $address
      * @param array  $setting
      * @param mixed  ...$args
      * @return bool
      */
-    public function createSwooleServer(int $port = 8000,int $type = 2,
-                                       $address = '0.0.0.0',
+    public function createSwooleServer(int $port = 8000,
+                                       int $type = 2,
+                                       string $address = '0.0.0.0',
                                        array $setting = [],
                                        ...$args) :bool {
         switch ($type){
             case self::SERVER_TYPE_DEFAULT:
-                $this->swooleServer = new \Swoole\Server($address,$port,...$args);
+                $this->swooleServer = new \Swoole\Server($address, $port, ...$args);
                 break;
             case self::SERVER_TYPE_DEFAULT_WEB:
-                $this->swooleServer = new \Swoole\Http\Server($address,$port,...$args);
+                $this->swooleServer = new \Swoole\Http\Server($address, $port, ...$args);
                 break;
             case self::SERVER_TYPE_DEFAULT_WEB_SOCKET:
-                $this->swooleServer = new \Swoole\WebSocket\Server($address,$port,...$args);
+                $this->swooleServer = new \Swoole\WebSocket\Server($address, $port, ...$args);
                 break;
             default:{
                 Trigger::getInstance()->error("unknown server type :{$type}");

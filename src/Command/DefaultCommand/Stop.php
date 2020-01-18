@@ -74,7 +74,7 @@ class Stop implements CommandInterface {
 \e[36m  to stop current karthus server \e[0m
 \e[33mArg:\e[0m
 \e[32m  force \e[0m                   force to kill server
-\e[32m  produce \e[0m                 load produce.php
+\e[32m  produce \e[0m                 load Config/produce.php
 HELP_START;
     }
 }

@@ -1,73 +1,106 @@
 <?php
+declare(strict_types=1);
+
+namespace Karthus\Spl;
+
 /**
- * Created by PhpStorm.
- * User: yf
- * Date: 2018/5/22
- * Time: 下午2:54
+ * Class SplStream
+ *
+ * @package Karthus\Spl
  */
-
-namespace EasySwoole\Spl;
-
-
-class SplStream
-{
+class SplStream {
     private $stream;
     private $seekable;
     private $readable;
     private $writable;
+    /**
+     * @var array
+     */
     private $readList = [
-        'r' => true, 'w+' => true, 'r+' => true, 'x+' => true, 'c+' => true,
-        'rb' => true, 'w+b' => true, 'r+b' => true, 'x+b' => true,
-        'c+b' => true, 'rt' => true, 'w+t' => true, 'r+t' => true,
-        'x+t' => true, 'c+t' => true, 'a+' => true
+        'r'     => true,
+        'w+'    => true,
+        'r+'    => true,
+        'x+'    => true,
+        'c+'    => true,
+        'rb'    => true,
+        'w+b'   => true,
+        'r+b'   => true,
+        'x+b'   => true,
+        'c+b'   => true,
+        'rt'    => true,
+        'w+t'   => true,
+        'r+t'   => true,
+        'x+t'   => true,
+        'c+t'   => true,
+        'a+'    => true,
     ];
+    /**
+     * @var array
+     */
     private $writeList = [
-        'w' => true, 'w+' => true, 'rw' => true, 'r+' => true, 'x+' => true,
-        'c+' => true, 'wb' => true, 'w+b' => true, 'r+b' => true,
-        'x+b' => true, 'c+b' => true, 'w+t' => true, 'r+t' => true,
-        'x+t' => true, 'c+t' => true, 'a' => true, 'a+' => true
+        'w'     => true,
+        'w+'    => true,
+        'rw'    => true,
+        'r+'    => true,
+        'x+'    => true,
+        'c+'    => true,
+        'wb'    => true,
+        'w+b'   => true,
+        'r+b'   => true,
+        'x+b'   => true,
+        'c+b'   => true,
+        'w+t'   => true,
+        'r+t'   => true,
+        'x+t'   => true,
+        'c+t'   => true,
+        'a'     => true,
+        'a+'    => true,
     ];
-    function __construct($resource = '',$mode = 'r+')
-    {
+
+    /**
+     * SplStream constructor.
+     *
+     * @param string $resource
+     * @param string $mode
+     */
+    public function __construct($resource = '', $mode = 'r+') {
         switch (gettype($resource)) {
-            case 'resource': {
+            case 'resource':
                 $this->stream = $resource;
                 break;
-            }
-            case 'object':{
-                if(method_exists($resource, '__toString')) {
+            case 'object':
+                if (method_exists($resource, '__toString')) {
                     $resource = $resource->__toString();
                     $this->stream = fopen('php://memory', $mode);
                     if ($resource !== '') {
                         fwrite($this->stream, $resource);
                     }
                     break;
-                }else{
+                } else {
                     throw new \InvalidArgumentException('Invalid resource type: ' . gettype($resource));
                 }
-            }
-            default:{
-                $this->stream  = fopen('php://memory', $mode);
-                try{
-                    $resource = (string)$resource;
+            default:
+                $this->stream = fopen('php://memory', $mode);
+                try {
+                    $resource = (string) $resource;
                     if ($resource !== '') {
                         fwrite($this->stream, $resource);
                     }
-                }catch (\Exception $exception){
+                } catch (\Exception $exception) {
                     throw new \InvalidArgumentException('Invalid resource type: ' . gettype($resource));
                 }
-            }
         }
         $info = stream_get_meta_data($this->stream);
         $this->seekable = $info['seekable'];
         $this->seek(0);
         $this->readable = isset($this->readList[$info['mode']]);
-        $this->writable =  isset($this->writeList[$info['mode']]);
+        $this->writable = isset($this->writeList[$info['mode']]);
     }
 
-    public function __toString()
-    {
-        // TODO: Implement __toString() method.
+    /**
+     * @return string
+     */
+    public function __toString() {
         try {
             $this->seek(0);
             return (string) stream_get_contents($this->stream);
@@ -76,18 +109,20 @@ class SplStream
         }
     }
 
-    public function close()
-    {
-        // TODO: Implement close() method.
+    /**
+     *
+     */
+    public function close() {
         $res = $this->detach();
-        if(is_resource($res)){
+        if (is_resource($res)) {
             fclose($res);
         }
     }
 
-    public function detach()
-    {
-        // TODO: Implement detach() method.
+    /**
+     * @return false|resource|null
+     */
+    public function detach() {
         if (!isset($this->stream)) {
             return null;
         }
@@ -97,20 +132,22 @@ class SplStream
         return $result;
     }
 
-    public function getSize()
-    {
-        // TODO: Implement getSize() method.
+    /**
+     * @return mixed|null
+     */
+    public function getSize() {
         $stats = fstat($this->stream);
-        if (isset($stats['size'])) {
-            return $stats['size'];
-        }else{
+        if (isset($stats[ 'size' ])) {
+            return $stats[ 'size' ];
+        } else {
             return null;
         }
     }
 
-    public function tell()
-    {
-        // TODO: Implement tell() method.
+    /**
+     * @return false|int
+     */
+    public function tell() {
         $result = ftell($this->stream);
         if ($result === false) {
             throw new \RuntimeException('Unable to determine stream position');
@@ -118,21 +155,25 @@ class SplStream
         return $result;
     }
 
-    public function eof()
-    {
-        // TODO: Implement eof() method.
+    /**
+     * @return bool
+     */
+    public function eof() {
         return !$this->stream || feof($this->stream);
     }
 
-    public function isSeekable()
-    {
-        // TODO: Implement isSeekable() method.
+    /**
+     * @return mixed
+     */
+    public function isSeekable() {
         return $this->seekable;
     }
 
-    public function seek($offset, $whence = SEEK_SET)
-    {
-        // TODO: Implement seek() method.
+    /**
+     * @param     $offset
+     * @param int $whence
+     */
+    public function seek($offset, $whence = SEEK_SET) {
         if (!$this->seekable) {
             throw new \RuntimeException('Stream is not seekable');
         } elseif (fseek($this->stream, $offset, $whence) === -1) {
@@ -141,21 +182,25 @@ class SplStream
         }
     }
 
-    public function rewind()
-    {
-        // TODO: Implement rewind() method.
+    /**
+     *
+     */
+    public function rewind() {
         $this->seek(0);
     }
 
-    public function isWritable()
-    {
-        // TODO: Implement isWritable() method.
+    /**
+     * @return bool
+     */
+    public function isWritable() {
         return $this->writable;
     }
 
-    public function write($string)
-    {
-        // TODO: Implement write() method.
+    /**
+     * @param $string
+     * @return false|int
+     */
+    public function write($string) {
         if (!$this->writable) {
             throw new \RuntimeException('Cannot write to a non-writable stream');
         }
@@ -166,15 +211,18 @@ class SplStream
         return $result;
     }
 
-    public function isReadable()
-    {
-        // TODO: Implement isReadable() method.
+    /**
+     * @return bool
+     */
+    public function isReadable() {
         return $this->readable;
     }
 
-    public function read($length)
-    {
-        // TODO: Implement read() method.
+    /**
+     * @param $length
+     * @return false|string
+     */
+    public function read($length) {
         if (!$this->readable) {
             throw new \RuntimeException('Cannot read from non-readable stream');
         }
@@ -191,9 +239,10 @@ class SplStream
         return $string;
     }
 
-    public function getContents()
-    {
-        // TODO: Implement getContents() method.
+    /**
+     * @return false|string
+     */
+    public function getContents() {
         //注意与__toString的区别
         $contents = stream_get_contents($this->stream);
         if ($contents === false) {
@@ -202,30 +251,41 @@ class SplStream
         return $contents;
     }
 
-    public function getMetadata($key = null)
-    {
-        // TODO: Implement getMetadata() method.
+    /**
+     * @param null $key
+     * @return array|mixed|null
+     */
+    public function getMetadata($key = null) {
         if (!isset($this->stream)) {
             return $key ? null : [];
         } elseif (!$key) {
             return stream_get_meta_data($this->stream);
         } else {
             $meta = stream_get_meta_data($this->stream);
-            return isset($meta[$key]) ? $meta[$key] : null;
+            return isset($meta[ $key ]) ? $meta[ $key ] : null;
         }
     }
 
-    public function __destruct()
-    {
-        // TODO: Implement __destruct() method.
+    /**
+     *
+     */
+    public function __destruct() {
         $this->close();
     }
 
-    function getStreamResource(){
+
+    /**
+     * @return false|resource
+     */
+    public function getStreamResource() {
         return $this->stream;
     }
 
-    function truncate($size = 0){
-        return ftruncate($this->stream,$size);
+    /**
+     * @param int $size
+     * @return bool
+     */
+    public function truncate($size = 0) {
+        return ftruncate($this->stream, $size);
     }
 }

@@ -37,14 +37,16 @@ class Runner {
      *
      * @param array $args
      * @return string|null
+     * @throws \Exception
+     * @throws \Throwable
      */
     function run(array $args):?string {
         $command = array_shift($args);
         if(empty($command)){
             $command = 'help';
-        }else if($command != 'install'){
+        }elseif($command !== 'install'){
             //预先加载配置
-            if(in_array('produce',$args)){
+            if(in_array('produce', $args)){
                 Core::getInstance()->setDev(false);
             }
             Core::getInstance()->initialize();

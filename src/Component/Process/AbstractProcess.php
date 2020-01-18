@@ -8,6 +8,9 @@ use Swoole\Process;
 use Swoole\Timer;
 
 abstract class AbstractProcess {
+    /**
+     * @var Process
+     */
     private $swooleProcess;
     /** @var Config */
     private $config;
@@ -41,22 +44,42 @@ abstract class AbstractProcess {
         return $this->swooleProcess;
     }
 
-    public function addTick($ms, callable $call): ?int {
-        return Timer::getInstance()->loop(
-            $ms, $call
-        );
+    /**
+     * TODO 天假定时器
+     *
+     * @param          $ms
+     * @param callable $call
+     * @return int|null
+     */
+    public function addTick($ms, callable $callback): ?int {
     }
 
+    /**
+     * TODO 清除定时器
+     *
+     * @param int $timerId
+     * @return int|null
+     */
     public function clearTick(int $timerId): ?int {
-        return Timer::getInstance()->clear($timerId);
     }
 
-    public function delay($ms, callable $call): ?int {
-        return Timer::getInstance()->after($ms, $call);
+    /**
+     *
+     * TODO 延迟定时器
+     * @param          $ms
+     * @param callable $call
+     * @return int|null
+     */
+    public function delay($ms, callable $callback): ?int {
     }
 
-    /*
+
+    /**
+     *
+     * 获取PID
      * 服务启动后才能获得到pid
+     *
+     * @return int|null
      */
     public function getPid(): ?int {
         if (isset($this->swooleProcess->pid)) {
@@ -66,7 +89,13 @@ abstract class AbstractProcess {
         }
     }
 
-    function __start(Process $process) {
+    /**
+     * 开始执行
+     *
+     * @param Process $process
+     * @throws \Throwable
+     */
+    public function __start(Process $process) {
         if (!in_array(PHP_OS, ['Darwin', 'CYGWIN', 'WINNT']) && !empty($this->getProcessName())) {
             $process->name($this->getProcessName());
         }
@@ -106,14 +135,29 @@ abstract class AbstractProcess {
         }
     }
 
+    /**
+     * 获取参数
+     *
+     * @return mixed
+     */
     public function getArg() {
         return $this->config->getArg();
     }
 
+    /**
+     * 获取进程名称
+     *
+     * @return mixed
+     */
     public function getProcessName() {
         return $this->config->getProcessName();
     }
 
+    /**
+     * 获取配置
+     *
+     * @return Config
+     */
     protected function getConfig(): Config {
         return $this->config;
     }
@@ -127,17 +171,23 @@ abstract class AbstractProcess {
         throw $throwable;
     }
 
+    /**
+     * 运行
+     *
+     * @param $arg
+     * @return mixed
+     */
     protected abstract function run($arg);
 
-    protected function onShutDown() {
+    /**
+     * 关闭
+     */
+    protected function onShutDown() {}
 
-    }
-
+    /**
+     * @param Process $process
+     */
     protected function onPipeReadable(Process $process) {
-        /*
-         * 由于Swoole底层使用了epoll的LT模式，因此swoole_event_add添加的事件监听，
-         * 在事件发生后回调函数中必须调用read方法读取socket中的数据，否则底层会持续触发事件回调。
-         */
         $process->read();
     }
 }

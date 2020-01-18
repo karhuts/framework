@@ -1,30 +1,39 @@
 <?php
-namespace EasySwoole\EasySwoole;
+declare(strict_types=1);
 
-use EasySwoole\EasySwoole\Swoole\EventRegister;
-use EasySwoole\EasySwoole\AbstractInterface\Event;
-use EasySwoole\Http\Request;
-use EasySwoole\Http\Response;
+namespace Karthus;
 
-class EasySwooleEvent implements Event {
+use Karthus\Http\Request;
+use Karthus\Http\Response;
+use Karthus\AbstractInterface\Event;
+use Karthus\Event\EventRegister;
 
-    public static function initialize() {
+class KarthusEvent implements Event {
 
-    }
+    /**
+     * @return mixed|void
+     */
+    public static function initialize() {}
 
-    public static function mainServerCreate(EventRegister $register)
-    {
-        // TODO: Implement mainServerCreate() method.
-    }
+    /**
+     * @param EventRegister $register
+     * @return mixed|void
+     */
+    public static function mainServerCreate(EventRegister $register) {}
 
-    public static function onRequest(Request $request, Response $response): bool
-    {
-        // TODO: Implement onRequest() method.
+    /**
+     * @param Request  $request
+     * @param Response $response
+     * @return bool
+     */
+    public static function beforeRequest(Request $request, Response $response): bool {
         return true;
     }
 
-    public static function afterRequest(Request $request, Response $response): void
-    {
-        // TODO: Implement afterAction() method.
+    /**
+     * @param Request  $request
+     * @param Response $response
+     */
+    public static function afterRequest(Request $request, Response $response): void {
     }
 }

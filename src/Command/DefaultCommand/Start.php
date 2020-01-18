@@ -110,7 +110,7 @@ class Start implements CommandInterface{
 \e[36m  to start current karthus server \e[0m
 \e[33mArg:\e[0m
 \e[32m  daemonize \e[0m                   run in daemonize
-\e[32m  produce \e[0m                     load produce.php
+\e[32m  produce \e[0m                     load Config/produce.php
 HELP_START;
     }
 }

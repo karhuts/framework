@@ -53,7 +53,7 @@ class Reload implements CommandInterface {
 \e[33mIntro:\e[0m
 \e[36m  you can reload current karthus server\e[0m
 \e[33mAgs:\e[0m
-\e[32m  produce \e[0m                     load produce.php
+\e[32m  produce \e[0m                     load Config/produce.php
 HELP_RELOAD;
     }
 }

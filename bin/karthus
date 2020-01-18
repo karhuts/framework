@@ -1,10 +1,11 @@
 #!/usr/bin/env php
 <?php
-
 use Karthus\Command\Runner;
 
 ///设置时区
 date_default_timezone_set('Asia/Shanghai');
+ini_set("display_errors", "On");
+error_reporting(E_ALL | E_STRICT);
 
 defined('IN_PHAR') or define('IN_PHAR', boolval(\Phar::running(false)));
 defined('RUNNING_ROOT') or define('RUNNING_ROOT', realpath(getcwd()));
