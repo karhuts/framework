@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace App\HttpController;
+namespace Apps\Controller;
 
 use Karthus\Http\AbstractInterface\Controller;
 
