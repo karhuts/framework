@@ -101,7 +101,7 @@ class Response extends Message\Response {
         if(!$this->isEndResponse()){
             //仅支持header重定向  不做meta定向
             $this->withStatus($status);
-            $this->withHeader('Location',$url);
+            $this->withHeader('Location', $url);
             return true;
         }else{
             return false;

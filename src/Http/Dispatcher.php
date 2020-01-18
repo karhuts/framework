@@ -132,8 +132,8 @@ class Dispatcher {
             }
         }
         response:{
-        $this->controllerHandler($request,$response,$path);
-    }
+            $this->controllerHandler($request,$response,$path);
+        }
     }
 
     /**
@@ -143,7 +143,7 @@ class Dispatcher {
      */
     private function controllerHandler(Request $request,Response $response,string $path) {
         $pathInfo   = ltrim($path,"/");
-        $list       = explode("/",$pathInfo);
+        $list       = explode("/", $pathInfo);
         $actionName = null;
         $finalClass = null;
         $controlMaxDepth    = $this->maxDepth;
@@ -151,12 +151,12 @@ class Dispatcher {
         $maxDepth           = $currentDepth < $controlMaxDepth ? $currentDepth : $controlMaxDepth;
         while ($maxDepth >= 0){
             $className      = '';
-            for ($i=0 ;$i<$maxDepth;$i++){
+            for ($i=0 ;$i<$maxDepth; $i++){
                 $className = $className."\\".ucfirst($list[$i] ?: 'Index');//为一级控制器Index服务
             }
             if(class_exists($this->controllerNameSpacePrefix.$className)){
                 //尝试获取该class后的actionName
-                $actionName = empty($list[$i]) ? 'index' : $list[$i];
+                $actionName = empty($list[$i]) ? 'execute' : $list[$i];
                 $finalClass = $this->controllerNameSpacePrefix.$className;
                 break;
             }else{
@@ -165,7 +165,7 @@ class Dispatcher {
                 if(class_exists($this->controllerNameSpacePrefix.$temp)){
                     $finalClass = $this->controllerNameSpacePrefix.$temp;
                     //尝试获取该class后的actionName
-                    $actionName = empty($list[$i]) ? 'index' : $list[$i];
+                    $actionName = empty($list[$i]) ? 'execute' : $list[$i];
                     break;
                 }
             }
@@ -199,6 +199,7 @@ class Dispatcher {
         }else{
             $response->withStatus(Status::NOT_FOUND);
             $response->write("not controller class match");
+
         }
     }
 
