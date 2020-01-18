@@ -86,6 +86,7 @@
         }
     },
     "bin": [
-        "bin/karthus"
+        "bin/karthus",
+        "bin/phpunit"
     ]
 }

@@ -27,5 +27,5 @@
       <path value="$PROJECT_DIR$/vendor/min/karthus-ext-logger" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />
+  <component name="PhpProjectSharedConfiguration" php_language_level="7.1" />
 </project>

@@ -43,7 +43,7 @@ class Stop implements CommandInterface {
             $time = time();
             while (true) {
                 usleep(1000);
-                if (!\swoole_process::kill($pid, 0)) {
+                if (!Process::kill($pid, 0)) {
                     if (is_file($pidFile)) {
                         unlink($pidFile);
                     }

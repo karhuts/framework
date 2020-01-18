@@ -31,5 +31,8 @@ return [
             'timeout'       =>15
         ]
     ],
-    'LOG_DIR'               => null
+    'LOG_DIR'               => null,
+    'MYSQL_PAY'             => [
+
+    ],
 ];

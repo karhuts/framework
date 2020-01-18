@@ -13,9 +13,9 @@ defined('KARTHUS_ROOT') or define('KARTHUS_ROOT', IN_PHAR ? \Phar::running() : r
 
 $file   =   KARTHUS_ROOT.'/vendor/autoload.php';
 if (file_exists($file)) {
-    require $file;
+    require_once($file);
 }else{
-    die("include composer autoload.php fail\n");
+    exit("include composer autoload.php fail\n");
 }
 
 if(file_exists(KARTHUS_ROOT.'/bootstrap.php')){
