@@ -20,14 +20,12 @@ class Install implements CommandInterface {
     public function exec(array $args): ?string {
         echo welcome();
         if(is_file(KARTHUS_ROOT . '/karthus')){
-            unlink(KARTHUS_ROOT . '/karthus');
+            @unlink(KARTHUS_ROOT . '/karthus');
         }
 
+        $exeContents    = file_get_contents(__DIR__.'/../../../bin/karthus');
         //保存一个可执行文件
-        file_put_contents(
-            KARTHUS_ROOT . '/katthus',
-            file_get_contents(__DIR__.'/../../../bin/karthus')
-        );
+        @file_put_contents(KARTHUS_ROOT . '/karthus', $exeContents);
 
         releaseResource(__DIR__ . '/../../Resource/KarthusEvent.php', KARTHUS_ROOT . '/KarthusEvent.php');
         releaseResource(__DIR__ . '/../../Resource/Http/Index.php', KARTHUS_ROOT . '/Apps/Controller/Index.php');

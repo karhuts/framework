@@ -105,7 +105,7 @@ class Config {
      * @param string $file
      * @throws \Exception
      */
-    public function loadEnv(string $file) {
+    public function loadConfig(string $file) {
         if(file_exists($file)){
             $data = require $file;
             if(is_array($data)){
