@@ -6,15 +6,14 @@ use Karthus\Http\Message\ServerRequest;
 use Karthus\Http\Message\Stream;
 use Karthus\Http\Message\UploadFile;
 use Karthus\Http\Message\Uri;
-use Swoole\Http\Server;
 
 class Request extends ServerRequest{
     /**
-     * @var Server
+     * @var \Swoole\Http\Request
      */
     private $request;
 
-    public function __construct(Server $request = null) {
+    public function __construct(\Swoole\Http\Request $request = null) {
         $this->request  = $request;
         $this->initHeaders();
         $protocol       = str_replace('HTTP/', '', $request->server['server_protocol']) ;

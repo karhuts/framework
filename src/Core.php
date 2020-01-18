@@ -6,10 +6,16 @@ namespace Karthus;
 use Karthus\AbstractInterface\Event;
 use Karthus\Component\Di;
 use Karthus\Component\Singleton;
+use Karthus\Event\EventHelper;
+use Karthus\Event\EventRegister;
 use Karthus\Helper\FileHelper;
+use Karthus\Http\Dispatcher;
+use Karthus\Http\Request;
+use Karthus\Http\Response;
 use Karthus\Logger\LoggerInterface;
 use Karthus\Trigger\Location;
 use Karthus\Trigger\TriggerInterface;
+use Swoole\Http\Status;
 
 class Core {
     use Singleton;
@@ -199,8 +205,84 @@ class Core {
         Config::getInstance()->loadConfig($file);
     }
 
+    /**
+     * 注册默认的回调了
+     *
+     * @param \Swoole\Server $server
+     * @param int            $type
+     * @throws \Throwable
+     */
     private function registerDefaultCallBack(\Swoole\Server $server, int $type){
+        if(in_array($type, [Server::SERVER_TYPE_DEFAULT_WEB, Server::SERVER_TYPE_DEFAULT_WEB_SOCKET],true)){
+            $namespace      = Di::getInstance()->get(SystemConst::HTTP_CONTROLLER_NAMESPACE);
+            if(empty($namespace)){
+                $namespace  = 'Apps\\Controller\\';
+            }
+            $depth          = intval(Di::getInstance()->get(SystemConst::HTTP_CONTROLLER_MAX_DEPTH));
+            $depth          = $depth > 5 ? $depth : 5;
+            $max            = intval(Di::getInstance()->get(SystemConst::HTTP_CONTROLLER_POOL_MAX_NUM));
+            if($max === 0){
+                $max = 500;
+            }
+            $waitTime       = intval(Di::getInstance()->get(SystemConst::HTTP_CONTROLLER_POOL_WAIT_TIME));
+            if($waitTime == 0){
+                $waitTime = 5;
+            }
+            $dispatcher     = new Dispatcher($namespace, $depth, $max);
+            $dispatcher->setControllerPoolWaitTime($waitTime);
+            $httpExceptionHandler = Di::getInstance()->get(SystemConst::HTTP_EXCEPTION_HANDLER);
+            if(!is_callable($httpExceptionHandler)){
+                $httpExceptionHandler = function (\Throwable $throwable, Request $request, Response $response){
+                    $response->withStatus(Status::INTERNAL_SERVER_ERROR);
+                    $response->write(nl2br($throwable->getMessage()."\n".$throwable->getTraceAsString()));
+                    Trigger::getInstance()->throwable($throwable);
+                };
+                Di::getInstance()->set(SystemConst::HTTP_EXCEPTION_HANDLER, $httpExceptionHandler);
+            }
+            $dispatcher->setHttpExceptionHandler($httpExceptionHandler);
 
+            EventHelper::on($server,EventRegister::onRequest,
+                function (\Swoole\Http\Request $request,
+                          \Swoole\Http\Response $response) use ($dispatcher){
+
+                $request_psr    = new Request($request);
+                $response_psr   = new Response($response);
+
+                try{
+                    if(KarthusEvent::beforeRequest($request_psr,$response_psr)){
+                        $dispatcher->dispatch($request_psr,$response_psr);
+                    }
+                }catch (\Throwable $throwable){
+                    call_user_func(Di::getInstance()->get(SystemConst::HTTP_EXCEPTION_HANDLER),
+                        $throwable, $request_psr, $response_psr);
+                }finally{
+                    try{
+                        KarthusEvent::afterRequest($request_psr,$response_psr);
+                    }catch (\Throwable $throwable){
+                        call_user_func(Di::getInstance()->get(SystemConst::HTTP_EXCEPTION_HANDLER),
+                            $throwable, $request_psr, $response_psr);
+                    }
+                }
+                $response_psr->__response();
+
+            });
+        }
+
+        $register = Server::getInstance()->getMainEventRegister();
+        //注册默认的worker start
+        EventHelper::registerWithAdd($register,EventRegister::onWorkerStart, function (\Swoole\Server $server, int $workerId){
+            if(isWin() !== true && isMac() !== true){
+                $name = Config::getInstance()->getConf('SERVER_NAME');
+                if(($workerId < Config::getInstance()->getConf('MAIN_SERVER.SETTING.worker_num'))
+                    && $workerId >= 0){
+                    @cli_set_process_title("{$name}.Worker.{$workerId}");
+                }
+            }
+        });
+
+        EventHelper::registerWithAdd($register,$register::onWorkerExit,function (\Swoole\Server $server, int $workerId){
+            //TODO
+        });
     }
 
     /***
@@ -217,7 +299,9 @@ class Core {
     public function start() {
         //给主进程也命名
         $serverName = Config::getInstance()->getConf('SERVER_NAME');
-        @swoole_set_process_name($serverName);
+        if(isWin() === false && isMac() === false){
+            @cli_set_process_title($serverName);
+        }
         //启动
         Server::getInstance()->start();
     }

@@ -110,3 +110,36 @@ if(!function_exists('UriPathInfo')){
         return $basePath;
     }
 }
+
+if(!function_exists('isCli')){
+    /**
+     * 是否为 CLI 模式
+     * @return bool
+     */
+    function isCli() {
+        return PHP_SAPI === 'cli';
+    }
+}
+
+if(!function_exists('isWin')){
+    /**
+     * 是否为 Win 系统
+     * @return bool
+     */
+    function isWin() {
+        if (isMac()) {
+            return false;
+        }
+        return stripos(PHP_OS, 'WIN') !== false;
+    }
+}
+
+if(!function_exists('isMac')){
+    /**
+     * 是否为 Mac 系统
+     * @return bool
+     */
+    function isMac() {
+        return stripos(PHP_OS, 'Darwin') !== false;
+    }
+}
