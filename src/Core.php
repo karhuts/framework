@@ -207,19 +207,8 @@ class Core {
      * 注册额外的handler
      */
     private function extraHandler() {
-        //注册crontab进程
-        Crontab::getInstance()->__run();
-        //注册Task进程
-        $config = Config::getInstance()->getConf('MAIN_SERVER.TASK');
-        $config = new TaskConfig($config);
-        $config->setTempDir(EASYSWOOLE_TEMP_DIR);
-        $config->setServerName(Config::getInstance()->getConf('SERVER_NAME'));
-        $config->setOnException(function (\Throwable $throwable){
-            Trigger::getInstance()->throwable($throwable);
-        });
-        TaskManager::getInstance($config)->attachToServer(
-            Server::getInstance()->getSwooleServer()
-        );
+        //TODO crontab
+        //TODO TASK
     }
 
     /**
