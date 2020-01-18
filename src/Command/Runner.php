@@ -38,6 +38,7 @@ class Runner {
      * @param array $args
      * @return string|null
      * @throws \Exception
+     * @throws \Throwable
      */
     function run(array $args):?string {
         $command = array_shift($args);

@@ -107,7 +107,7 @@ class Config {
      */
     public function loadConfig(string $file) {
         if(file_exists($file)){
-            $data = require $file;
+            $data = require_once($file);
             if(is_array($data)){
                 $this->load($data);
             }

@@ -192,9 +192,9 @@ class Core {
      */
     private function loadConfig() {
         if($this->isDev){
-            $file  = KARTHUS_ROOT.'Config/dev.php';
+            $file  = KARTHUS_ROOT . '/Config/dev.php';
         }else{
-            $file  = KARTHUS_ROOT.'Config/produce.php';
+            $file  = KARTHUS_ROOT . '/Config/produce.php';
         }
         Config::getInstance()->loadConfig($file);
     }
