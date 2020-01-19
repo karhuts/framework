@@ -17,6 +17,7 @@ return [
             "/users/:uid"   => [
                 "method"    => RouterMethod::GET,
                 "class"     => Users::class,
+                "action"    => "index",
             ],
         ],
     ],

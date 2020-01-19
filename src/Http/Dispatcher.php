@@ -97,29 +97,20 @@ class Dispatcher {
                         break;
                 }
             }
-            //如果handler不为null，那么说明，非为 \FastRoute\Dispatcher::FOUND ，因此执行
+            // 如果handler不为null，那么说明，非为 \FastRoute\Dispatcher::FOUND ，因此执行
+            // 如果handler可直接执行，那么我就直接执行了
             if(is_callable($handler)){
                 try{
                     //若直接返回一个url path
-                    $ret = call_user_func($handler,$request,$response);
-                    if(is_string($ret)){
-                        $path = UriPathInfo($ret);
-                    }else if($ret == false){
-                        return;
-                    }else{
-                        //可能在回调中重写了URL PATH
-                        $path = UriPathInfo($request->getUri()->getPath());
-                    }
-                    $request->getUri()->withPath($path);
+                    call_user_func($handler, $request, $response);
+                    return;
                 }catch (\Throwable $throwable){
                     $this->hookThrowable($throwable,$request,$response);
-                    //出现异常的时候，不在往下dispatch
+                    //出现异常的时候，不往下dispatch
                     return;
                 }
             }elseif(is_string($handler)){
-                $path = UriPathInfo($handler);
-                $request->getUri()->withPath($path);
-                goto response;
+                $this->controllerHandler($request, $response, $handler);
             }
             /*
                 * 全局模式的时候，都拦截。非全局模式，否则继续往下
@@ -128,45 +119,20 @@ class Dispatcher {
                 return;
             }
         }
-        response:{
-            $this->controllerHandler($request,$response,$path);
-        }
     }
 
     /**
      * @param Request  $request
      * @param Response $response
-     * @param string   $path
+     * @param string   $handle
      */
-    private function controllerHandler(Request $request,Response $response,string $path) {
-        $pathInfo   = ltrim($path,"/");
-        $list       = explode("/", $pathInfo);
-        $actionName = null;
-        $finalClass = null;
-        $controlMaxDepth    = $this->maxDepth;
-        $currentDepth       = count($list);
-        $maxDepth           = $currentDepth < $controlMaxDepth ? $currentDepth : $controlMaxDepth;
-        while ($maxDepth >= 0){
-            $className      = '';
-            for ($i=0 ;$i<$maxDepth; $i++){
-                $className = $className."\\".ucfirst($list[$i] ?: 'Index');//为一级控制器Index服务
-            }
-            if(class_exists($this->controllerNameSpacePrefix.$className)){
-                //尝试获取该class后的actionName
-                $actionName = empty($list[$i]) ? 'execute' : $list[$i];
-                $finalClass = $this->controllerNameSpacePrefix.$className;
-                break;
-            }else{
-                //尝试搜搜index控制器
-                $temp = $className."\\Index";
-                if(class_exists($this->controllerNameSpacePrefix.$temp)){
-                    $finalClass = $this->controllerNameSpacePrefix.$temp;
-                    //尝试获取该class后的actionName
-                    $actionName = empty($list[$i]) ? 'execute' : $list[$i];
-                    break;
-                }
-            }
-            $maxDepth--;
+    private function controllerHandler(Request $request,Response $response,string $handle) {
+        $list               = explode("@", $handle);
+        $actionName         = "execute";
+        $finalClass         = $list[0];
+        $routerCount        = count($list);
+        if($routerCount > 1){
+            $actionName     = $list[1];
         }
 
         if(!empty($finalClass)){
@@ -178,11 +144,11 @@ class Dispatcher {
             }
             if($controllerObject instanceof Controller){
                 try{
-                    $forward = $controllerObject->__hook($actionName,$request,$response);
+                    $forward = $controllerObject->__hook($actionName, $request, $response);
                     if(is_string($forward) && (strlen($forward) > 0) && ($forward != $path)){
                         $forward = UriPathInfo($forward);
                         $request->getUri()->withPath($forward);
-                        $this->dispatch($request,$response);
+                        $this->dispatch($request, $response);
                     }
                 }catch (\Throwable $throwable){
                     $this->hookThrowable($throwable,$request,$response);
@@ -196,7 +162,6 @@ class Dispatcher {
         }else{
             $response->withStatus(Status::NOT_FOUND);
             $response->write("not controller class match");
-
         }
     }
 

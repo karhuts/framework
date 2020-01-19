@@ -53,7 +53,8 @@ class Router extends AbstractRouter{
         if(isset($config['handle'])) {
             $handle     = $config['handle'];
         } else {
-            $handle     = $config['class'];
+            $action     = $config['action'] ?? 'execute';
+            $handle     = "{$config['class']}@$action";
         }
         $this->getRouteCollector()->addRoute($method, $router, $handle);
     }
