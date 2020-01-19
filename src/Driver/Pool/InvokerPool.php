@@ -14,18 +14,20 @@ use Swoole\Coroutine;
 trait InvokerPool {
 
     /**
+     * 也是一个注册，允许回调
+     *
      * @param callable   $call
      * @param float|null $timeout
      * @return mixed
      * @throws \Throwable
      */
-    public static function invoke(callable $call, float $timeout = null) {
+    public static function invoke(callable $callback, float $timeout = null) {
         $pool = PoolManager::getInstance()->getPool(static::class);
         if($pool instanceof AbstractPool){
-            $obj = $pool->getObj($timeout);
+            $obj = $pool->getObject($timeout);
             if($obj){
                 try{
-                    $ret = call_user_func($call,$obj);
+                    $ret = call_user_func($callback, $obj);
                     return $ret;
                 }catch (\Throwable $throwable){
                     throw $throwable;
@@ -53,7 +55,7 @@ trait InvokerPool {
         }else{
             $pool = PoolManager::getInstance()->getPool(static::class);
             if($pool instanceof AbstractPool){
-                $obj = $pool->getObj($timeout);
+                $obj = $pool->getObject($timeout);
                 if($obj){
                     Coroutine::defer(function ()use($pool,$obj){
                         $pool->recycle($obj);
