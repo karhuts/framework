@@ -12,6 +12,7 @@ use Karthus\Helper\FileHelper;
 use Karthus\Http\Dispatcher;
 use Karthus\Http\Request;
 use Karthus\Http\Response;
+use Karthus\Http\Router\Router;
 use Karthus\Logger\LoggerInterface;
 use Karthus\Trigger\Location;
 use Karthus\Trigger\TriggerInterface;
@@ -214,7 +215,7 @@ class Core {
     private function loadRouter() {
         $file   = KARTHUS_ROOT . '/Config/router.php';
         $data   = $data = require_once($file);
-        Config::getInstance()->setConf('ROUTERS', $data);
+        Router::getInstance()->setRouters($data);
     }
 
     /**

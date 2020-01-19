@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use Apps\Controller\Users;
 use Karthus\Http\Request;
 use Karthus\Http\Response;
 use Karthus\Http\Router\RouterMethod;
@@ -15,7 +16,7 @@ return [
         "groups"    => [
             "/users/:uid"   => [
                 "method"    => RouterMethod::GET,
-                "class"     => \Apps\Controller\Users::Index,
+                "class"     => Users::Index,
             ],
         ],
     ],
