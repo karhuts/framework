@@ -146,7 +146,7 @@ class Dispatcher {
                 try{
                     $controllerObject->hook($actionName, $request, $response);
                 }catch (\Throwable $throwable){
-                    $this->hookThrowable($throwable,$request,$response);
+                    $this->hookThrowable($throwable, $request, $response);
                 }finally {
                     $this->recycleController($finalClass, $controllerObject);
                 }
@@ -171,15 +171,15 @@ class Dispatcher {
             $this->$classKey = new Co\Channel($this->maxPoolNum + 1);
             $this->controllerPoolCreateNum[$classKey] = 0;
         }
-        $channel = $this->$classKey;
         //懒惰创建模式
         /** @var Co\Channel $channel */
+        $channel = $this->$classKey;
         if($channel->isEmpty()){
             $createNum = $this->controllerPoolCreateNum[$classKey];
             if($createNum < $this->maxPoolNum){
                 $this->controllerPoolCreateNum[$classKey] = $createNum + 1;
                 try{
-                    //防止用户在控制器结构函数做了什么东西导致异常
+                    // 包一层报错
                     return new $class();
                 }catch (\Throwable $exception){
                     $this->controllerPoolCreateNum[$classKey] = $createNum;
