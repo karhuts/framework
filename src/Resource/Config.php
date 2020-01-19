@@ -40,7 +40,19 @@ return [
     ],
 
     'LOG_DIR'               => null,
-    'MYSQL_BLUEDMIS'        => [
+    'MYSQL'                 => [
+        'BLUEDMIS'          => [
+            'host'                 => '10.9.196.184',
+            'port'                 => 3306,
+            'user'                 => 'bluedmis',
+            'password'             => 'PQeWUC3MdC3wDjcs',
+            'database'             => 'bluedmis',
+            'timeout'              => 30,
+            'charset'              => 'utf8mb4',
+            'connect_timeout'      => 5,//连接超时时间
+        ],
+    ],
+    'REDIS'                 => [
 
     ],
 ];

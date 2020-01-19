@@ -13,7 +13,11 @@ class KarthusEvent implements Event {
     /**
      * @return mixed|void
      */
-    public static function initialize() {}
+    public static function initialize() {
+        // 这里注册MYSQL进程池 和 REDIS？
+        $mysql_config   = Config::getInstance()->getConf("MYSQL");
+        print_r($mysql_config);
+    }
 
     /**
      * @param EventRegister $register

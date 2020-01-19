@@ -92,7 +92,7 @@ class Start implements CommandInterface{
         $msg = $msg . displayItem('PHP Version', phpversion()) . "\n";
         $msg = $msg . displayItem('Karthus Version', SystemConst::KARTHUS_VERSION) . "\n";
         $msg = $msg . displayItem('develop/produce', $mode) . "\n";
-        $msg = $msg . displayItem('Log Dir', KARTHUS_LOGGER_DIR) . "\n";
+        $msg = $msg . displayItem('Log Dir', KARTHUS_LOG_DIR) . "\n";
         echo $msg;
         Core::getInstance()->start();
         return null;
