@@ -168,4 +168,82 @@ class Request extends ServerRequest{
         $this->getBody()->close();
     }
 
+
+    /**
+     * @return string
+     */
+    public function getRemoteIP(): string {
+        $remoteIp = $this->request->header['x-real-ip'] ?? $this->request->server['remote_addr'];
+        $remoteIp = strval($remoteIp);
+
+        return $remoteIp;
+    }
+
+    /**
+     * 获取Remote-UID
+     *
+     * @return int
+     */
+    public function getRemoteUserID(): int{
+        $userID = $this->request->header['x-remote-userid'] ?? 0;
+
+        return $userID;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserAgent(): string {
+        $userAgent = $this->request->header['user-agent'] ?? '';
+
+        return $userAgent;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAcceptLanguage(): string {
+        $acceptLanguage = $this->request->header['accept-language'] ?? 'en-us';
+
+        return $acceptLanguage;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRemoteAddr(): string {
+        $remoteAddr     = $this->request->server['remote_addr'] ?? '';
+        $remoteAddr     = strval($remoteAddr);
+
+        return $remoteAddr;
+    }
+
+    /**
+     * 获取Request-ID
+     *
+     * @return string
+     */
+    public function getRequestID(): string {
+        $requestID = $this->request->header['x-request-id'] ?? '-';
+
+        return $requestID;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRequestTime(): int{
+        $requestID = $this->request->server['request_time'] ?? 0;
+
+        return intval($requestID);
+    }
+
+    /**
+     * @return float
+     */
+    public function getRequestTimeFloat(): float {
+        $requestID = $this->request->server['request_time_float'] ?? 0;
+
+        return floatval($requestID);
+    }
 }

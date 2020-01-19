@@ -30,10 +30,15 @@ class Logger implements LoggerInterface {
     public function logger(?string $msg,int $logLevel = self::LOG_LEVEL_INFO,
                            string $category = 'DEBUG'):string {
         $datetime   = date("Ymd");
+        $date       = strftime('[%d/%h/%Y:%H:%M:%S %z]', microtime());
         $levelStr   = $this->levelMap($logLevel);
         $filename   = strtolower($levelStr) . ".log.$datetime";
         $filePath   = $this->logDir."/$filename";
-        $str        = "$msg\n";
+        if($logLevel === self::LOG_LEVEL_SUCCESS){
+            $str        = "$msg\n";
+        }else{
+            $str        = "[{$date}] : [{$msg}]\n";
+        }
         @file_put_contents($filePath, $str, FILE_APPEND | LOCK_EX);
         return $str;
     }
