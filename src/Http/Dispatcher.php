@@ -64,7 +64,6 @@ class Dispatcher {
             try{
                 $ref = new \ReflectionClass(Router::class);
                 if($ref->isSubclassOf(AbstractRouter::class)){
-                    Core::getInstance()->loadRouter();
                     $this->routerRegister =  $ref->newInstance();
                     $this->router = new GroupCountBased($this->routerRegister->getRouteCollector()->getData());
                 }else{

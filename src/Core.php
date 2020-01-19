@@ -209,11 +209,13 @@ class Core {
 
     /**
      * 加载路由配置文件
+     *
+     * @return array
      */
-    public function loadRouter() {
+    public function loadRouter() : array{
         $file   = KARTHUS_ROOT . '/Config/router.php';
         $data   = $data = require_once($file);
-        Router::getInstance()->setRouters($data);
+        return $data;
     }
 
     /**
