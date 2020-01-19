@@ -14,9 +14,9 @@ class Logger implements LoggerInterface {
      */
     public function __construct(string $logDir = null) {
         if(empty($logDir)){
-            $logDir = getcwd();
+            $logDir     = getcwd();
         }
-        $this->logDir = $logDir;
+        $this->logDir   = $logDir;
     }
 
     /**
@@ -29,13 +29,12 @@ class Logger implements LoggerInterface {
      */
     public function logger(?string $msg,int $logLevel = self::LOG_LEVEL_INFO,
                            string $category = 'DEBUG'):string {
-
-        $date       = date('Y-m-d H:i:s');
+        $datetime   = date("Ymd");
         $levelStr   = $this->levelMap($logLevel);
-        $filePath   = $this->logDir."/log.log";
-        $str        = "[{$date}][{$category}][{$levelStr}] : [{$msg}]\n";
-
-        @file_put_contents($filePath,"{$str}",FILE_APPEND|LOCK_EX);
+        $filename   = strtolower($levelStr) . ".log.$datetime";
+        $filePath   = $this->logDir."/$filename";
+        $str        = "$msg\n";
+        @file_put_contents($filePath, $str, FILE_APPEND | LOCK_EX);
         return $str;
     }
 
@@ -49,7 +48,7 @@ class Logger implements LoggerInterface {
         $date       = date('Y-m-d H:i:s');
         $levelStr   = $this->levelMap($logLevel);
         $temp       =  $this->colorString("[{$date}][{$category}][{$levelStr}] : [{$msg}]",$logLevel)."\n";
-        fwrite(STDOUT,$temp);
+        fwrite(STDOUT, $temp);
     }
 
     /**
@@ -87,6 +86,8 @@ class Logger implements LoggerInterface {
                 return 'NOTICE';
             case self::LOG_LEVEL_WARNING:
                 return 'WARNING';
+            case self::LOG_LEVEL_SUCCESS:
+                return "SUCCESS";
             case self::LOG_LEVEL_ERROR:
                 return 'ERROR';
             default:

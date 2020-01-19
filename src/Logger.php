@@ -55,7 +55,7 @@ class Logger implements LoggerInterface {
      * @param string|null $msg
      */
     public function success(?string $msg){
-        $this->console($msg, self::LOG_LEVEL_WARNING, 'SUCCESS');
+        $this->console($msg, self::LOG_LEVEL_SUCCESS, 'SUCCESS');
     }
 
     /**

@@ -8,10 +8,11 @@ namespace Karthus\Logger;
  * @package Karthus\Logger
  */
 interface LoggerInterface {
-    public const LOG_LEVEL_INFO = 1;
-    public const LOG_LEVEL_NOTICE = 2;
-    public const LOG_LEVEL_WARNING = 3;
-    public const LOG_LEVEL_ERROR = 4;
+    public const LOG_LEVEL_INFO     = 1;
+    public const LOG_LEVEL_NOTICE   = 2;
+    public const LOG_LEVEL_WARNING  = 3;
+    public const LOG_LEVEL_ERROR    = 4;
+    public const LOG_LEVEL_SUCCESS  = 5;
 
     /**
      * 记录日志
