@@ -52,8 +52,7 @@ class KarthusEvent implements Event {
         $endTime        = microtime(true);
         $spend          = $endTime - $start_time;
         $spend          = round($spend, 6) * 1000;
-        $msg            = "Run Ok[{$spend}ms]!!!";
-        $msg            = "{$ip} {$uid} {$id} {$time} \"{$method} {$path}\" \"{$ua}\" \"{$lang}\" \"$remoteAddr\" {$msg}\n";
+        $msg            = "{$ip} {$uid} {$id} {$time} \"{$method} {$path}\" \"{$ua}\" \"{$lang}\" \"$remoteAddr\" Run Ok[{$spend}ms]!!!";
         Logger::getInstance()->success($msg);
     }
 }
