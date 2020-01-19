@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Karthus\Driver\Pool;
 
+use Karthus\Context\ContextManager;
+use Karthus\Exception\Exception;
 use Swoole\Coroutine;
 
 /**
@@ -31,10 +33,10 @@ trait InvokerPool {
                     $pool->recycle($obj);
                 }
             }else{
-                throw new PoolEmpty(static::class." pool is empty");
+                throw new Exception(static::class." pool is empty");
             }
         }else{
-            throw new PoolException(static::class." convert to pool error");
+            throw new Exception(static::class." convert to pool error");
         }
     }
 
@@ -44,8 +46,8 @@ trait InvokerPool {
      * @throws \Throwable
      */
     public static function defer($timeout = null) {
-        $key = md5(static::class);
-        $obj = ContextManager::getInstance()->get($key);
+        $key    = md5(static::class);
+        $obj    = ContextManager::getInstance()->get($key);
         if($obj){
             return $obj;
         }else{
@@ -59,10 +61,10 @@ trait InvokerPool {
                     ContextManager::getInstance()->set($key,$obj);
                     return $obj;
                 }else{
-                    throw new PoolEmpty(static::class." pool is empty");
+                    throw new Exception(static::class." pool is empty");
                 }
             }else{
-                throw new PoolException(static::class." convert to pool error");
+                throw new Exception(static::class." convert to pool error");
             }
         }
     }

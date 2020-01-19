@@ -15,7 +15,7 @@ class Config {
     use Singleton;
 
     /**
-     * Config constructor.
+::     * Config constructor.
      *
      * @param AbstractConfig|null $config
      */

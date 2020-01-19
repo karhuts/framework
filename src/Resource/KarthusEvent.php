@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Karthus;
 
+use Karthus\Config as GConfig;
+use Karthus\Driver\Mysqli\Config;
+use Karthus\Driver\Pool\Mysql\Mysql;
 use Karthus\Http\Request;
 use Karthus\Http\Response;
 use Karthus\AbstractInterface\Event;
@@ -12,11 +15,21 @@ class KarthusEvent implements Event {
 
     /**
      * @return mixed|void
+     * @throws \ReflectionException
      */
     public static function initialize() {
-        // 这里注册MYSQL进程池 和 REDIS？
-        $mysql_config   = Config::getInstance()->getConf("MYSQL");
-        print_r($mysql_config);
+        // 这里注册MYSQL进程池？
+        $mysqlConfig   = GConfig::getInstance()->getConf("MYSQL");
+        ///循环遍历和注册了
+        if($mysqlConfig){
+            foreach ($mysqlConfig as $key => $item){
+                $config     = new Config($item);
+                Mysql::getInstance()->register($key, $config);
+            }
+        }
+
+        //这里开始注册Redis
+        //TODO
     }
 
     /**
