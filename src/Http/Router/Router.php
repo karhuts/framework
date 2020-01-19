@@ -28,7 +28,7 @@ class Router extends AbstractRouter{
                 $groups     = $routerConfig['groups'] ?? [];
                 if($groups) {
                     foreach ($groups as $name => $group){
-                        $this->addRoute($name, $groups);
+                        $this->addRoute($name, $group);
                     }
                 }else {
                     $this->addRoute($routerName, $routerConfig);
