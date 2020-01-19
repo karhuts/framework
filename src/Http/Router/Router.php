@@ -20,7 +20,11 @@ class Router extends AbstractRouter{
      * @param RouteCollector $routeCollector
      */
     public function initialize(RouteCollector $routeCollector) {
-        $routers    = Core::getInstance()->loadRouter();
+        $routers    = Core::getInstance()->getRouters();
         print_r($routers);
+        if($routers){
+            //开始进行路由初始化了
+
+        }
     }
 }

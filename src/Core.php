@@ -21,6 +21,8 @@ use Swoole\Http\Status;
 class Core {
     use Singleton;
 
+    private $routers = [];
+
     /**
      * 是否是测试
      *
@@ -104,6 +106,8 @@ class Core {
         }
         // 先加载配置文件
         $this->loadConfig();
+        // 加载路由了
+        $this->loadRouter();
         // 执行框架初始化事件
         KarthusEvent::initialize();
         // 临时文件和Log目录初始化
@@ -208,14 +212,20 @@ class Core {
     }
 
     /**
-     * 加载路由配置文件
      *
+     * 加载路由配置文件
+     */
+    private function loadRouter(){
+        $file           = KARTHUS_ROOT . '/Config/router.php';
+        $data           = $data = require_once($file);
+        $this->routers  = $data;
+    }
+
+    /**
      * @return array
      */
-    public function loadRouter() : array{
-        $file   = KARTHUS_ROOT . '/Config/router.php';
-        $data   = $data = require_once($file);
-        return $data;
+    public function getRouters(): array{
+        return $this->routers;
     }
 
     /**
