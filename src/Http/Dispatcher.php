@@ -139,25 +139,20 @@ class Dispatcher {
             try{
                 $controllerObject = $this->getController($finalClass);
             }catch (\Throwable $throwable){
-                $this->hookThrowable($throwable,$request,$response);
+                $this->hookThrowable($throwable, $request, $response);
                 return;
             }
             if($controllerObject instanceof Controller){
                 try{
-                    $forward = $controllerObject->__hook($actionName, $request, $response);
-                    if(is_string($forward) && (strlen($forward) > 0) && ($forward != $path)){
-                        $forward = UriPathInfo($forward);
-                        $request->getUri()->withPath($forward);
-                        $this->dispatch($request, $response);
-                    }
+                    $controllerObject->hook($actionName, $request, $response);
                 }catch (\Throwable $throwable){
                     $this->hookThrowable($throwable,$request,$response);
                 }finally {
-                    $this->recycleController($finalClass,$controllerObject);
+                    $this->recycleController($finalClass, $controllerObject);
                 }
             }else{
                 $throwable = new ControllerPoolEmpty("controller pool empty for $finalClass");
-                $this->hookThrowable($throwable,$request,$response);
+                $this->hookThrowable($throwable, $request, $response);
             }
         }else{
             $response->withStatus(Status::NOT_FOUND);
@@ -182,7 +177,7 @@ class Dispatcher {
         if($channel->isEmpty()){
             $createNum = $this->controllerPoolCreateNum[$classKey];
             if($createNum < $this->maxPoolNum){
-                $this->controllerPoolCreateNum[$classKey] = $createNum+1;
+                $this->controllerPoolCreateNum[$classKey] = $createNum + 1;
                 try{
                     //防止用户在控制器结构函数做了什么东西导致异常
                     return new $class();

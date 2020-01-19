@@ -21,7 +21,7 @@ abstract class Controller {
      */
     public function __construct() {
         $forbidList = [
-            '__hook',
+            'hook',
             '__destruct',
             '__clone',
             '__construct',
@@ -128,11 +128,11 @@ abstract class Controller {
      * @return mixed|void|null
      * @throws \Throwable
      */
-    public function __hook(?string $actionName, Request $request, Response $response,callable $actionHook = null) {
-        $forwardPath = null;
-        $this->request = $request;
-        $this->response = $response;
-        $this->actionName = $actionName;
+    public function hook(?string $actionName, Request $request, Response $response,callable $actionHook = null) {
+        $forwardPath        = null;
+        $this->request      = $request;
+        $this->response     = $response;
+        $this->actionName   = $actionName;
         try {
             if ($this->onRequest($actionName) !== false) {
                 if (isset($this->allowMethodReflections[$actionName])) {
