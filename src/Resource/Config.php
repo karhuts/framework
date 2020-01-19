@@ -50,6 +50,8 @@ return [
             'timeout'              => 30,
             'charset'              => 'utf8mb4',
             'connect_timeout'      => 5,//连接超时时间
+            'strict_type'          => true, //开启严格模式，query方法返回的数据也将转为强类型
+            'fetch_mode'           => true, //开启fetch模式, 可与pdo一样使用fetch/fetchAll逐行或获取全部结果集(4.0版本以上)
         ],
     ],
     'REDIS'                 => [

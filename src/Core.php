@@ -52,6 +52,7 @@ class Core {
     /**
      *
      * @return $this
+     * @throws \Throwable
      */
     public function createServer() :Core{
         $conf = Config::getInstance()->getConf('MAIN_SERVER');
@@ -100,13 +101,15 @@ class Core {
         }else{
             die('global event file missing');
         }
-        //先加载配置文件
+        // 先加载配置文件
         $this->loadConfig();
-        //执行框架初始化事件
+        // 加载路由配置
+        $this->loadRouter();
+        // 执行框架初始化事件
         KarthusEvent::initialize();
-        //临时文件和Log目录初始化
+        // 临时文件和Log目录初始化
         $this->directoryInit();
-        //注册错误回调
+        // 注册错误回调
         $this->registerErrorHandler();
         return $this;
     }
@@ -203,6 +206,15 @@ class Core {
             $file  = KARTHUS_ROOT . '/Config/produce.php';
         }
         Config::getInstance()->loadConfig($file);
+    }
+
+    /**
+     * 加载路由配置文件
+     */
+    private function loadRouter() {
+        $file   = KARTHUS_ROOT . '/Config/router.php';
+        $data   = $data = require_once($file);
+        Config::getInstance()->setConf('ROUTERS', $data);
     }
 
     /**

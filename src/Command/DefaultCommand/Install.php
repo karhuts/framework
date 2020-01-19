@@ -31,6 +31,7 @@ class Install implements CommandInterface {
         releaseResource(__DIR__ . '/../../Resource/Http/Index.php', KARTHUS_ROOT . '/Apps/Controller/Index.php');
         releaseResource(__DIR__ . '/../../Resource/Config.php', KARTHUS_ROOT . '/Config/dev.php');
         releaseResource(__DIR__ . '/../../Resource/Config.php', KARTHUS_ROOT . '/Config/produce.php');
+        releaseResource(__DIR__ . '/../../Resource/Router.php', KARTHUS_ROOT . '/Config/router.php');
 
         echo chr(27)."[42minstall success,enjoy! ".chr(27)."[0m \n";
 
