@@ -7,11 +7,17 @@ use Karthus\Component\Singleton;
 use Karthus\Logger\LoggerInterface;
 
 class Logger implements LoggerInterface {
+    use Singleton;
+
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
+    /**
+     * @var Event
+     */
     private $callback;
-
-    use Singleton;
 
     /**
      * Logger constructor.
@@ -19,7 +25,7 @@ class Logger implements LoggerInterface {
      * @param LoggerInterface $logger
      */
     public function __construct(LoggerInterface $logger) {
-        $this->logger = $logger;
+        $this->logger   = $logger;
         $this->callback = new Event();
     }
 
@@ -41,6 +47,15 @@ class Logger implements LoggerInterface {
      */
     public function info(?string $msg, string $category = 'DEBUG') {
         $this->console($msg, self::LOG_LEVEL_INFO, $category);
+    }
+
+    /**
+     * 成功
+     *
+     * @param string|null $msg
+     */
+    public function success(?string $msg){
+        $this->console($msg, self::LOG_LEVEL_WARNING, 'SUCCESS');
     }
 
     /**
@@ -80,9 +95,9 @@ class Logger implements LoggerInterface {
      * @param string      $category
      * @return string
      */
-    function logger(?string $msg, int $logLevel = self::LOG_LEVEL_INFO, string $category = 'DEBUG'): string {
-        $str = $this->logger->logger($msg, $logLevel, $category);
-        $calls = $this->callback->all();
+    public function logger(?string $msg, int $logLevel = self::LOG_LEVEL_INFO, string $category = 'DEBUG'): string {
+        $str    = $this->logger->logger($msg, $logLevel, $category);
+        $calls  = $this->callback->all();
         foreach ($calls as $call) {
             call_user_func($call, $msg, $logLevel, $category);
         }

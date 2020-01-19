@@ -119,7 +119,7 @@ class Dispatcher {
                     //出现异常的时候，不在往下dispatch
                     return;
                 }
-            }else if(is_string($handler)){
+            }elseif(is_string($handler)){
                 $path = UriPathInfo($handler);
                 $request->getUri()->withPath($path);
                 goto response;

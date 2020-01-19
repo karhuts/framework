@@ -189,7 +189,7 @@ abstract class Controller {
      */
     protected function writeJson(int $status = 200, array $data = array(),bool $isEnd = true) {
         if (!$this->response()->isEndResponse()) {
-            $requestParam   = $this->request()->getRequestParam();
+            $requestParam   = $this->request()->getServerParams();
             $request_id     = $requestParam['request_id'] ?? '-';
             $request_time   = $requestParam['request_time_float'] ?? 0;
             $output = array(

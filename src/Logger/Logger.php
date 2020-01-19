@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Karthus\Logger;
 
+use Karthus\Http\Request;
+
 class Logger implements LoggerInterface {
     private $logDir;
 
@@ -18,17 +20,23 @@ class Logger implements LoggerInterface {
     }
 
     /**
+     * 写入日志文件
+     *
      * @param string|null $msg
      * @param int         $logLevel
      * @param string      $category
      * @return string
      */
-    public function logger(?string $msg,int $logLevel = self::LOG_LEVEL_INFO,string $category = 'DEBUG'):string {
-        $date = date('Y-m-d H:i:s');
-        $levelStr = $this->levelMap($logLevel);
-        $filePath = $this->logDir."/log.log";
-        $str = "[{$date}][{$category}][{$levelStr}] : [{$msg}]\n";
-        file_put_contents($filePath,"{$str}",FILE_APPEND|LOCK_EX);
+    public function logger(?string $msg,int $logLevel = self::LOG_LEVEL_INFO,
+                           string $category = 'DEBUG'):string {
+
+        $time       = strftime('[%d/%h/%Y:%H:%M:%S %z]', $this->request->getRequestTime());
+        $date       = date('Y-m-d H:i:s');
+        $levelStr   = $this->levelMap($logLevel);
+        $filePath   = $this->logDir."/log.log";
+        $str        = "[{$date}][{$category}][{$levelStr}] : [{$msg}]\n";
+
+        @file_put_contents($filePath,"{$str}",FILE_APPEND|LOCK_EX);
         return $str;
     }
 
@@ -39,9 +47,9 @@ class Logger implements LoggerInterface {
      * @return mixed|void
      */
     public function console(?string $msg,int $logLevel = self::LOG_LEVEL_INFO,string $category = 'DEBUG') {
-        $date = date('Y-m-d H:i:s');
-        $levelStr = $this->levelMap($logLevel);
-        $temp =  $this->colorString("[{$date}][{$category}][{$levelStr}] : [{$msg}]",$logLevel)."\n";
+        $date       = date('Y-m-d H:i:s');
+        $levelStr   = $this->levelMap($logLevel);
+        $temp       =  $this->colorString("[{$date}][{$category}][{$levelStr}] : [{$msg}]",$logLevel)."\n";
         fwrite(STDOUT,$temp);
     }
 

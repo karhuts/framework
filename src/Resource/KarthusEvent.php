@@ -35,5 +35,25 @@ class KarthusEvent implements Event {
      * @param Response $response
      */
     public static function afterRequest(Request $request, Response $response): void {
+        $request_id     = $request->getRequestID();
+        $request_time   = $request->getRequestTime();
+        $start_time     = $request->getRequestTimeFloat();
+
+        $time           = strftime('[%d/%h/%Y:%H:%M:%S %z]', $request_time);
+        $id             = strval($request_id);
+        $ip             = strval($request->getRemoteIP());
+        $uid            = intval($request->getRemoteUserID());
+        $method         = strval($request->getMethod());
+        $path           = strval($request->getUri());
+        $ua             = strval($request->getUserAgent());
+        $lang           = strval($request->getAcceptLanguage());
+        $remoteAddr     = strval($request->getRemoteAddr());
+
+        $endTime        = microtime(true);
+        $spend          = $endTime - $start_time;
+        $spend          = round($spend, 6) * 1000;
+        $msg            = "Run Ok[{$spend}ms]!!!";
+        $msg            = "{$ip} {$uid} {$id} {$time} \"{$method} {$path}\" \"{$ua}\" \"{$lang}\" \"$remoteAddr\" {$msg}\n";
+        Logger::getInstance()->success($msg);
     }
 }
