@@ -2,10 +2,12 @@
 declare(strict_types=1);
 namespace Karthus\Http;
 
+use Karthus\Core;
 use Karthus\Exception\ControllerPoolEmpty;
 use Karthus\Exception\RouterError;
 use Karthus\Http\AbstractInterface\AbstractRouter;
 use Karthus\Http\AbstractInterface\Controller;
+use Karthus\Http\Router\Router;
 use Swoole\Coroutine as Co;
 use FastRoute\Dispatcher\GroupCountBased;
 use Swoole\Http\Status;
@@ -59,19 +61,15 @@ class Dispatcher {
     public function dispatch(Request $request, Response $response):void {
         // 初始化？
         if($this->router === null){
-            $class = $this->controllerNameSpacePrefix.'\\Router';
             try{
-                if(class_exists($class)){
-                    $ref = new \ReflectionClass($class);
-                    if($ref->isSubclassOf(AbstractRouter::class)){
-                        $this->routerRegister =  $ref->newInstance();
-                        $this->router = new GroupCountBased($this->routerRegister->getRouteCollector()->getData());
-                    }else{
-                        $this->router = false;
-                        throw new RouterError("class : {$class} not AbstractRouter class");
-                    }
+                $ref = new \ReflectionClass(Router::class);
+                if($ref->isSubclassOf(AbstractRouter::class)){
+                    Core::getInstance()->loadRouter();
+                    $this->routerRegister =  $ref->newInstance();
+                    $this->router = new GroupCountBased($this->routerRegister->getRouteCollector()->getData());
                 }else{
                     $this->router = false;
+                    throw new RouterError("class : Router not AbstractRouter class");
                 }
             }catch (\Throwable $throwable){
                 $this->router = false;

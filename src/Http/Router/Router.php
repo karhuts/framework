@@ -21,6 +21,7 @@ class Router extends AbstractRouter{
      * @param array $routers
      */
     public function setRouters(array $routers = []){
+        print_r($routers);
         $this->routers = $routers;
     }
 

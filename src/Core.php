@@ -104,8 +104,6 @@ class Core {
         }
         // 先加载配置文件
         $this->loadConfig();
-        // 加载路由配置
-        $this->loadRouter();
         // 执行框架初始化事件
         KarthusEvent::initialize();
         // 临时文件和Log目录初始化
@@ -212,7 +210,7 @@ class Core {
     /**
      * 加载路由配置文件
      */
-    private function loadRouter() {
+    public function loadRouter() {
         $file   = KARTHUS_ROOT . '/Config/router.php';
         $data   = $data = require_once($file);
         Router::getInstance()->setRouters($data);

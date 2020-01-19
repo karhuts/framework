@@ -16,7 +16,7 @@ return [
         "groups"    => [
             "/users/:uid"   => [
                 "method"    => RouterMethod::GET,
-                "class"     => Users::Index,
+                "class"     => Users::class,
             ],
         ],
     ],
