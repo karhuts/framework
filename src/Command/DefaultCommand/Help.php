@@ -23,11 +23,11 @@ class Help implements CommandInterface {
         } else {
             $actionName = $args[0];
             array_shift($args);
-            $call = CommandContainer::getInstance()->get($actionName);
+            $call       = CommandContainer::getInstance()->get($actionName);
             if ($call instanceof CommandInterface) {
                 return $call->help($args);
             } else {
-                return "no help message for command {$actionName} was found";
+                return "The Command {$actionName} not registered";
             }
         }
     }

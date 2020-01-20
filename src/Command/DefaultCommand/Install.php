@@ -33,7 +33,7 @@ class Install implements CommandInterface {
         releaseResource(__DIR__ . '/../../Resource/Config.php', KARTHUS_ROOT . '/Config/produce.php');
         releaseResource(__DIR__ . '/../../Resource/Router.php', KARTHUS_ROOT . '/Config/router.php');
 
-        echo chr(27)."[42minstall success,enjoy! ".chr(27)."[0m \n";
+        echo "\e[42minstall success,enjoy! \e[0m \n";
 
         $arr = json_decode(file_get_contents(KARTHUS_ROOT.'/composer.json'),true);
         $arr['autoload']['psr-4']['Apps\\'] = "Apps/";
@@ -41,7 +41,7 @@ class Install implements CommandInterface {
             json_encode($arr,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)
         );
 
-        echo chr(27)."[42mdonot forget run composer dump-autoload ".chr(27)."[0m \n";
+        echo "\e[42mdonot forget run composer dump-autoload \e[0m \n";
         @exec('composer dump-autoload');
         return "";
     }

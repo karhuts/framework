@@ -19,6 +19,7 @@ class Start implements CommandInterface{
 
     /**
      * @inheritDoc
+     * @throws \Throwable
      */
     public function exec(array $args): ?string {
         opCacheClear();
@@ -103,14 +104,14 @@ class Start implements CommandInterface{
      */
     public function help(array $args): ?string {
         $logo = welcome();
-        return $logo . <<<HELP_START
+        return $logo . <<<HELP
 \e[33mOperation:\e[0m
 \e[31m  php karthus start [arg1] [arg2]\e[0m
-\e[33mIntro:\e[0m
+\e[33mUsage:\e[0m
 \e[36m  to start current karthus server \e[0m
-\e[33mArg:\e[0m
+\e[33mArgs:\e[0m
 \e[32m  daemonize \e[0m                   run in daemonize
 \e[32m  produce \e[0m                     load Config/produce.php
-HELP_START;
+HELP;
     }
 }

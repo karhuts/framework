@@ -76,7 +76,7 @@ class Logger implements LoggerInterface {
                 $out = "[42m";
                 break;
         }
-        return chr(27) . "$out" . "{$str}" . chr(27) . "[0m";
+        return "\e$out{$str}\e[0m";
     }
 
     /**

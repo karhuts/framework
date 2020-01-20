@@ -67,14 +67,14 @@ class Stop implements CommandInterface {
      */
     public function help(array $args): ?string {
         $logo = welcome();
-        return $logo.<<<HELP_START
+        return $logo.<<<HELP
 \e[33mOperation:\e[0m
 \e[31m  php karthus stop [arg1] [arg2]\e[0m
-\e[33mIntro:\e[0m
+\e[33mUsage:\e[0m
 \e[36m  to stop current karthus server \e[0m
-\e[33mArg:\e[0m
+\e[33mArgs:\e[0m
 \e[32m  force \e[0m                   force to kill server
 \e[32m  produce \e[0m                 load Config/produce.php
-HELP_START;
+HELP;
     }
 }

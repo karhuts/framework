@@ -43,7 +43,8 @@
         "ext-mysqli": "*",
         "ext-zend-opcache": "*",
         "ext-dom": "*",
-        "ext-libxml": "*"
+        "ext-libxml": "*",
+        "phpunit/phpunit": "^8.5"
     },
     "require-dev": {
     },
@@ -68,7 +69,8 @@
         ],
         "psr-4": {
             "Karthus\\": "src/",
-            "App\\": "App/"
+            "App\\": "App/",
+            "Karthus\\PHPUnit\\": "phpunit/"
         }
     },
     "repositories": [{
@@ -86,7 +88,6 @@
         }
     },
     "bin": [
-        "bin/karthus",
-        "bin/phpunit"
+        "bin/karthus"
     ]
 }
