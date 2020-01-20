@@ -23,9 +23,16 @@ class PhpUnit implements CommandInterface{
      * @throws \Throwable
      */
     public function exec(array $args): ?string {
-        $scheduler  = new Scheduler();
+        $scheduler          = new Scheduler();
         $scheduler->add(function (){
-            Command::main(false);
+            try{
+                Command::main(false);
+            }catch (\Throwable $exception){
+                // 因为swoole会自己退出，所以我这里临时屏蔽一下 \Swoole\ExitException 的异常就OK
+                if(!$exception instanceof \Swoole\ExitException){
+                    throw $exception;
+                }
+            }
         });
         $scheduler->start();
         return null;
