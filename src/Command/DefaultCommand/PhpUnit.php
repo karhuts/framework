@@ -5,6 +5,7 @@ namespace Karthus\Command\DefaultCommand;
 use Karthus\Command\CommandInterface;
 use PHPUnit\TextUI\Command;
 use Swoole\Coroutine\Scheduler;
+use Swoole\ExitException;
 
 class PhpUnit implements CommandInterface{
 
@@ -29,7 +30,7 @@ class PhpUnit implements CommandInterface{
                 Command::main(false);
             }catch (\Throwable $exception){
                 // 因为swoole会自己退出，所以我这里临时屏蔽一下 \Swoole\ExitException 的异常就OK
-                if(!$exception instanceof \Swoole\ExitException){
+                if(!$exception instanceof ExitException){
                     throw $exception;
                 }
             }

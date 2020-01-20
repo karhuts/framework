@@ -7,6 +7,10 @@ use PHPUnit\Framework\TestCase;
 
 class CoreTest extends TestCase{
 
+    /**
+     * @test
+     * @throws \Throwable
+     */
     public function runTest() {
         Core::getInstance()->initialize();
         return parent::runTest();
