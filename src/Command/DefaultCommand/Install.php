@@ -34,13 +34,13 @@ class Install implements CommandInterface {
         releaseResource(__DIR__ . '/../../Resource/Router.php', KARTHUS_ROOT . '/Config/router.php');
 
         //开始安装单元测试case了
-        releaseResource(__DIR__ . '/../../../phpunit/CoreTest.php', KARTHUS_ROOT . '/phpunit/CoreTest.php');
+        releaseResource(__DIR__ . '/../../../PHPUnit/CoreTest.php', KARTHUS_ROOT . '/PHPunit/CoreTest.php');
 
         echo "\e[42minstall success,enjoy! \e[0m \n";
 
         $arr = json_decode(file_get_contents(KARTHUS_ROOT.'/composer.json'),true);
         $arr['autoload']['psr-4']['Apps\\'] = "Apps/";
-        $arr['autoload']['psr-4']['Karthus\\PHPUnit\\'] = "phpunit/";
+        $arr['autoload']['psr-4']['Karthus\\PHPUnit\\'] = "PHPUnit/";
         FileHelper::createFile(KARTHUS_ROOT.'/composer.json',
             json_encode($arr,JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)
         );

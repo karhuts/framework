@@ -68,9 +68,7 @@
             "src/Functions.php"
         ],
         "psr-4": {
-            "Karthus\\": "src/",
-            "App\\": "App/",
-            "Karthus\\PHPUnit\\": "phpunit/"
+            "Karthus\\": "src/"
         }
     },
     "repositories": [{
