@@ -3,10 +3,10 @@ declare(strict_types=1);
 namespace Karthus\Driver\Pool\Mysql;
 
 use Karthus\Component\Singleton;
+use Karthus\Driver\Mysqli\Config;
 use Karthus\Driver\Pool\AbstractPool;
 use Karthus\Driver\Pool\PoolConf;
 use Karthus\Driver\Pool\PoolManager;
-use Karthus\Driver\Redis\Config;
 use Karthus\Exception\MysqlPoolException;
 
 class Mysql {
