@@ -7,9 +7,7 @@ date_default_timezone_set('Asia/Shanghai');
 ini_set("display_errors", "On");
 error_reporting(E_ALL | E_STRICT);
 
-defined('IN_PHAR') or define('IN_PHAR', boolval(\Phar::running(false)));
-defined('RUNNING_ROOT') or define('RUNNING_ROOT', realpath(getcwd()));
-defined('KARTHUS_ROOT') or define('KARTHUS_ROOT', IN_PHAR ? \Phar::running() : realpath(getcwd()));
+defined('KARTHUS_ROOT') or define('KARTHUS_ROOT', realpath(getcwd()));
 
 $file   =   KARTHUS_ROOT . '/vendor/autoload.php';
 if (file_exists($file)) {

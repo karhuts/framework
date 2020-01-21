@@ -2,3 +2,4 @@ Karthus.pid
 /vendor/
 /.idea/
 composer.lock
+.DS_Store
