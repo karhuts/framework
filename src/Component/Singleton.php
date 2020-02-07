@@ -3,6 +3,9 @@ declare(strict_types=1);
 namespace Karthus\Component;
 
 trait Singleton {
+    /**
+     * @var static
+     */
     private static $instance;
 
     /**

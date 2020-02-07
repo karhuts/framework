@@ -21,6 +21,7 @@ class SplBean implements \JsonSerializable {
      *
      * @param array|null $data
      * @param bool       $autoCreateProperty
+     * @throws \ReflectionException
      */
     public function __construct(array $data = null, $autoCreateProperty = false) {
         if ($data) {
@@ -189,8 +190,13 @@ class SplBean implements \JsonSerializable {
         return [];
     }
 
-    /*
+    /**
      * 恢复到属性定义的默认值
+     *
+     * @param array $data
+     * @param bool  $autoCreateProperty
+     * @return $this
+     * @throws \ReflectionException
      */
     public function restore(array $data = [], $autoCreateProperty = false) {
         $this->clear();
@@ -213,6 +219,9 @@ class SplBean implements \JsonSerializable {
         }
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function classMap() {
         $propertyList = $this->allProperty();
         foreach ($this->setClassMapping() as $property => $class) {

@@ -19,7 +19,7 @@ class Config extends SplBean {
     /**
      * @param float $timeout
      */
-    public function setTimeout($timeout) {
+    public function setTimeout(float $timeout) {
         $this->timeout = $timeout;
     }
 
@@ -61,14 +61,14 @@ class Config extends SplBean {
     /**
      * @param int $serialize
      */
-    public function setSerialize($serialize) {
+    public function setSerialize(int $serialize) {
         $this->serialize = $serialize;
     }
 
     /**
      * @param int $reconnectTimes
      */
-    public function setReconnectTimes($reconnectTimes) {
+    public function setReconnectTimes(int $reconnectTimes) {
         $this->reconnectTimes = $reconnectTimes;
     }
 

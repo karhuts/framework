@@ -2,7 +2,7 @@
     "name": "min/karthus",
     "description": "A simple Framework For Swoole",
     "type": "library",
-    "version": "v1.0.12",
+    "version": "v2.0.0",
     "keywords": [
         "swoole",
         "framework",
@@ -14,10 +14,7 @@
     ],
     "homepage": "https://git.blued.cn/min/karthus",
     "require": {
-        "php": ">=7.1",
-        "ext-json": "*",
-        "ext-apcu": ">=5.1.7",
-        "ext-redis": "*",
+        "php": ">=7.2",
         "ext-swoole": ">=4.1",
         "psr/log": "^1.1.2",
         "nikic/fast-route": "^1.3",
@@ -25,9 +22,6 @@
         "firebase/php-jwt": "v5.0.0",
         "psr/container": "^1.0",
         "psr/http-server-middleware": "^1.0",
-        "ext-simplexml": "*",
-        "ext-ctype": "*",
-        "ext-mbstring": "*",
         "php-di/phpdoc-reader": "^2.1",
         "doctrine/instantiator": "^1.3",
         "nikic/php-parser": "^4.3",
@@ -37,16 +31,23 @@
         "psr/event-dispatcher": "^1.0",
         "psr/http-factory": "^1.0",
         "psr/http-server-handler": "^1.0",
-        "ext-posix": "*",
         "symfony/dotenv": "^4.4",
         "hassankhan/config": "^2.1",
+        "phpunit/phpunit": "^8.5"
+    },
+    "require-dev": {
+        "ext-curl": "*",
         "ext-mysqli": "*",
         "ext-zend-opcache": "*",
         "ext-dom": "*",
         "ext-libxml": "*",
-        "phpunit/phpunit": "^8.5"
-    },
-    "require-dev": {
+        "ext-posix": "*",
+        "ext-json": "*",
+        "ext-apcu": ">=5.1.7",
+        "ext-redis": "*",
+        "ext-simplexml": "*",
+        "ext-ctype": "*",
+        "ext-mbstring": "*"
     },
     "license": "Apache License 2",
     "authors": [

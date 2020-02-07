@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Karthus\Spl;
 
-class SplArray extends \ArrayObject {
+use ArrayObject;
+
+class SplArray extends ArrayObject {
     /**
      * @param $name
      * @return mixed|null

@@ -1,21 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2018/5/22
- * Time: 下午2:54
- */
+declare(strict_types=1);
+namespace Karthus\Spl;
 
-namespace EasySwoole\Spl;
-
-
-class SplEnum
-{
+class SplEnum {
     private $val = null;
     private $name = null;
 
-    final public function __construct($val)
-    {
+    /**
+     * SplEnum constructor.
+     *
+     * @param $val
+     * @throws \Exception
+     */
+    final public function __construct($val) {
         $list = self::getConstants();
         //禁止重复值
         if (count($list) != count(array_unique($list))) {
@@ -29,18 +26,19 @@ class SplEnum
         }
     }
 
-    final public function getName():string
-    {
+    final public function getName():string {
         return $this->name;
     }
 
-    final public function getValue()
-    {
+    final public function getValue() {
         return $this->val;
     }
 
-    final public static function isValidName(string $name):bool
-    {
+    /**
+     * @param string $name
+     * @return bool
+     */
+    final public static function isValidName(string $name):bool {
         $list = self::getConstants();
         if(isset($list[$name])){
             return true;
@@ -49,19 +47,26 @@ class SplEnum
         }
     }
 
-    final public static function isValidValue($val)
-    {
+    /**
+     * @param $val
+     * @return false|int|string
+     */
+    final public static function isValidValue($val) {
         $list = self::getConstants();
         return array_search($val,$list);
     }
 
-    final public static function getEnumList():array
-    {
+    /**
+     * @return array
+     */
+    final public static function getEnumList():array {
         return self::getConstants();
     }
 
-    private final static function getConstants():array
-    {
+    /**
+     * @return array
+     */
+    private final static function getConstants():array {
         try{
             return (new \ReflectionClass(static::class))->getConstants();
         }catch (\Throwable $throwable){
@@ -69,9 +74,10 @@ class SplEnum
         }
     }
 
-    function __toString()
-    {
-        // TODO: Implement __toString() method.
+    /**
+     * @return string
+     */
+    public function __toString() {
         return (string)$this->getName();
     }
 }

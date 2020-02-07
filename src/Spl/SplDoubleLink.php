@@ -1,56 +1,76 @@
 <?php
+declare(strict_types=1);
 
+namespace Karthus\Spl;
 
-namespace EasySwoole\Spl;
-
-
-class SplDoubleLink
-{
+/**
+ * Class SplDoubleLink
+ *
+ * @package Karthus\Spl
+ */
+class SplDoubleLink {
     private $next;
     private $pre;
 
-    function hashNext():bool
-    {
-        return (bool)$this->next;
+    /**
+     * @return bool
+     */
+    public function hashNext(): bool {
+        return (bool) $this->next;
     }
 
-    function hashPre():bool
-    {
-        return (bool)$this->pre;
+    /**
+     * @return bool
+     */
+    public function hashPre(): bool {
+        return (bool) $this->pre;
     }
 
-    function next(...$arg):SplDoubleLink
-    {
-        if(!$this->next){
+    /**
+     * @param mixed ...$arg
+     * @return SplDoubleLink
+     */
+    public function next(...$arg): SplDoubleLink {
+        if (!$this->next) {
             $this->next = $this->newInstance(...$arg);
         }
         return $this->next;
     }
 
-    function pre(...$arg):SplDoubleLink
-    {
-        if(!$this->pre){
+    /**
+     * @param mixed ...$arg
+     * @return SplDoubleLink
+     */
+    public function pre(...$arg): SplDoubleLink {
+        if (!$this->pre) {
             $this->pre = $this->newInstance(...$arg);
         }
         return $this->pre;
     }
 
-    function delPre()
-    {
+    /**
+     * @return $this
+     */
+    public function delPre() {
         $this->pre = null;
         return $this;
     }
 
-    function delNext()
-    {
+    /**
+     * @return $this
+     */
+    public function delNext() {
         $this->next = null;
         return $this;
     }
 
-    private function newInstance(...$arg):SplDoubleLink
-    {
+    /**
+     * @param mixed ...$arg
+     * @return SplDoubleLink
+     * @throws \ReflectionException
+     */
+    private function newInstance(...$arg): SplDoubleLink {
         $ref = new \ReflectionClass(static::class);
         return $ref->newInstanceArgs($arg);
     }
-
 }
