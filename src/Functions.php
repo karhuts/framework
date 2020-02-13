@@ -143,3 +143,4 @@ if(!function_exists('isMac')){
         return stripos(PHP_OS, 'Darwin') !== false;
     }
 }
+
