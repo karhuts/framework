@@ -33,7 +33,7 @@
         "psr/http-server-handler": "^1.0",
         "symfony/dotenv": "^4.4",
         "hassankhan/config": "^2.1",
-        "phpunit/phpunit": "^8.5",
+        "phpunit/phpunit": "^8.5"
     },
     "require-dev": {
         "ext-curl": "*",
