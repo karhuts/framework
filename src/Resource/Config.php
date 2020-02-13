@@ -2,6 +2,9 @@
 declare(strict_types=1);
 use Karthus\Server;
 
+$qconf  = new \Qconf();
+$users  = $qconf->getAllHost('/blued/backend/umem/users', '', 1);
+
 return [
     // 服务名称
     'SERVER_NAME'   => "Karthus-Server",
@@ -55,6 +58,9 @@ return [
         ],
     ],
     'REDIS'                 => [
-
+        // 集群方式
+        'USERS'             => $users,
+        // 非集群方式
+        'TICKTOCKS'         => '10.10.159.251:6379',
     ],
 ];

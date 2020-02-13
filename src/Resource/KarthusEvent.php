@@ -7,6 +7,7 @@ use Karthus\Config as GConfig;
 use Karthus\Driver\Mysqli\Config as MysqlConfig;
 use Karthus\Driver\Pool\Redis\Redis;
 use Karthus\Driver\Redis\Config as RedisConfig;
+use Karthus\Driver\Redis\ClusterConfig as RedisClusterConfig;
 use Karthus\Driver\Pool\Mysql\Mysql;
 use Karthus\Http\Request;
 use Karthus\Http\Response;
@@ -34,8 +35,13 @@ class KarthusEvent implements Event {
         $redisConfig   = GConfig::getInstance()->getConf('REDIS');
         if($redisConfig){
             foreach ($redisConfig as $key => $item){
-                $config     = new RedisConfig($item);
-                Redis::getInstance()->register($key, $config);
+                if(is_string($item)){
+                    //强制变成集群
+                    $item[] = $item;
+                }
+
+                $clusterConfig  = new RedisClusterConfig($item);
+                Redis::getInstance()->register($key, $clusterConfig);
             }
         }
     }
@@ -44,7 +50,10 @@ class KarthusEvent implements Event {
      * @param EventRegister $register
      * @return mixed|void
      */
-    public static function mainServerCreate(EventRegister $register) {}
+    public static function mainServerCreate(EventRegister $register) {
+        // TODO 加入定时器
+        // 这个定时器为了定时去检查 Qconf中的数据是否还存在
+    }
 
     /**
      * @param Request  $request

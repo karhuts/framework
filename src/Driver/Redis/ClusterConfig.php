@@ -35,9 +35,11 @@ class ClusterConfig extends Config {
      * @param bool       $autoCreateProperty
      * @throws \ReflectionException
      */
-    public function __construct(array $serverList=[], array $data = null, $autoCreateProperty = false) {
+    public function __construct(array $serverList = [],
+                                array $data = null,
+                                $autoCreateProperty = false) {
         if(!empty($serverList)){
-            ($this->serverList = $serverList);
+            $this->serverList = $serverList;
         }
         parent::__construct($data, $autoCreateProperty);
     }
