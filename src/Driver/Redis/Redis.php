@@ -48,8 +48,7 @@ class Redis {
             try {
                 $ret    = $this->coroutineRedisClient->connect(
                     $this->config->getHost(),
-                    $this->config->getPort(),
-                    $this->config->getSerialize()
+                    $this->config->getPort()
                 );
 
                 if($ret){

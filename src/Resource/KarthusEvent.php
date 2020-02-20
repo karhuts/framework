@@ -37,7 +37,9 @@ class KarthusEvent implements Event {
             foreach ($redisConfig as $key => $item){
                 if(is_string($item)){
                     //强制变成集群
-                    $item[] = $item;
+                    $_config[] = $item;
+                    unset($item);
+                    $item     = $_config;
                 }
 
                 $clusterConfig  = new RedisClusterConfig($item);

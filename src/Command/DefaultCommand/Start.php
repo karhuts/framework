@@ -54,6 +54,7 @@ class Start implements CommandInterface{
                 break;
         }
 
+        $msg    = $msg . displayItem('server name', $conf->getConf('SERVER_NAME')). "\n";
         $msg    = $msg . displayItem('main server', $serverType) . "\n";
         $msg    = $msg . displayItem('listen address', $conf->getConf('MAIN_SERVER.LISTEN_ADDRESS')) . "\n";
         $msg    = $msg . displayItem('listen port', $conf->getConf('MAIN_SERVER.PORT')) . "\n";

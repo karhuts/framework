@@ -82,7 +82,7 @@ class Dispatcher {
             if($routeInfo !== false){
                 switch ($routeInfo[0]) {
                     case \FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-                        $handler = $this->routerRegister->getMethodNotAllowCallBack();
+                        $handler    = $this->routerRegister->getMethodNotAllowCallBack();
                         break;
                     case \FastRoute\Dispatcher::FOUND:
                         $handler    = $routeInfo[1];

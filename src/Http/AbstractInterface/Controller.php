@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Karthus\Http\AbstractInterface;
 
-use FastRoute\RouteParser\Std;
 use Karthus\Http\Request;
 use Karthus\Http\Response;
 use Swoole\Http\Status;
@@ -67,7 +66,7 @@ abstract class Controller {
      *
      * @return mixed
      */
-    abstract function execute();
+    abstract public function execute();
 
     /**
      * @return array
@@ -192,17 +191,21 @@ abstract class Controller {
             $requestParam   = $this->request()->getServerParams();
             $request_id     = $requestParam['request_id'] ?? '-';
             $request_time   = $requestParam['request_time_float'] ?? 0;
-            $output = array(
-                'code'          => $data['code'] ? intval($data['code']) : $status,
-                'message'       => $data['message'] ? strval($data['message']) : Status::getReasonPhrase($status),
-                'data'          => $data['data'] ? $data['data'] : new \stdClass(),
+            $output         = array(
+                'code'          => isset($data['code']) ? intval($data['code']) : $status,
+                'message'       => isset($data['message']) ? strval($data['message']) : Status::getReasonPhrase($status),
+                'data'          => isset($data['data']) ? $data['data'] : new \stdClass(),
                 'request_id'    => $request_id,
                 'request_time'  => floatval($request_time),
                 'response_time' => microtime(true),
             );
-            $this->response()->write(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-            $this->response()->withHeader('Content-type', 'application/json; charset=utf-8');
-            $this->response()->withStatus($status);
+            $this->response()
+                ->withStatus($status)
+                ->withHeader('Content-type', 'application/json; charset=utf-8')
+                ->write(json_encode($output, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            if($isEnd){
+                $this->response()->end();
+            }
             return true;
         } else {
             return false;

@@ -23,9 +23,8 @@ class Install implements CommandInterface {
             @unlink(KARTHUS_ROOT . '/karthus');
         }
 
-        $exeContents    = file_get_contents(__DIR__.'/../../../bin/karthus');
         //保存一个可执行文件
-        @file_put_contents(KARTHUS_ROOT . '/karthus', $exeContents);
+        @copy(__DIR__.'/../../../bin/karthus', KARTHUS_ROOT . '/karthus');
 
         releaseResource(__DIR__ . '/../../Resource/KarthusEvent.php', KARTHUS_ROOT . '/KarthusEvent.php');
         releaseResource(__DIR__ . '/../../Resource/Http/Index.php', KARTHUS_ROOT . '/Apps/Controller/Index.php');

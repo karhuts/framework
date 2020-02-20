@@ -22,7 +22,6 @@ class Redis {
      * @param string $poolName
      * @param Config $config
      * @return PoolConf
-     * @throws \ReflectionException
      */
     public function register(string $poolName, Config $config): PoolConf{
         if(isset($this->container[$poolName])){
@@ -30,16 +29,10 @@ class Redis {
             throw new PoolException("redis pool:{$poolName} is already been register");
         }
 
-        $class      = "Karthus\\Driver\\Pool\\Redis\\Created";
-        $poolConfig = PoolManager::getInstance()->register($class);
-        $poolConfig->setExtraConf($config);
+        $pool   = new Created($config);
+        $this->container[$poolName] = $pool;
 
-        $this->container[$poolName] = [
-            'class'  => $class,
-            'config' => $config
-        ];
-
-        return $poolConfig;
+        return $pool->getConfig();
     }
 
     /**

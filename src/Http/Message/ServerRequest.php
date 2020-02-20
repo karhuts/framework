@@ -84,15 +84,17 @@ class ServerRequest extends Request implements ServerRequestInterface {
 
     /**
      * 获取具体request参数
-     * @param $name
+     *
+     * @param string $name
+     * @param null   $default
      * @return mixed|null
      */
-    public function getQueryParam($name){
+    public function getQueryParam(string $name, $default = null){
         $data = $this->getQueryParams();
         if(isset($data[$name])){
             return $data[$name];
         }else{
-            return null;
+            return $default;
         }
     }
 
