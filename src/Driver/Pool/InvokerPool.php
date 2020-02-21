@@ -16,13 +16,14 @@ trait InvokerPool {
     /**
      * 也是一个注册，允许回调
      *
-     * @param callable   $call
+     * @param string     $poolName
+     * @param callable   $callback
      * @param float|null $timeout
      * @return mixed
      * @throws \Throwable
      */
-    public static function invoke(callable $callback, float $timeout = null) {
-        $pool = PoolManager::getInstance()->getPool(static::class);
+    public static function invoke(string $poolName, callable $callback, float $timeout = null) {
+        $pool = PoolManager::getInstance()->getPool(static::class, $poolName);
         if($pool instanceof AbstractPool){
             $obj = $pool->getObject($timeout);
             if($obj){
@@ -47,13 +48,13 @@ trait InvokerPool {
      * @return mixed
      * @throws \Throwable
      */
-    public static function defer($timeout = null) {
+    public static function defer(string $poolName, $timeout = null) {
         $key    = md5(static::class);
         $obj    = ContextManager::getInstance()->get($key);
         if($obj){
             return $obj;
         }else{
-            $pool = PoolManager::getInstance()->getPool(static::class);
+            $pool = PoolManager::getInstance()->getPool(static::class, $poolName);
             if($pool instanceof AbstractPool){
                 $obj = $pool->getObject($timeout);
                 if($obj){

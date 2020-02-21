@@ -49,7 +49,7 @@ class Redis {
     static function defer(string $name, $timeout = null): ?Connection {
         $pool = static::getInstance()->pool($name);
         if ($pool) {
-            return $pool::defer($timeout);
+            return $pool::defer($name, $timeout);
         } else {
             return null;
         }
@@ -65,7 +65,7 @@ class Redis {
     static function invoker(string $name, callable $call, float $timeout = null) {
         $pool = static::getInstance()->pool($name);
         if ($pool) {
-            return $pool::invoke($call, $timeout);
+            return $pool::invoke($name, $call, $timeout);
         } else {
             return null;
         }
