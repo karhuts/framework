@@ -22,6 +22,7 @@ class Redis {
      * @param string $poolName
      * @param Config $config
      * @return PoolConf
+     * @throws \ReflectionException
      */
     public function register(string $poolName, Config $config): PoolConf{
         if(isset($this->container[$poolName])){
@@ -29,10 +30,14 @@ class Redis {
             throw new PoolException("redis pool:{$poolName} is already been register");
         }
 
-        $pool   = new Created($config);
-        $this->container[$poolName] = $pool;
+        $poolConfig = PoolManager::getInstance()->register(Created::class, $poolName);
+        $poolConfig->setExtraConf($config);
 
-        return $pool->getConfig();
+        $this->container[$poolName] = [
+            'class'  => Created::class,
+            'config' => $config
+        ];
+        return $poolConfig;
     }
 
     /**
@@ -76,9 +81,8 @@ class Redis {
             if ($item instanceof AbstractPool) {
                 return $item;
             } else {
-
                 $class  = $item['class'];
-                $pool   = PoolManager::getInstance()->getPool($class);
+                $pool   = PoolManager::getInstance()->getPool($class, $name);
                 $this->container[$name] = $pool;
                 return $this->pool($name);
             }

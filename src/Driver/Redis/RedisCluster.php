@@ -72,7 +72,7 @@ class RedisCluster{
                 $port       = $__[1];
 
                 $client     = new CoroutineRedis();
-                $ret        = $client->connect($host, $port);
+                $ret        = $client->connect($host, (int) $port);
 
                 if(!$ret){
                     $errno = $this->coroutineRedisClient->errCode;
@@ -80,6 +80,7 @@ class RedisCluster{
                     throw new ConnectFail("connect to {$this->config->getHost()} at port {$this->config->getPort()} fail: {$errno} {$error}");
                 }else {
                     $this->nodeClientList[$this->serverInfo] = $client;
+                    $this->coroutineRedisClient              = $client;
                 }
             }catch (\Throwable $exception){
                 throw $exception;

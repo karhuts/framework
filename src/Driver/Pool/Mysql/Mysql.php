@@ -25,12 +25,11 @@ class Mysql {
             throw new MysqlPoolException("mysqlPool:{$poolName} is already been register");
         }
 
-        $class      = "Karthus\\Driver\\Pool\\Redis\\Created";
-        $poolConfig = PoolManager::getInstance()->register($class);
+        $poolConfig = PoolManager::getInstance()->register(Created::class, $poolName);
         $poolConfig->setExtraConf($config);
 
         $this->container[$poolName] = [
-            'class'  => $class,
+            'class'  => Created::class,
             'config' => $config
         ];
         return $poolConfig;
@@ -77,9 +76,8 @@ class Mysql {
             if ($item instanceof AbstractPool) {
                 return $item;
             } else {
-
                 $class  = $item['class'];
-                $pool   = PoolManager::getInstance()->getPool($class);
+                $pool   = PoolManager::getInstance()->getPool($class, $name);
                 $this->container[$name] = $pool;
                 return $this->pool($name);
             }

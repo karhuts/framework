@@ -3,9 +3,9 @@ declare(strict_types=1);
 namespace Karthus\Driver\Pool\Redis;
 
 use Karthus\Driver\Pool\PoolObjectInterface;
-use Karthus\Driver\Redis\Redis;
+use Karthus\Driver\Redis\RedisCluster;
 
-class Connection extends Redis implements PoolObjectInterface {
+class Connection extends RedisCluster implements PoolObjectInterface {
 
     /**
      * @inheritDoc
@@ -28,6 +28,6 @@ class Connection extends Redis implements PoolObjectInterface {
      * @throws \Throwable
      */
     public function beforeUse(): bool {
-        $this->getCoroutineRedisClient()->connected;
+        return !!$this->getCoroutineRedisClient()->connected;
     }
 }
