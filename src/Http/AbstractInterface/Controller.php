@@ -141,7 +141,7 @@ abstract class Controller {
                         $forwardPath = $this->$actionName();
                     }
                 } else {
-                    $forwardPath = $this->actionNotFound($actionName);
+                    $this->actionNotFound($actionName);
                 }
             }
         } catch (\Throwable $throwable) {

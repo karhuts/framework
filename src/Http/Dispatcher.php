@@ -6,7 +6,6 @@ use Karthus\Core;
 use Karthus\Exception\ControllerPoolEmpty;
 use Karthus\Exception\RouterError;
 use Karthus\Http\AbstractInterface\AbstractRouter;
-use Karthus\Http\AbstractInterface\AbstractService;
 use Karthus\Http\AbstractInterface\Controller;
 use Karthus\Http\Router\Router;
 use Swoole\Coroutine as Co;
@@ -155,9 +154,6 @@ class Dispatcher {
                 $throwable = new ControllerPoolEmpty("controller pool empty for $finalClass");
                 $this->hookThrowable($throwable, $request, $response);
             }
-
-            //这里载入一个Service
-            AbstractService::getInstance($request, $response);
         }else{
             $response->withHeader('Content-type', 'application/json; charset=utf-8')
                 ->withStatus(Status::NOT_FOUND)
@@ -215,7 +211,7 @@ class Dispatcher {
      */
     protected function hookThrowable(\Throwable $throwable,Request $request,Response $response) {
         if(is_callable($this->httpExceptionHandler)){
-            call_user_func($this->httpExceptionHandler,$throwable,$request,$response);
+            call_user_func($this->httpExceptionHandler, $throwable, $request, $response);
         }else{
             $response->withStatus(Status::INTERNAL_SERVER_ERROR);
             $response->write(nl2br($throwable->getMessage()."\n".$throwable->getTraceAsString()));
