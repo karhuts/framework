@@ -72,6 +72,9 @@ class RedisCluster{
                 $port       = $__[1];
 
                 $client     = new CoroutineRedis();
+                $client->setOptions([
+                    'compatibility_mode'    => true,
+                ]);
                 $ret        = $client->connect($host, (int) $port);
 
                 if(!$ret){

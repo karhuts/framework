@@ -6,6 +6,7 @@ use Karthus\Core;
 use Karthus\Exception\ControllerPoolEmpty;
 use Karthus\Exception\RouterError;
 use Karthus\Http\AbstractInterface\AbstractRouter;
+use Karthus\Http\AbstractInterface\AbstractService;
 use Karthus\Http\AbstractInterface\Controller;
 use Karthus\Http\Router\Router;
 use Swoole\Coroutine as Co;
@@ -154,9 +155,13 @@ class Dispatcher {
                 $throwable = new ControllerPoolEmpty("controller pool empty for $finalClass");
                 $this->hookThrowable($throwable, $request, $response);
             }
+
+            //这里载入一个Service
+            AbstractService::getInstance($request, $response);
         }else{
-            $response->withStatus(Status::NOT_FOUND);
-            $response->write("not controller class match");
+            $response->withHeader('Content-type', 'application/json; charset=utf-8')
+                ->withStatus(Status::NOT_FOUND)
+                ->write("not controller class match");
         }
     }
 

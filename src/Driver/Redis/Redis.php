@@ -33,6 +33,9 @@ class Redis {
     public function __construct(Config $config) {
         $this->config               = $config;
         $this->coroutineRedisClient = new CoroutineRedis();
+        $this->coroutineRedisClient->setOptions([
+            'compatibility_mode'    => true,
+        ]);
     }
 
     /**
