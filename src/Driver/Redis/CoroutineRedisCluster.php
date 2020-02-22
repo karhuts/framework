@@ -12,7 +12,7 @@ use Swoole\Coroutine\Redis as CoroutineRedis;
  *
  * @package Karthus\Driver\Redis
  */
-class RedisCluster{
+class CoroutineRedisCluster{
 
     /**
      * @var ClusterConfig
@@ -78,8 +78,8 @@ class RedisCluster{
                 $ret        = $client->connect($host, (int) $port);
 
                 if(!$ret){
-                    $errno = $this->coroutineRedisClient->errCode;
-                    $error = $this->coroutineRedisClient->errMsg;
+                    $errno = $client->errCode;
+                    $error = $client->errMsg;
                     throw new ConnectFail("connect to {$this->config->getHost()} at port {$this->config->getPort()} fail: {$errno} {$error}");
                 }else {
                     $this->nodeClientList[$this->serverInfo] = $client;

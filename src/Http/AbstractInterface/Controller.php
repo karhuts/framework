@@ -193,8 +193,9 @@ abstract class Controller {
             $request_time   = $requestParam['request_time_float'] ?? 0;
             $output         = array(
                 'code'          => isset($data['code']) ? intval($data['code']) : $status,
-                'message'       => isset($data['message']) ? strval($data['message']) : Status::getReasonPhrase($status),
-                'data'          => isset($data['data']) ? $data['data'] : new \stdClass(),
+                'message'       => isset($data['message']) && $data['message'] ? strval($data['message']) : Status::getReasonPhrase($status),
+                'data'          => isset($data['data']) && $data['data'] ? $data['data'] : new \stdClass(),
+                'extra'         => isset($data['extra']) && $data['extra'] ? $data['extra'] : new \stdClass(),
                 'request_id'    => $request_id,
                 'request_time'  => floatval($request_time),
                 'response_time' => microtime(true),

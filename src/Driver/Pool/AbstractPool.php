@@ -30,8 +30,8 @@ abstract class AbstractPool {
             $class = static::class;
             throw new PoolObjectNumError("pool max num is small than min num for {$class} error");
         }
-        $this->conf = $conf;
-        $this->poolChannel = new Channel($conf->getMaxObjectNum());
+        $this->conf         = $conf;
+        $this->poolChannel  = new Channel($conf->getMaxObjectNum());
         if ($conf->getIntervalCheckTime() > 0) {
             Timer::tick($conf->getIntervalCheckTime(), [$this, 'intervalCheck']);
         }

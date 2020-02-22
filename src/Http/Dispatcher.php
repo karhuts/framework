@@ -89,7 +89,11 @@ class Dispatcher {
                         //合并解析出来的数据
                         $vars       = $routeInfo[2];
                         $data       = $request->getQueryParams();
-                        $request->withQueryParams($vars + $data);
+                        //解析出 RemoteUserID
+                        $me         = [
+                            'me'    => $request->getRemoteUserID(),
+                        ];
+                        $request->withQueryParams($vars + $data + $me);
                         break;
                     case \FastRoute\Dispatcher::NOT_FOUND:
                     default:

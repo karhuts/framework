@@ -3,27 +3,25 @@ declare(strict_types=1);
 namespace Karthus\Driver\Redis;
 
 use Karthus\Exception\ConnectFail;
-use Swoole\Coroutine\Redis as CoroutineRedis;
 
-/**
- * 不做额外的封装
- *
- * Class Redis
- *
- * @package Karthus\Driver\Redis
- */
 class Redis {
     /**
-     * Redis配置选项
-     *
      * @var Config
      */
-    private $config;
+    protected $config;
 
     /**
-     * @var CoroutineRedis
+     * @var string
      */
-    private $coroutineRedisClient;
+    protected $serverInfo;
+    /**
+     * @var array
+     */
+    protected $nodeClientList;
+    /**
+     * @var \Redis;
+     */
+    protected $redisClient;
 
     /**
      * Redis constructor.
@@ -31,36 +29,47 @@ class Redis {
      * @param Config $config
      */
     public function __construct(Config $config) {
-        $this->config               = $config;
-        $this->coroutineRedisClient = new CoroutineRedis();
-        $this->coroutineRedisClient->setOptions([
-            'compatibility_mode'    => true,
-        ]);
+        $this->config   = $config;
     }
 
     /**
-     *  * 链接数据库
-     *
-     * @return bool 链接成功返回 true
+     * @return \Redis
      * @throws \Throwable
      */
-    public function connect(): bool {
-        if($this->coroutineRedisClient->connected){
-            return true;
+    public function getRedisClient(): \Redis {
+        $this->connect();
+        return $this->redisClient;
+    }
+
+    /**
+     * 连接
+     *
+     * @throws \Throwable
+     */
+    public function connect(){
+        $serverList         = $this->getServers();
+        $idx                = array_rand($serverList);
+        $this->serverInfo   = $serverList[$idx];
+
+        //然后开始连接
+        if(isset($this->nodeClientList[$this->serverInfo])
+            && $this->nodeClientList[$this->serverInfo] instanceof Redis
+            && $this->nodeClientList[$this->serverInfo]->connected){
+            $this->redisClient = $this->nodeClientList[$this->serverInfo];
         }else {
             try {
-                $ret    = $this->coroutineRedisClient->connect(
-                    $this->config->getHost(),
-                    $this->config->getPort()
-                );
+                $__         = explode(':', $this->serverInfo);
+                $host       = $__[0];
+                $port       = $__[1];
 
-                if($ret){
-                    return true;
-                }else {
-                    $errno = $this->coroutineRedisClient->errCode;
-                    $error = $this->coroutineRedisClient->errMsg;
+                $client     = new \Redis();
+                $ret        = $client->pconnect($host, (int) $port);
 
+                if(!$ret){
                     throw new ConnectFail("connect to {$this->config->getHost()} at port {$this->config->getPort()} fail: {$errno} {$error}");
+                }else {
+                    $this->nodeClientList[$this->serverInfo] = $client;
+                    $this->redisClient                       = $client;
                 }
             }catch (\Throwable $exception){
                 throw $exception;
@@ -70,39 +79,28 @@ class Redis {
 
     /**
      * 断开连接
+     *
+     * @throws \RedisException
      */
     public function disconnect() {
-        if($this->coroutineRedisClient->connected){
-            $this->coroutineRedisClient->close();
+        if($this->redisClient->ping()){
+            $this->redisClient->close();
+            unset($this->nodeClientList[$this->serverInfo]);
         }
     }
 
-    /**
-     * @return CoroutineRedis
-     * @throws \Throwable
-     */
-    public function getCoroutineRedisClient() :CoroutineRedis{
-        //确保连接
-        $this->connect();
-        return $this->coroutineRedisClient;
-    }
 
     /**
-     * 获取配置信息
-     *
      * @return Config
      */
-    public function getConfig() :Config {
+    public function getConfig(): Config{
         return $this->config;
     }
 
     /**
-     * 析构被调用时关闭当前链接并释放客户端对象
+     * @return array
      */
-    public function __destruct() {
-        if (isset($this->coroutineRedisClient) && $this->coroutineRedisClient->connected) {
-            $this->coroutineRedisClient->close();
-        }
-        unset($this->coroutineRedisClient);
+    public function getServers(): array {
+        return $this->getConfig()->getServerList();
     }
 }

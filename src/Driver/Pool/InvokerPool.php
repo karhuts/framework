@@ -58,10 +58,10 @@ trait InvokerPool {
             if($pool instanceof AbstractPool){
                 $obj = $pool->getObject($timeout);
                 if($obj){
-                    Coroutine::defer(function ()use($pool,$obj){
+                    Coroutine::defer(function ()use($pool, $obj){
                         $pool->recycle($obj);
                     });
-                    ContextManager::getInstance()->set($key,$obj);
+                    ContextManager::getInstance()->set($key, $obj);
                     return $obj;
                 }else{
                     throw new Exception(static::class." pool is empty");
