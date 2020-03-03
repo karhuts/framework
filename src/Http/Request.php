@@ -246,4 +246,52 @@ class Request extends ServerRequest{
 
         return floatval($requestID);
     }
+
+    /**
+     * 获取解析后的UA头
+     *
+     * @return array
+     */
+    public function getParseUa(): array {
+        $ua     = $this->getUserAgent();
+        $_      = array(
+            'device'    => '',
+            'platform'  => 'unknown',
+            'screen'    => array(1080, 1920),
+            'version_name' => '',
+            'version_code' => '',
+            'timezone'  => 'Asia/Shanghai',
+            'additions' => '',
+            'app'       => 1,
+            'ibb'       => 0,
+        );
+
+        #$pattern = '#^Mozilla/5\.0 \(([^\(\)]+)\) ([a-z0-9]+)/([^ ]+) \(([^ ]+)\)(.*)$#i';
+        $pattern = '#^Mozilla/5\.0 \((.+)\) .*(ios|android|windowsphone|windows|mac)/([^ ]+) \(([^ ]+)\)(.*)$#i';
+
+        if (!preg_match($pattern, $ua, $match)) {
+            return $_;
+        }
+
+        $_['device'] = $match[1];
+        $_['platform'] = strtolower($match[2]);
+
+        list($width, $height, $version_name, $version_code)
+            = explode('_', strrev($match[3]));
+        $_['screen'] = array($width, $height);
+        $_['version_name'] = $version_name;
+        $_['version_code'] = intval($version_code);
+        $_['timezone'] = trim($match[4]);
+        $_['additions'] = trim($match[5]);
+
+        if (preg_match('#app/([0-9]+)#', $_['additions'], $match)) {
+            $_['app'] = trim($match[1]);
+        }
+
+        if (preg_match('#ibb/([0-9\.]+)#', $_['additions'], $match)) {
+            $_['ibb'] = trim($match[1]);
+        }
+
+        return $_;
+    }
 }
