@@ -112,6 +112,50 @@ class HttpClient {
     }
 
     /**
+     * @param string $userAgent
+     * @return HttpClient
+     */
+    public function setUserAgent(string $userAgent = ''): HttpClient {
+        $this->setHeader('User-Agent', $userAgent);
+        return $this;
+    }
+
+    /**
+     * 设置AcceptLanguage
+     *
+     * @param string $acceptLanguage
+     * @return HttpClient
+     */
+    public function setAcceptLanguage(string $acceptLanguage = 'zh-cn'): HttpClient {
+        $this->setHeader('Accept-Language', $acceptLanguage);
+        return $this;
+    }
+
+    /**
+     * 设置header头中的X-Remote-UserID
+     *
+     * @param int $uid
+     * @return HttpClient
+     */
+    public function setRemoteUID(int $uid): HttpClient{
+        $this->setHeader('X-Remote-UserID', (string) $uid);
+        return $this;
+    }
+
+    /**
+     * 设置requestID
+     *
+     * @param string $requestID
+     * @return HttpClient
+     */
+    public function setRequestID(string $requestID): HttpClient {
+        $this->setHeader('X-Request-ID', $requestID);
+        return $this;
+    }
+
+
+
+    /**
      * 直接设置客户端配置
      * @param string $key 配置key值
      * @param mixed $setting 配置value值
@@ -351,17 +395,18 @@ class HttpClient {
                     if($item instanceof \CURLFile){
                         $client->addFile(
                             $item->getFilename(),
-                            $key,$item->getMimeType(),
+                            $key,
+                            $item->getMimeType(),
                             $item->getPostFilename()
                         );
                         unset($rawData[$key]);
                     }
                 }
                 $client->setData($rawData);
-            }else if($rawData !== null){
+            }elseif($rawData !== null){
                 $client->setData($rawData);
             }
-        }else if($rawData !== null){
+        }elseif($rawData !== null){
             $client->setData($rawData);
         }
         if(is_string($rawData)){
@@ -532,6 +577,9 @@ class HttpClient {
         return $response;
     }
 
+    /**
+     * 销毁
+     */
     public function __destruct() {
         if($this->client instanceof Client){
             if($this->client->connected){

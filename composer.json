@@ -2,7 +2,7 @@
     "name": "min/karthus",
     "description": "A simple Framework For Swoole",
     "type": "library",
-    "version": "v2.0.8",
+    "version": "v2.0.9",
     "keywords": [
         "swoole",
         "framework",
