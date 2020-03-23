@@ -33,13 +33,11 @@ class SplBean implements \JsonSerializable {
 
     /**
      * @return array
+     * @throws \ReflectionException
      */
     final public function allProperty(): array {
-        $data = [];
-        try {
-            $class = new \ReflectionClass($this);
-        } catch (\ReflectionException $e) {
-        }
+        $data   = [];
+        $class  = new \ReflectionClass($this);
         $protectedAndPublic = $class->getProperties(
             \ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED
         );
@@ -119,6 +117,7 @@ class SplBean implements \JsonSerializable {
      * @param array $data
      * @param bool  $autoCreateProperty
      * @return SplBean
+     * @throws \ReflectionException
      */
     final private function arrayToBean(array $data, $autoCreateProperty = false): SplBean {
 
@@ -206,6 +205,9 @@ class SplBean implements \JsonSerializable {
         return $this;
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function clear() {
         $keys = $this->allProperty();
         $ref = new \ReflectionClass(static::class);

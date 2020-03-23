@@ -2,40 +2,57 @@
 declare(strict_types=1);
 namespace Karthus\Driver\Pool\Mysql;
 
-use Karthus\Driver\Mysqli\Mysqli;
-use Karthus\Driver\Pool\PoolObjectInterface;
+use Karthus\Driver\Pool\AbstractPool;
 
-class Connection extends Mysqli implements PoolObjectInterface{
+class Connection implements ConnectionInterface {
+    /** @var Config */
+    protected $config;
+
+    /** @var AbstractPool */
+    protected $pool;
 
     /**
-     * @inheritDoc
-     * @throws \Throwable
+     * Connection constructor.
+     *
+     * @param Config $config
      */
-    public function gc() {
-        try{
-            $this->rollback();
-        }catch (\Throwable $throwable){
-            trigger_error($throwable->getMessage());
-        }
-        $this->getMysqlClient()->close();
+    public function __construct(Config $config) {
+        $this->config = $config;
     }
 
     /**
-     * @inheritDoc
+     * @param float|null $timeout
+     * @return ClientInterface|null
+     * @throws \Throwable
      */
-    public function objectRestore() {
-        try{
-            $this->rollback();
-        }catch (\Throwable $throwable){
-            trigger_error($throwable->getMessage());
+    public function defer(float $timeout = null): ? ClientInterface {
+        if ($timeout === null) {
+            $timeout = $this->config->getGetObjectTimeout();
         }
+        return $this->getPool()->defer($timeout);
     }
 
     /**
-     * @inheritDoc
-     * @throws \Throwable
+     * @return AbstractPool
      */
-    public function beforeUse(): bool {
-        return $this->getMysqlClient()->connected;
+    public function getClientPool(): AbstractPool {
+        return $this->getPool();
+    }
+
+    /**
+     * @return MysqlPool
+     */
+    protected function getPool(): MysqlPool {
+        if (!$this->pool) {
+            $this->pool = new MysqlPool($this->config);
+        }
+        return $this->pool;
+    }
+
+    /**
+     * @return Config|null
+     */
+    public function getConfig(): ?Config {
+        return $this->config;
     }
 }

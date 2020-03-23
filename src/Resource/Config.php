@@ -13,7 +13,7 @@ return [
         // 监听地址，建议使用 0.0.0.0 监听本地多路地址
         'LISTEN_ADDRESS' => '0.0.0.0',
         // 监听端口
-        'PORT'      => 8000,
+        'PORT'           => 8000,
         /**
          * 服务类型
          * 可选为
@@ -32,7 +32,7 @@ return [
             // 最大等待时间
             'max_wait_time' => 3,
         ],
-        'TASK'          =>[
+        'TASK'          => [
             // 异步任务数量
             'workerNum'     => 4,
             // 最大同时运行数量
@@ -41,20 +41,36 @@ return [
             'timeout'       => 15,
         ]
     ],
-
     'LOG_DIR'               => null,
     'MYSQL'                 => [
-        'BLUEDMIS'          => [
-            'host'                 => '10.9.196.184',
-            'port'                 => 3306,
-            'user'                 => 'bluedmis',
-            'password'             => 'PQeWUC3MdC3wDjcs',
-            'database'             => 'bluedmis',
-            'timeout'              => 30,
-            'charset'              => 'utf8mb4',
-            'connect_timeout'      => 5,//连接超时时间
-            'strict_type'          => true, //开启严格模式，query方法返回的数据也将转为强类型
-            'fetch_mode'           => true, //开启fetch模式, 可与pdo一样使用fetch/fetchAll逐行或获取全部结果集(4.0版本以上)
+        'account'       => [
+            'bluedmis'  => [
+                'user'          => 'bluedmis',
+                'password'      => 'PQeWUC3MdC3wDjcs',
+                'database'      => 'bluedmis',
+                'charset'       => 'utf8mb4',
+                'strict_type'   => true, //开启严格模式，query方法返回的数据也将转为强类型
+                'fetch_mode'    => true, //开启fetch模式, 可与pdo一样使用fetch/fetchAll逐行或获取全部结果集(4.0版本以上)
+                'timeout'       => 30,
+            ]
+        ],
+        'serverInfo'    => [
+            'BLUEDMIS'          => [
+                'read'  => [
+                    'host'      => [
+                        '10.9.196.184'
+                    ],
+                    'port'      => 3306,
+                    'account'   => 'bluedmis',
+                ],
+                'write' => [
+                    'host'      => [
+                        '10.9.196.184'
+                    ],
+                    'port'      => 3306,
+                    'account'   => 'bluedmis',
+                ],
+            ],
         ],
     ],
     'REDIS'                 => [

@@ -4,15 +4,15 @@ declare(strict_types=1);
 namespace Karthus;
 
 use Karthus\Config as GConfig;
-use Karthus\Driver\Mysqli\Config as MysqlConfig;
+use Karthus\Driver\Pool\Mysql\Connection;
+use Karthus\Driver\Pool\Mysql\Manager;
 use Karthus\Driver\Pool\Redis\Redis;
-use Karthus\Driver\Redis\Config as RedisConfig;
 use Karthus\Driver\Redis\ClusterConfig as RedisClusterConfig;
-use Karthus\Driver\Pool\Mysql\Mysql;
 use Karthus\Http\Request;
 use Karthus\Http\Response;
 use Karthus\AbstractInterface\Event;
 use Karthus\Event\EventRegister;
+use Karthus\Driver\Pool\Mysql\Config as MysqlConfig;
 
 class KarthusEvent implements Event {
 
@@ -26,8 +26,10 @@ class KarthusEvent implements Event {
         ///循环遍历和注册了
         if($mysqlConfig){
             foreach ($mysqlConfig as $key => $item){
-                $config     = new MysqlConfig($item);
-                Mysql::getInstance()->register($key, $config);
+                //$config     = new MysqlConfig($item);
+                //Mysql::getInstance()->register($key, $config);
+                $config      = new MysqlConfig($item);
+                Manager::getInstance()->addConnection(new Connection($config), $key);
             }
         }
 

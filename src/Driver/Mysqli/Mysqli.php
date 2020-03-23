@@ -78,7 +78,7 @@ class Mysqli {
      * @throws \Throwable
      */
     public function selectDb(string $dbName,float $timeout = 1.0) {
-        return $this->getMysqlClient()->query('use '.$dbName,$timeout);
+        return $this->getMysqlClient()->query('use '.$dbName, $timeout);
     }
 
     /**
@@ -113,71 +113,4 @@ class Mysqli {
         }
         unset($this->coroutineMysqlClient);
     }
-
-    /**
-     * 开启事务
-     *
-     * @return bool 是否成功开启事务
-     * @throws ConnectFail*@throws \Throwable
-     * @throws \Throwable
-     */
-    public function startTransaction(): bool {
-        if ($this->startTransaction) {
-            return true;
-        } else {
-            $this->connect();
-            $res = $this->coroutineMysqlClient->query('start transaction');
-            if ($res) {
-                $this->startTransaction = true;
-            }
-            return $res;
-        }
-    }
-
-    /**
-     * 提交事务
-     *
-     * @return bool 是否成功提交事务
-     * @throws ConnectFail*@throws \Throwable
-     * @throws \Throwable
-     */
-    public function commit(): bool {
-        if ($this->startTransaction) {
-            $this->connect();
-            $res = $this->coroutineMysqlClient->query('commit');
-            if ($res) {
-                $this->startTransaction = false;
-            }
-            return $res;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * 回滚事务
-     *
-     * @param bool $commit
-     * @return array|bool
-     * @throws ConnectFail*@throws \Throwable
-     * @throws \Throwable
-     */
-    public function rollback($commit = true) {
-        if ($this->startTransaction) {
-            $this->connect();
-            $res = $this->coroutineMysqlClient->query('rollback');
-            if ($res && $commit) {
-                $res = $this->commit();
-                if ($res) {
-                    $this->startTransaction = false;
-                }
-                return $res;
-            } else {
-                return $res;
-            }
-        } else {
-            return true;
-        }
-    }
-
 }

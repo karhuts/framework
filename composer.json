@@ -2,7 +2,7 @@
     "name": "min/karthus",
     "description": "A simple Framework For Swoole",
     "type": "library",
-    "version": "v2.0.10",
+    "version": "v2.0.11",
     "keywords": [
         "swoole",
         "framework",
@@ -89,5 +89,10 @@
     },
     "bin": [
         "bin/karthus"
-    ]
+    ],
+    "scripts": {
+        "post-autoload-dump": [
+
+        ]
+    }
 }

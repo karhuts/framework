@@ -3,8 +3,9 @@ declare(strict_types=1);
 namespace Karthus\Driver\Pool;
 
 use Karthus\Exception\PoolObjectNumError;
+use Karthus\Spl\SplBean;
 
-class PoolConf {
+class PoolConf extends SplBean {
     /**
      * 执行间隔 30S
      *
