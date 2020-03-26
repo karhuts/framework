@@ -43,7 +43,17 @@ class Mysqli {
             return true;
         } else {
             try {
-                $ret = $this->coroutineMysqlClient->connect($this->config->toArray());
+                $config     = $this->config->toArray();
+                //如果 HOST 是个数组
+                $__         = $config['host'];
+                unset($config['host']);
+                if(is_array($__)){
+                    $idx    = array_rand($__);
+                    $config['host'] = $__[$idx];
+                }else {
+                    $config['host'] = $__;
+                }
+                $ret = $this->coroutineMysqlClient->connect($config);
                 if ($ret) {
                     $this->currentReconnectTimes = 0;
                     return true;

@@ -19,7 +19,7 @@ abstract class AbstractModel implements ArrayAccess, JsonSerializable {
     private $lastQueryResult;
     private $lastQuery;
 
-    /**@var ClientInterface */
+    /** @var ClientInterface */
     private $client;
 
     /**
@@ -101,10 +101,12 @@ abstract class AbstractModel implements ArrayAccess, JsonSerializable {
 
     /**
      * 取出链接
+     *
+     * @param string     $name
      * @param float|NULL $timeout
      * @return ClientInterface|null
      */
-    public static function defer(float $timeout = null) {
+    public static function defer(string $name, float $timeout = null) {
         try {
             $model = new static();
         } catch (Exception $e) {
@@ -112,7 +114,7 @@ abstract class AbstractModel implements ArrayAccess, JsonSerializable {
         }
         $connectionName = $model->connectionName;
 
-        return Manager::getInstance()->getConnection($connectionName)->defer($timeout);
+        return Manager::getInstance()->getConnection($connectionName)->defer($name, $timeout);
     }
 
     /**

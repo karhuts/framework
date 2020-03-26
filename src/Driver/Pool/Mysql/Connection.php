@@ -21,15 +21,16 @@ class Connection implements ConnectionInterface {
     }
 
     /**
+     * @param string     $name
      * @param float|null $timeout
      * @return ClientInterface|null
      * @throws \Throwable
      */
-    public function defer(float $timeout = null): ? ClientInterface {
+    public function defer(string $name, float $timeout = null): ? ClientInterface {
         if ($timeout === null) {
             $timeout = $this->config->getGetObjectTimeout();
         }
-        return $this->getPool()->defer($timeout);
+        return $this->getPool()->defer($name, $timeout);
     }
 
     /**

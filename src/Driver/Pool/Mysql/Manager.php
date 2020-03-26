@@ -49,21 +49,20 @@ class Manager {
     }
 
     /**
-     * @param QueryBuilder $builder
-     * @param bool $raw
+     * @param string $builder
      * @param string|ClientInterface $connection
      * @param float|null $timeout
-     * @return Result
+     * @return array|null
      * @throws Exception
      * @throws \Throwable
      */
-    public function query(string $builder, bool $raw = false, $connection = 'default', float $timeout = null):Result {
+    public function query(string $builder, $connection = 'default', float $timeout = null): ?array {
         if(is_string($connection)){
             $_connection = $this->getConnection($connection);
             if(!$_connection){
                 throw new Exception("connection : {$connection} not register");
             }
-            $client = $_connection->defer($timeout);
+            $client = $_connection->defer($connection, $timeout);
             if(empty($client)){
                 throw new Exception("connection : {$connection} is empty");
             }
@@ -71,21 +70,8 @@ class Manager {
             $client = $connection;
         }
 
-        $start  = microtime(true);
-        $ret    = $client->query($builder);
-        if($this->onQuery){
-            $temp = clone $builder;
-            call_user_func($this->onQuery,$ret,$temp,$start);
-        }
-        if(in_array('SQL_CALC_FOUND_ROWS',$builder->getLastQueryOptions())){
-            $temp = new QueryBuilder();
-            $temp->raw('SELECT FOUND_ROWS() as count');
-            $count = $client->query($temp,true);
-            if($this->onQuery){
-                call_user_func($this->onQuery,$count,$temp,$start,$client);
-            }
-            $ret->setTotalCount($count->getResult()[0]['count']);
-        }
+        $start      = microtime(true);
+        $ret        = $client->query($builder);
         return $ret;
     }
 

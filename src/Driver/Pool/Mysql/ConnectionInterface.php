@@ -5,7 +5,7 @@ namespace Karthus\Driver\Pool\Mysql;
 use Karthus\Driver\Pool\AbstractPool;
 
 interface ConnectionInterface {
-    function defer(float $timeout = null):? ClientInterface;
+    function defer(string $name, float $timeout = null):? ClientInterface;
     function getClientPool(): AbstractPool;
     function getConfig():?Config;
 }

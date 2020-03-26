@@ -25,11 +25,28 @@ class KarthusEvent implements Event {
         $mysqlConfig   = GConfig::getInstance()->getConf("MYSQL");
         ///循环遍历和注册了
         if($mysqlConfig){
-            foreach ($mysqlConfig as $key => $item){
-                //$config     = new MysqlConfig($item);
-                //Mysql::getInstance()->register($key, $config);
-                $config      = new MysqlConfig($item);
-                Manager::getInstance()->addConnection(new Connection($config), $key);
+            $account    = $mysqlConfig['account'] ?? [];
+            $serversInfo= $mysqlConfig['serverInfo'] ?? [];
+
+            if($account && $serversInfo){
+                foreach ($serversInfo as $serverName => $servers){
+                    if(empty($servers)){
+                        continue;
+                    }
+
+                    foreach ($servers as $model => $server){
+                        //获取帐号
+                        $accountInfo    = $account[$server['account']];
+                        $server         = array_merge($server, $accountInfo);
+                        unset($server['account']);
+
+                        // 进行配置注入
+                        $config         = new MysqlConfig($server);
+                        $model          = strtoupper($model);
+                        $key            = "{$serverName}_{$model}";
+                        Manager::getInstance()->addConnection(new Connection($config), $key);
+                    }
+                }
             }
         }
 

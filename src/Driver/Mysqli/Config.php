@@ -5,10 +5,10 @@ namespace Karthus\Driver\Mysqli;
 use Karthus\Spl\SplBean;
 
 class Config extends SplBean {
-    protected $host     = '127.0.0.1';
-    protected $user     = 'root';
-    protected $password = '';
-    protected $database = 'blued';//数据库
+    protected $host;
+    protected $user;
+    protected $password;
+    protected $database;//数据库
     protected $port     = 3306;
     protected $timeout  = 30;
     protected $charset  = 'utf8mb4';
