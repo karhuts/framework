@@ -5,9 +5,9 @@ namespace Karthus\Driver\Pool\Mysql;
 use Swoole\Coroutine\MySQL\Statement;
 
 interface ClientInterface {
-    public function begin();
-    public function commit();
-    public function rollback();
+    public function begin():bool ;
+    public function commit(): bool ;
+    public function rollback(): bool ;
     public function query(string $sql): Result;
     public function lastQuery():? string ;
     public function lastQueryResult():? Result;

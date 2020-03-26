@@ -18,14 +18,11 @@ class Manager {
      *
      * @var array
      */
-    protected $connections = [];
-
+    protected $connections   = [];
     /**
-     * 事务上下文
-     *
      * @var array
      */
-    protected $transactionContext = [];
+    protected $connectorPool = [];
 
     /**
      * 注册
@@ -41,7 +38,8 @@ class Manager {
             throw new PoolException("Mysql pool:{$connectionName} is already been register");
         }
 
-        $this->connections[$connectionName] = $connection;
+        $this->connections[$connectionName]     = $connection;
+        $this->connectorPool[$connectionName]   = $connection;
 
         $poolConfig = PoolManager::getInstance()->register(MysqlPool::class, $connectionName);
         $poolConfig->setExtraConf($connection->getConfig());
@@ -89,6 +87,105 @@ class Manager {
     }
 
     /**
+     * @param string     $connection
+     * @param float|null $timeout
+     * @return bool
+     * @throws \Throwable
+     */
+    public function transaction($connection = 'default', float $timeout = null): bool{
+        if(is_string($connection)){
+            $_connection = $this->getConnection($connection);
+            if(!$_connection){
+                throw new Exception("connection : {$connection} not register");
+            }
+            $client = self::getInstance()->defer($connection, $timeout);
+            if(empty($client)){
+                throw new Exception("connection : {$connection} is empty");
+            }
+        }else{
+            $client = $connection;
+        }
+
+        return $client->begin();
+    }
+
+    /**
+     * 提交事务
+     *
+     * @param string     $connection
+     * @param float|null $timeout
+     * @return bool
+     * @throws \Throwable
+     */
+    public function commit($connection = 'default', float $timeout = null): bool {
+        if(is_string($connection)){
+            $_connection = $this->getConnection($connection);
+            if(!$_connection){
+                throw new Exception("connection : {$connection} not register");
+            }
+            $client = self::getInstance()->defer($connection, $timeout);
+            if(empty($client)){
+                throw new Exception("connection : {$connection} is empty");
+            }
+        }else{
+            $client = $connection;
+        }
+
+        return $client->commit();
+    }
+
+    /**
+     * 回滚
+     *
+     * @param string     $connection
+     * @param float|null $timeout
+     * @return bool
+     * @throws \Throwable
+     */
+    public function rollback($connection = 'default', float $timeout = null): bool {
+        if(is_string($connection)){
+            $_connection = $this->getConnection($connection);
+            if(!$_connection){
+                throw new Exception("connection : {$connection} not register");
+            }
+            $client = self::getInstance()->defer($connection, $timeout);
+            if(empty($client)){
+                throw new Exception("connection : {$connection} is empty");
+            }
+        }else{
+            $client = $connection;
+        }
+
+        return $client->rollback();
+    }
+
+    /**
+     * MYSQL 转义
+     *
+     * @param string     $str
+     * @param string     $connection
+     * @param float|null $timeout
+     * @return string
+     * @throws \Throwable
+     */
+    public function escape(string $str, $connection = 'default', float $timeout = null) : string {
+        if(is_string($connection)){
+            $_connection = $this->getConnection($connection);
+            if(!$_connection){
+                throw new Exception("connection : {$connection} not register");
+            }
+            $client = self::getInstance()->defer($connection, $timeout);
+            if(empty($client)){
+                throw new Exception("connection : {$connection} is empty");
+            }
+        }else{
+            $client = $connection;
+        }
+
+        return $client->escape($str);
+    }
+
+    /**
      * @param string $name
      * @param null   $timeout
      * @return MysqliClient|null
@@ -108,13 +205,13 @@ class Manager {
      * @return AbstractPool|null
      */
     public function pool(string $name): ?AbstractPool {
-        if (isset($this->connections[$name])) {
-            $item = $this->connections[$name];
+        if (isset($this->connectorPool[$name])) {
+            $item = $this->connectorPool[$name];
             if ($item instanceof AbstractPool) {
                 return $item;
             } else {
                 $pool   = PoolManager::getInstance()->getPool(MysqlPool::class, $name);
-                $this->connections[$name] = $pool;
+                $this->connectorPool[$name]   = $pool;
                 return $this->pool($name);
             }
         } else {
@@ -138,30 +235,5 @@ class Manager {
         } else {
             return null;
         }
-    }
-
-    /**
-     * 清理事务上下文
-     *
-     * @param null $connectName
-     * @return bool
-     */
-    protected function clearTransactionContext($connectName = null) {
-        $cid = Coroutine::getCid();
-        if (!isset($this->transactionContext[$cid])){
-            return false;
-        }
-
-        if ($connectName !== null){
-            foreach ($this->transactionContext[$cid] as $key => $name){
-                if ($name === $connectName){
-                    unset($this->transactionContext[$cid][$key]);
-                    return true;
-                }
-                return false;
-            }
-        }
-        unset($this->transactionContext[$cid]);
-        return true;
     }
 }

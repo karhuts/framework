@@ -32,7 +32,12 @@ class MysqliClient extends Mysqli implements ClientInterface , PoolObjectInterfa
             $timeout    = $this->getConfig()->getTimeout();
         }
         try{
-            $ret            = $this->getMysqlClient()->query($builder, $timeout);
+            $ret            = [];
+            $stmt           = $this->getMysqlClient()->prepare($builder, $timeout);
+            if($stmt){
+                $stmt->execute();
+                $ret  = $stmt->fetchAll();
+            }
             $errno          = $this->getMysqlClient()->errno;
             $error          = $this->getMysqlClient()->error;
             $insert_id      = $this->getMysqlClient()->insert_id;
@@ -41,8 +46,8 @@ class MysqliClient extends Mysqli implements ClientInterface , PoolObjectInterfa
             /**
              * 重置mysqli客户端成员属性，避免下次使用
              */
-            $this->getMysqlClient()->errno          = 0;
-            $this->getMysqlClient()->error          = '';
+            $this->getMysqlClient()->errtno          = 0;
+            $this->getMysqlClient()->error           = '';
             $this->getMysqlClient()->insert_id      = 0;
             $this->getMysqlClient()->affected_rows  = 0;
 
@@ -59,6 +64,7 @@ class MysqliClient extends Mysqli implements ClientInterface , PoolObjectInterfa
         } finally {
             // 这里需要进行回收？
             if($errno){
+                $this->getMysqlClient()->close();
                 throw new Exception($error);
             }
         }
@@ -111,23 +117,31 @@ class MysqliClient extends Mysqli implements ClientInterface , PoolObjectInterfa
     }
 
     /**
+     * 开启事务。与 commit 和 rollback 结合实现 MySQL 事务处理。
+     * @return bool
      * @throws \Throwable
      */
-    public function begin() {
-        $this->getMysqlClient()->begin();
+    public function begin(): bool {
+        return $this->getMysqlClient()->begin();
     }
 
     /**
+     * 提交事务。
+     *
+     * @return bool
      * @throws \Throwable
      */
-    public function commit() {
-        $this->getMysqlClient()->commit();
+    public function commit(): bool {
+        return $this->getMysqlClient()->commit();
     }
 
     /**
+     * 回滚事务。
+     *
+     * @return bool
      * @throws \Throwable
      */
-    public function rollback(){
-        $this->getMysqlClient()->rollback();
+    public function rollback(): bool {
+        return $this->getMysqlClient()->rollback();
     }
 }
