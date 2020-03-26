@@ -21,6 +21,7 @@ class KarthusEvent implements Event {
      * @throws \ReflectionException
      */
     public static function initialize() {
+        date_default_timezone_set('Asia/Shanghai');
         // 这里注册 MYSQL 进程池
         $mysqlConfig   = GConfig::getInstance()->getConf("MYSQL");
         ///循环遍历和注册了
@@ -43,8 +44,8 @@ class KarthusEvent implements Event {
                         // 进行配置注入
                         $config         = new MysqlConfig($server);
                         $model          = strtoupper($model);
-                        $key            = "{$serverName}_{$model}";
-                        Manager::getInstance()->addConnection(new Connection($config), $key);
+                        Manager::getInstance()->register(new Connection($config),
+                            "{$serverName}_{$model}");
                     }
                 }
             }
