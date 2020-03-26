@@ -121,12 +121,19 @@ abstract class AbstractModel implements ArrayAccess, JsonSerializable {
      * @return mixed
      * @throws \Throwable
      */
-    public function query(string $builder) : Result{
+    public function query(string $builder, bool $oneResult = false) : Result{
         $this->lastQuery    = $builder;
         try {
             $connectionName = $this->connectionName;
             $ret = Manager::getInstance()->query($builder, $connectionName);
             $this->lastQueryResult = $ret;
+
+            if($oneResult === true){
+                $result     = $ret->getResult();
+                $__         = $result[0] ?? [];
+                $ret->setResult($__);
+            }
+
             return $ret;
         } catch (\Throwable $throwable) {
             throw $throwable;

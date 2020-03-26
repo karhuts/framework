@@ -5,7 +5,6 @@ namespace Karthus\Driver\Pool\Mysql;
 use Karthus\Driver\Mysqli\Mysqli;
 use Karthus\Driver\Pool\PoolObjectInterface;
 use Karthus\Exception\Exception;
-use Swoole\Coroutine\MySQL\Statement;
 
 class MysqliClient extends Mysqli implements ClientInterface , PoolObjectInterface {
 
