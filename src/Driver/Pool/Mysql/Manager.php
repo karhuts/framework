@@ -3,7 +3,11 @@ declare(strict_types=1);
 namespace Karthus\Driver\Pool\Mysql;
 
 use Karthus\Component\Singleton;
+use Karthus\Driver\Pool\AbstractPool;
+use Karthus\Driver\Pool\PoolConf;
+use Karthus\Driver\Pool\PoolManager;
 use Karthus\Exception\Exception;
+use Karthus\Exception\PoolException;
 use Swoole\Coroutine;
 
 class Manager {
@@ -24,15 +28,25 @@ class Manager {
     protected $transactionContext = [];
 
     /**
-     * 添加连接池
+     * 注册
      *
      * @param ConnectionInterface $connection
      * @param string              $connectionName
-     * @return Manager
+     * @return PoolConf
+     * @throws \ReflectionException
      */
-    public function addConnection(ConnectionInterface $connection,string $connectionName = 'default'): Manager {
+    public function register(ConnectionInterface $connection, string $connectionName = 'default'): PoolConf{
+        if(isset($this->connections[$connectionName])){
+            //已经注册，则抛出异常
+            throw new PoolException("Mysql pool:{$connectionName} is already been register");
+        }
+
         $this->connections[$connectionName] = $connection;
-        return $this;
+
+        $poolConfig = PoolManager::getInstance()->register(MysqlPool::class, $connectionName);
+        $poolConfig->setExtraConf($connection->getConfig());
+
+        return $poolConfig;
     }
 
     /**
@@ -56,13 +70,13 @@ class Manager {
      * @throws Exception
      * @throws \Throwable
      */
-    public function query(string $builder, $connection = 'default', float $timeout = null): ?array {
+    public function query(string $builder, $connection = 'default', float $timeout = null): Result {
         if(is_string($connection)){
             $_connection = $this->getConnection($connection);
             if(!$_connection){
                 throw new Exception("connection : {$connection} not register");
             }
-            $client = $_connection->defer($connection, $timeout);
+            $client = self::getInstance()->defer($connection, $timeout);
             if(empty($client)){
                 throw new Exception("connection : {$connection} is empty");
             }
@@ -70,9 +84,42 @@ class Manager {
             $client = $connection;
         }
 
-        $start      = microtime(true);
         $ret        = $client->query($builder);
         return $ret;
+    }
+
+    /**
+     * @param string $name
+     * @param null   $timeout
+     * @return MysqliClient|null
+     * @throws \Throwable
+     */
+    public static function defer(string $name, $timeout = null): ?MysqliClient {
+        $pool = static::getInstance()->pool($name);
+        if ($pool) {
+            return $pool::defer($name, $timeout);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param string $name
+     * @return AbstractPool|null
+     */
+    public function pool(string $name): ?AbstractPool {
+        if (isset($this->connections[$name])) {
+            $item = $this->connections[$name];
+            if ($item instanceof AbstractPool) {
+                return $item;
+            } else {
+                $pool   = PoolManager::getInstance()->getPool(MysqlPool::class, $name);
+                $this->connections[$name] = $pool;
+                return $this->pool($name);
+            }
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -85,22 +132,11 @@ class Manager {
      * @throws \Throwable
      */
     public function invoke(callable $call,string $connectionName = 'default',float $timeout = null) {
-        $connection = $this->getConnection($connectionName);
-        if($connection){
-            $client = $connection->getClientPool()->getObject($timeout);
-            if($client){
-                try{
-                    return call_user_func($call, $client);
-                }catch (\Throwable $exception){
-                    throw $exception;
-                }finally{
-                    $connection->getClientPool()->recycle($client);
-                }
-            }else{
-                throw new Exception("connection : {$connectionName} is empty");
-            }
-        }else{
-            throw new Exception("connection : {$connectionName} not register");
+        $pool = static::getInstance()->pool($connectionName);
+        if ($pool) {
+            return $pool::invoke($connectionName, $call, $timeout);
+        } else {
+            return null;
         }
     }
 

@@ -70,7 +70,7 @@ abstract class AbstractModel implements ArrayAccess, JsonSerializable {
      * @return mixed
      * @throws \Throwable
      */
-    public function query(string $builder, bool $raw = false) {
+    public function query(string $builder) {
         $this->lastQuery    = $builder;
         if ($this->tempConnectionName) {
             $connectionName = $this->tempConnectionName;
@@ -79,24 +79,15 @@ abstract class AbstractModel implements ArrayAccess, JsonSerializable {
         }
         try {
             if($this->client){
-                $ret = Manager::getInstance()->query($builder, $raw, $this->client);
+                $ret = Manager::getInstance()->query($builder, $this->client);
             }else{
-                $ret = Manager::getInstance()->query($builder, $raw, $connectionName);
+                $ret = Manager::getInstance()->query($builder, $connectionName);
             }
             $this->lastQueryResult = $ret;
-            return $ret;
+            return $ret->getResult();
         } catch (\Throwable $throwable) {
             throw $throwable;
         }
-    }
-
-    /**
-     * @param string $sql
-     * @param array  $data
-     * @param float  $timeout
-     * @return Statement|null
-     */
-    public function prepare(string $sql, array $data, float $timeout): ?Statement {
     }
 
     /**
@@ -126,5 +117,23 @@ abstract class AbstractModel implements ArrayAccess, JsonSerializable {
      */
     public static function invoke(ClientInterface $client): AbstractModel {
         return (self::getInstance())->setClient($client);
+    }
+
+    /**
+     * 最后结果
+     *
+     * @return Result|null
+     */
+    public function lastQueryResult(): ?Result {
+        return $this->lastQueryResult;
+    }
+
+    /**
+     * 最后执行SQL
+     *
+     * @return string|null
+     */
+    public function lastQuery(): ?string {
+        return $this->lastQuery;
     }
 }

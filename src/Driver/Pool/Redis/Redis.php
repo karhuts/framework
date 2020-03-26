@@ -46,7 +46,7 @@ class Redis {
      * @return Connection|null
      * @throws \Throwable
      */
-    static function defer(string $name, $timeout = null): ?Connection {
+    public static function defer(string $name, $timeout = null): ?Connection {
         $pool = static::getInstance()->pool($name);
         if ($pool) {
             return $pool::defer($name, $timeout);

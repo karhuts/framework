@@ -22,12 +22,6 @@ class Mysqli {
     private $coroutineMysqlClient;//swoole 协程MYSQL客户端
     private $currentReconnectTimes = 0;
 
-    /**
-     * 事务配置项
-     */
-    private $startTransaction = false;
-    private $transactionLevel = 0;  // 当前的事务层级
-
     public function __construct(Config $config) {
         $this->config               = $config;
         $this->coroutineMysqlClient = new CoroutineMySQL();
@@ -115,12 +109,22 @@ class Mysqli {
     }
 
     /**
-     * 析构被调用时关闭当前链接并释放客户端对象
+     * 关闭
+     *
+     * @return bool
      */
-    public function __destruct() {
+    public function close():bool {
         if (isset($this->coroutineMysqlClient) && $this->coroutineMysqlClient->connected) {
             $this->coroutineMysqlClient->close();
         }
         unset($this->coroutineMysqlClient);
+        return true;
+    }
+
+    /**
+     * 析构被调用时关闭当前链接并释放客户端对象
+     */
+    public function __destruct() {
+        $this->close();
     }
 }

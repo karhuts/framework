@@ -15,7 +15,7 @@ class MysqlPool extends AbstractPool {
      */
     protected function createObject() {
         /** @var Config $config */
-        $config = $this->getConfig();
+        $config = $this->getConfig()->getExtraConf();
         $client = new MysqliClient(new MysqlConfig($config->toArray()));
         if($client->connect()){
             return $client;
