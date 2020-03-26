@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+use Karthus\Command\Runner;
+
+///设置时区
+date_default_timezone_set('Asia/Shanghai');
+ini_set("display_errors", "On");
+error_reporting(E_ALL | E_STRICT);
+
+defined('KARTHUS_ROOT') or define('KARTHUS_ROOT', realpath(getcwd()));
+
+$file   =   KARTHUS_ROOT . '/vendor/autoload.php';
+if (file_exists($file)) {
+    require_once($file);
+}else{
+    exit("include composer autoload.php fail\n");
+}
+
+$args = $argv;
+array_shift($args);
+$ret  = Runner::getInstance()->run($args);
+
+if(!empty($ret)){
+    echo $ret."\n";
+}
