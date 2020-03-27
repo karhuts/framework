@@ -8,7 +8,6 @@ use Karthus\Driver\Pool\PoolConf;
 use Karthus\Driver\Pool\PoolManager;
 use Karthus\Exception\Exception;
 use Karthus\Exception\PoolException;
-use Swoole\Coroutine;
 
 class Manager {
     use Singleton;
@@ -69,19 +68,7 @@ class Manager {
      * @throws \Throwable
      */
     public function query(string $builder, $connection = 'default', float $timeout = null): Result {
-        if(is_string($connection)){
-            $_connection = $this->getConnection($connection);
-            if(!$_connection){
-                throw new Exception("connection : {$connection} not register");
-            }
-            $client = self::getInstance()->defer($connection, $timeout);
-            if(empty($client)){
-                throw new Exception("connection : {$connection} is empty");
-            }
-        }else{
-            $client = $connection;
-        }
-
+        $client = $this->getClient($connection, $timeout);
         $ret        = $client->query($builder);
         return $ret;
     }
@@ -93,19 +80,7 @@ class Manager {
      * @throws \Throwable
      */
     public function transaction($connection = 'default', float $timeout = null): bool{
-        if(is_string($connection)){
-            $_connection = $this->getConnection($connection);
-            if(!$_connection){
-                throw new Exception("connection : {$connection} not register");
-            }
-            $client = self::getInstance()->defer($connection, $timeout);
-            if(empty($client)){
-                throw new Exception("connection : {$connection} is empty");
-            }
-        }else{
-            $client = $connection;
-        }
-
+        $client = $this->getClient($connection, $timeout);
         return $client->begin();
     }
 
@@ -118,19 +93,7 @@ class Manager {
      * @throws \Throwable
      */
     public function commit($connection = 'default', float $timeout = null): bool {
-        if(is_string($connection)){
-            $_connection = $this->getConnection($connection);
-            if(!$_connection){
-                throw new Exception("connection : {$connection} not register");
-            }
-            $client = self::getInstance()->defer($connection, $timeout);
-            if(empty($client)){
-                throw new Exception("connection : {$connection} is empty");
-            }
-        }else{
-            $client = $connection;
-        }
-
+        $client = $this->getClient($connection, $timeout);
         return $client->commit();
     }
 
@@ -143,19 +106,7 @@ class Manager {
      * @throws \Throwable
      */
     public function rollback($connection = 'default', float $timeout = null): bool {
-        if(is_string($connection)){
-            $_connection = $this->getConnection($connection);
-            if(!$_connection){
-                throw new Exception("connection : {$connection} not register");
-            }
-            $client = self::getInstance()->defer($connection, $timeout);
-            if(empty($client)){
-                throw new Exception("connection : {$connection} is empty");
-            }
-        }else{
-            $client = $connection;
-        }
-
+        $client = $this->getClient($connection, $timeout);
         return $client->rollback();
     }
 
@@ -169,19 +120,7 @@ class Manager {
      * @throws \Throwable
      */
     public function escape(string $str, $connection = 'default', float $timeout = null) : string {
-        if(is_string($connection)){
-            $_connection = $this->getConnection($connection);
-            if(!$_connection){
-                throw new Exception("connection : {$connection} not register");
-            }
-            $client = self::getInstance()->defer($connection, $timeout);
-            if(empty($client)){
-                throw new Exception("connection : {$connection} is empty");
-            }
-        }else{
-            $client = $connection;
-        }
-
+        $client = $this->getClient($connection, $timeout);
         return $client->escape($str);
     }
 
@@ -235,5 +174,30 @@ class Manager {
         } else {
             return null;
         }
+    }
+
+    /**
+     * 获取client
+     *
+     * @param            $connection
+     * @param float|null $timeout
+     * @return MysqliClient|null
+     * @throws \Throwable
+     */
+    private function getClient($connection, float $timeout = null):?MysqliClient {
+        if(is_string($connection)){
+            $_connection = $this->getConnection($connection);
+            if(!$_connection){
+                throw new Exception("connection : {$connection} not register");
+            }
+            $client = self::getInstance()->defer($connection, $timeout);
+            if(empty($client)){
+                throw new Exception("connection : {$connection} is empty");
+            }
+        }else{
+            $client = $connection;
+        }
+
+        return $client;
     }
 }

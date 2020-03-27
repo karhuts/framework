@@ -63,8 +63,8 @@ class Result {
     /**
      * @return array
      */
-    public function getResultOne(): ?array {
-        return $this->result[0] ?? null;
+    public function getResultOne(): array {
+        return $this->result[0] ?? [];
     }
 
     /**
@@ -98,11 +98,16 @@ class Result {
     /**
      * @param int $totalCount
      */
-    public function setTotalCount(int $totalCount): void {
+    public function setTotalCount(int $totalCount){
         $this->totalCount = $totalCount;
     }
 
-    public function toArray() {
+    /**
+     * 转换为数组
+     *
+     * @return array
+     */
+    public function toArray(): array {
         return [
             'lastInsertId' => $this->lastInsertId,
             'result'       => $this->result,

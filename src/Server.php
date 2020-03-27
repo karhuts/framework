@@ -34,6 +34,7 @@ class Server {
     public function __construct() {
         $this->mainServerEventRegister = new EventRegister();
     }
+
     /**
      * @param string $serverName
      * @return null|\Swoole\Server|Port|\Swoole\WebSocket\Server|\Swoole\Http\Server
@@ -134,6 +135,12 @@ class Server {
         $this->getSwooleServer()->addProcess($process->getProcess());
     }
 
+    /**
+     * 获取进程信息
+     *
+     * @param string $processName
+     * @return Process|null
+     */
     public function getProcess(string $processName) : ? Process {
         return $this->customProcess[$processName];
     }

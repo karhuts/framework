@@ -12,7 +12,6 @@ use Karthus\Helper\FileHelper;
 use Karthus\Http\Dispatcher;
 use Karthus\Http\Request;
 use Karthus\Http\Response;
-use Karthus\Http\Router\Router;
 use Karthus\Logger\LoggerInterface;
 use Karthus\Trigger\Location;
 use Karthus\Trigger\TriggerInterface;
@@ -307,22 +306,25 @@ class Core {
         });
     }
 
-    /***
+    /**
+     * @todo
+     *
      * 注册额外的handler
      */
-    private function extraHandler() {
-        //TODO crontab
-        //TODO TASK
-    }
+    private function extraHandler() {}
 
     /**
      * 启动服务
      */
     public function start() {
-        //给主进程也命名
+        // 命名
         $serverName = Config::getInstance()->getConf('SERVER_NAME');
         if(isWin() === false && isMac() === false){
             @cli_set_process_title($serverName);
+            // swoole_set_process_name 可用于 PHP5.2 之上的任意版本
+            // swoole_set_process_name 兼容性比 cli_set_process_title 要差
+            // 如果存在 cli_set_process_title 函数则优先使用 cli_set_process_title
+            // @swoole_set_process_name($serverName);
         }
         //启动
         Server::getInstance()->start();

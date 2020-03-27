@@ -7,18 +7,28 @@ use JsonSerializable;
 use Karthus\Component\Singleton;
 use Karthus\Exception\Exception;
 use Swoole\Coroutine;
-use Swoole\Coroutine\MySQL\Statement;
 
 abstract class AbstractModel implements ArrayAccess, JsonSerializable {
     use Singleton;
 
-    /** @var string 连接池名称 */
+    /**
+     * 连接池名称
+     * @var string
+     */
     protected $connectionName = 'default';
-    private $lastQueryResult;
-    private $lastQuery;
 
-    /** @var ClientInterface */
-    private $client;
+    /**
+     * 最后执行结果
+     *
+     * @var Result
+     */
+    protected $lastQueryResult;
+    /**
+     * 最后查询SQL
+     *
+     * @var string
+     */
+    protected $lastQuery;
 
     /**
      * 事务上下文
@@ -29,21 +39,28 @@ abstract class AbstractModel implements ArrayAccess, JsonSerializable {
 
     /**
      * 连接名设置
+     *
      * @param string $name
+     * @param bool   $isRead
      * @return AbstractModel
      */
-    public function connection(string $name) {
-        $this->connectionName       = $name;
+    public function connection(string $name, bool $isRead = true): AbstractModel{
+        if($isRead === true){
+            $name   = "{$name}_READ";
+        }else {
+            $name   = "{$name}_WRITE";
+        }
+        $this->connectionName       = strtoupper($name);
         return $this;
     }
 
 
     /**
      * 获取使用的链接池名
-     * @return string|null
+     * @return string
      */
-    public function getConnectionName() {
-        return $this->connectionName;
+    public function getConnectionName(): string {
+        return strval($this->connectionName);
     }
 
 
@@ -74,7 +91,6 @@ abstract class AbstractModel implements ArrayAccess, JsonSerializable {
     /**
      * 提交事务
      *
-     * @param string|null $connectName
      * @return bool
      * @throws \Throwable
      */
@@ -116,24 +132,17 @@ abstract class AbstractModel implements ArrayAccess, JsonSerializable {
 
     /**
      * 执行QueryBuilder
-     * @param string $builder
-     * @param bool $raw
-     * @return mixed
+     *
+     * @param string $sql 执行的SQL语句
+     * @return Result
      * @throws \Throwable
      */
-    public function query(string $builder, bool $oneResult = false) : Result{
-        $this->lastQuery    = $builder;
+    public function query(string $sql) : Result{
+        $this->lastQuery    = $sql;
         try {
             $connectionName = $this->connectionName;
-            $ret = Manager::getInstance()->query($builder, $connectionName);
+            $ret = Manager::getInstance()->query($sql, $connectionName);
             $this->lastQueryResult = $ret;
-
-            if($oneResult === true){
-                $result     = $ret->getResult();
-                $__         = $result[0] ?? [];
-                $ret->setResult($__);
-            }
-
             return $ret;
         } catch (\Throwable $throwable) {
             throw $throwable;
@@ -188,7 +197,6 @@ abstract class AbstractModel implements ArrayAccess, JsonSerializable {
     /**
      * 清理事务上下文
      *
-     * @param null $connectName
      * @return bool
      */
     protected function clearTransactionContext() {

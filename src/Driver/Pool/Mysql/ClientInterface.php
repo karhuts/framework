@@ -2,8 +2,6 @@
 declare(strict_types=1);
 namespace Karthus\Driver\Pool\Mysql;
 
-use Swoole\Coroutine\MySQL\Statement;
-
 interface ClientInterface {
     public function begin():bool ;
     public function commit(): bool ;
