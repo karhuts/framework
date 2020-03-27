@@ -100,7 +100,7 @@ class KarthusEvent implements Event {
         $ip             = strval($request->getRemoteIP());
         $uid            = intval($request->getRemoteUserID());
         $method         = strval($request->getMethod());
-        $path           = strval($request->getUri());
+        $path           = strval($request->getUri()->getPath());
         $ua             = strval($request->getUserAgent());
         $lang           = strval($request->getAcceptLanguage());
         $remoteAddr     = strval($request->getRemoteAddr());
