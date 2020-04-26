@@ -1,8 +1,8 @@
 {
-    "name": "min/karthus",
+    "name": "karthus/framework",
     "description": "A simple Framework For Swoole",
     "type": "library",
-    "version": "v2.0.17",
+    "version": "v2.0.18",
     "keywords": [
         "swoole",
         "framework",
@@ -45,7 +45,6 @@
         "ext-posix": "*",
         "ext-json": "*",
         "ext-apcu": ">=5.1.7",
-        "ext-redis": "*",
         "ext-simplexml": "*",
         "ext-ctype": "*",
         "ext-mbstring": "*"

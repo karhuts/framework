@@ -215,7 +215,7 @@ class Core {
      * 加载路由配置文件
      */
     private function loadRouter(){
-        $file           = KARTHUS_ROOT . '/Config/router.php';
+        $file           = KARTHUS_ROOT . '/Config/Router.php';
         $data           = $data = require_once($file);
         $this->routers  = $data;
     }
