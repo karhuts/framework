@@ -6,13 +6,14 @@ namespace Karthus\Spl;
 use ArrayObject;
 
 class SplArray extends ArrayObject {
+
     /**
      * @param $name
      * @return mixed|null
      */
     public function __get($name) {
-        if (isset($this[ $name ])) {
-            return $this[ $name ];
+        if (isset($this[$name])) {
+            return $this[$name];
         } else {
             return null;
         }
@@ -23,7 +24,7 @@ class SplArray extends ArrayObject {
      * @param $value
      */
     public function __set($name, $value): void {
-        $this[ $name ] = $value;
+        $this[$name] = $value;
     }
 
     /**
@@ -37,7 +38,7 @@ class SplArray extends ArrayObject {
      * @return array
      */
     public function getArrayCopy(): array {
-        return (array) $this;
+        return (array)$this;
     }
 
     /**
@@ -270,57 +271,5 @@ class SplArray extends ArrayObject {
      */
     public function merge(array $data) {
         return $this->loadArray($data + $this->getArrayCopy());
-    }
-
-    /**
-     * @param bool   $CD_DATA
-     * @param string $rootName
-     * @param string $encoding
-     * @return false|string
-     */
-    public function toXML($CD_DATA = false, $rootName = 'xml', $encoding = 'UTF-8') {
-        $data = $this->getArrayCopy();
-        if ($CD_DATA) {
-            /*
-             * 默认制定
-             */
-            $xml = new class('<?xml version="1.0" encoding="' . $encoding . '" ?>' . "<{$rootName}></{$rootName}>") extends
-                \SimpleXMLElement {
-                public function addCData($cdata_text) {
-                    $dom = dom_import_simplexml($this);
-                    $cdata = $dom->ownerDocument->createCDATASection($cdata_text);
-                    $dom->appendChild($cdata);
-                }
-            };
-        } else {
-            $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="' . $encoding . '" ?>' . "<{$rootName} ></{$rootName}>");
-        }
-        $parser = function ($xml, $data) use (&$parser, $CD_DATA) {
-            foreach ($data as $k => $v) {
-                if (is_array($v)) {
-                    if (!is_numeric($k)) {
-                        $ch = $xml->addChild($k);
-                    } else {
-                        $ch = $xml->addChild(substr($xml->getName(), 0, -1));
-                    }
-                    $parser($ch, $v);
-                } else {
-                    if (is_numeric($k)) {
-                        $xml->addChild($k, $v);
-                    } else {
-                        if ($CD_DATA) {
-                            $n = $xml->addChild($k);
-                            $n->addCData($v);
-                        } else {
-                            $xml->addChild($k, $v);
-                        }
-                    }
-                }
-            }
-        };
-        $parser($xml, $data);
-        unset($parser);
-        $str = $xml->asXML();
-        return substr($str, strpos($str, "\n") + 1);
     }
 }

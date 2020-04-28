@@ -8,6 +8,13 @@ use Karthus\Core;
 use Karthus\Server;
 use Karthus\SystemConst;
 
+/**
+ * 启动脚本
+ *
+ * Class Start
+ *
+ * @package Karthus\Command\DefaultCommand
+ */
 class Start implements CommandInterface{
 
     /**
@@ -24,11 +31,6 @@ class Start implements CommandInterface{
     public function exec(array $args): ?string {
         opCacheClear();
         $msg  = welcome();
-        $mode = 'develop';
-        if (!Core::getInstance()->isDev()) {
-            $mode = 'produce';
-        }
-
         $conf = Config::getInstance();
         // 设置为静默启动
         if (in_array("d", $args) || in_array("daemonize", $args)) {
@@ -72,12 +74,12 @@ class Start implements CommandInterface{
             $index++;
         }
 
-        $ips    = getLocalIP();
+        $ips        = getLocalIP();
         foreach ($ips as $eth => $val) {
-            $msg = $msg . displayItem('ip@' . $eth, $val) . "\n";
+            $msg    = $msg . displayItem('ip@' . $eth, $val) . "\n";
         }
 
-        $data = $conf->getConf('MAIN_SERVER.SETTING');
+        $data       = $conf->getConf('MAIN_SERVER.SETTING');
         if(empty($data['user'])){
             $data['user'] = get_current_user();
         }
@@ -93,7 +95,6 @@ class Start implements CommandInterface{
         $msg = $msg . displayItem('Swoole Version', phpversion('swoole')) . "\n";
         $msg = $msg . displayItem('PHP Version', phpversion()) . "\n";
         $msg = $msg . displayItem('Karthus Version', SystemConst::KARTHUS_VERSION) . "\n";
-        $msg = $msg . displayItem('develop/produce', $mode) . "\n";
         $msg = $msg . displayItem('Log Dir', KARTHUS_LOG_DIR) . "\n";
         echo $msg;
         Core::getInstance()->start();
@@ -107,12 +108,11 @@ class Start implements CommandInterface{
         $logo = welcome();
         return $logo . <<<HELP
 \e[33mOperation:\e[0m
-\e[31m  php karthus start [arg1] [arg2]\e[0m
+\e[31m  php karthus start [arg1]\e[0m
 \e[33mUsage:\e[0m
 \e[36m  to start current karthus server \e[0m
 \e[33mArgs:\e[0m
 \e[32m  daemonize \e[0m                   run in daemonize
-\e[32m  produce \e[0m                     load Config/produce.php
 HELP;
     }
 }

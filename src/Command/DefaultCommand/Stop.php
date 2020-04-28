@@ -7,6 +7,13 @@ use Karthus\Config;
 use Karthus\Core;
 use Swoole\Process;
 
+/**
+ * 停止脚本
+ *
+ * Class Stop
+ *
+ * @package Karthus\Command\DefaultCommand
+ */
 class Stop implements CommandInterface {
 
     /**
@@ -20,17 +27,14 @@ class Stop implements CommandInterface {
      * @inheritDoc
      */
     public function exec(array $args): ?string {
-        $force = false;
+        $force      = false;
         if(in_array('force', $args)){
-            $force = true;
+            $force  = true;
         }
-        if(in_array('produce', $args)){
-            Core::getInstance()->setDev(false);
-        }
-        $Conf = Config::getInstance();
-        $pidFile = $Conf->getConf("MAIN_SERVER.SETTING.pid_file");
+        $Conf       = Config::getInstance();
+        $pidFile    = $Conf->getConf("MAIN_SERVER.SETTING.pid_file");
         if (file_exists($pidFile)) {
-            $pid = intval(file_get_contents($pidFile));
+            $pid    = intval(file_get_contents($pidFile));
             if (!Process::kill($pid, 0)) {
                 return "PID :{$pid} not exist ";
             }
@@ -58,7 +62,7 @@ class Stop implements CommandInterface {
             }
             return 'stop server fail';
         } else {
-            return "PID file does not exist, please check whether to run in the daemon mode!";
+            return "PID file does not exist!";
         }
     }
 
@@ -69,12 +73,11 @@ class Stop implements CommandInterface {
         $logo = welcome();
         return $logo.<<<HELP
 \e[33mOperation:\e[0m
-\e[31m  php karthus stop [arg1] [arg2]\e[0m
+\e[31m  php karthus stop [arg1]\e[0m
 \e[33mUsage:\e[0m
 \e[36m  to stop current karthus server \e[0m
 \e[33mArgs:\e[0m
 \e[32m  force \e[0m                   force to kill server
-\e[32m  produce \e[0m                 load Config/produce.php
 HELP;
     }
 }

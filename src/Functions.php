@@ -70,19 +70,19 @@ if(!function_exists('getLocalIP')){
 
 if(!function_exists('releaseResource')){
     /**
-     * 释放资源
+     * 释放资源，覆盖资源
      *
      * @param $source
      * @param $destination
      */
     function releaseResource($source, $destination){
         clearstatcache();
-        $replace = true;
+        $replace        = true;
         if (is_file($destination)) {
-            $filename = basename($destination);
+            $filename   = basename($destination);
             echo "{$filename} has already existed, do you want to replace it? [ Y / N (default) ] : ";
-            $answer = strtolower(trim(strtoupper(fgets(STDIN))));
-            if (!in_array($answer, [ 'y', 'yes' ])) {
+            $answer     = strtolower(trim(strtoupper(fgets(STDIN))));
+            if (!in_array($answer, ['y', 'yes'])) {
                 $replace = false;
             }
         }

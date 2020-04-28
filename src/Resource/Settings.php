@@ -41,6 +41,7 @@ return [
             'timeout'       => 15,
         ]
     ],
+    //日志存储目录
     'LOG_DIR'               => null,
     'MYSQL'                 => [
         'account'       => [

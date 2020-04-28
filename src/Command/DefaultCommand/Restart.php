@@ -18,12 +18,10 @@ class Restart implements CommandInterface{
 
     /**
      * @inheritDoc
+     * @throws \Throwable
      */
     public function exec(array $args): ?string {
-        if (in_array('produce', $args)) {
-            Core::getInstance()->setDev(false);
-        }
-        $result = $this->stop();
+        $result     = $this->stop();
         if ($result!== true) {
             return $result;
         }
@@ -81,7 +79,7 @@ class Restart implements CommandInterface{
             }
             return 'stop server fail';
         } else {
-            return "PID file does not exist, please check whether to run in the daemon mode!";
+            return "PID file does not exist!";
         }
     }
 
@@ -92,11 +90,9 @@ class Restart implements CommandInterface{
         $logo = welcome();
         return $logo . <<<HELP
 \e[33mOperation:\e[0m
-\e[31m  php karthus restart [arg1] \e[0m
+\e[31m  php karthus restart\e[0m
 \e[33mUsage:\e[0m
 \e[36m  to restart current karthus server \e[0m
-\e[33mArgs:\e[0m
-\e[32m  produce \e[0m                     load Config/produce.php
 HELP;
     }
 }

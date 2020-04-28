@@ -28,9 +28,9 @@ class SplDoubleLink {
 
     /**
      * @param mixed ...$arg
-     * @return SplDoubleLink
+     * @return object
      */
-    public function next(...$arg): SplDoubleLink {
+    public function next(...$arg): object {
         if (!$this->next) {
             $this->next = $this->newInstance(...$arg);
         }
@@ -39,9 +39,9 @@ class SplDoubleLink {
 
     /**
      * @param mixed ...$arg
-     * @return SplDoubleLink
+     * @return object
      */
-    public function pre(...$arg): SplDoubleLink {
+    public function pre(...$arg): object {
         if (!$this->pre) {
             $this->pre = $this->newInstance(...$arg);
         }
@@ -66,10 +66,9 @@ class SplDoubleLink {
 
     /**
      * @param mixed ...$arg
-     * @return SplDoubleLink
-     * @throws \ReflectionException
+     * @return object
      */
-    private function newInstance(...$arg): SplDoubleLink {
+    private function newInstance(...$arg): object {
         $ref = new \ReflectionClass(static::class);
         return $ref->newInstanceArgs($arg);
     }

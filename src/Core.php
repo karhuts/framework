@@ -23,35 +23,8 @@ class Core {
     private $routers = [];
 
     /**
-     * 是否是测试
      *
-     * @var bool
-     */
-    private $isDev = true;
-
-
-    /**
-     * 设置开发环境
-     *
-     * @param bool $isDev
-     * @return Core
-     */
-    public function setDev(bool $isDev): Core {
-        $this->isDev    = !!$isDev;
-
-        return $this;
-    }
-
-    /**
-     * 获取开发环境
-     *
-     * @return bool
-     */
-    public function isDev() : bool {
-        return !!$this->isDev;
-    }
-
-    /**
+     * 创建服务
      *
      * @return $this
      * @throws \Throwable
@@ -202,12 +175,7 @@ class Core {
      * @throws \Exception
      */
     private function loadConfig() {
-        if($this->isDev){
-            $file  = KARTHUS_ROOT . '/Config/dev.php';
-        }else{
-            $file  = KARTHUS_ROOT . '/Config/produce.php';
-        }
-        Config::getInstance()->loadConfig($file);
+        Config::getInstance()->loadConfig(KARTHUS_ROOT . '/Config/Settings.php');
     }
 
     /**
@@ -301,7 +269,8 @@ class Core {
             }
         });
 
-        EventHelper::registerWithAdd($register,$register::onWorkerExit,function (\Swoole\Server $server, int $workerId){
+        EventHelper::registerWithAdd($register,$register::onWorkerExit,
+            function (\Swoole\Server $server, int $workerId){
             //TODO
         });
     }
