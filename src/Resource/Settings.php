@@ -88,6 +88,6 @@ return [
         'fallback_locale'   => 'en',
         // 语言文件存放的文件夹
         // Karthus 会自动扫描 path 下所有语言包信息
-        'path'              => KARTHUS_ROOT . '/languages',
+        'path'              => KARTHUS_ROOT . '/Languages',
     ],
 ];
