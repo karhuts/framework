@@ -151,7 +151,6 @@ class I18N {
     protected function parseBasicSegments(array $segments): array {
         $group  = $segments[0];
         $item   = count($segments) === 1 ? null : implode('.', array_slice($segments, 1));
-
         return [$group, $item];
     }
 
@@ -163,12 +162,7 @@ class I18N {
      */
     protected function parseNamespacedSegments(string $key): array {
         $itemSegments       = explode('.', $key);
-
-        $groupAndItem       = array_slice(
-            $this->parseBasicSegments($itemSegments),
-            1
-        );
-
+        $groupAndItem       = $this->parseBasicSegments($itemSegments);
         return $groupAndItem;
     }
 

@@ -156,6 +156,21 @@ if(!function_exists('translate')) {
      * @param bool   $fallback
      */
     function translate(string $key, array $replace = [], string $locale = 'zh-CN', bool $fallback = false){
-        I18N::getInstance()->translate($key, $replace, $locale, $fallback);
+        return I18N::getInstance()->translate($key, $replace, $locale, $fallback);
+    }
+}
+
+
+if(!function_exists('__')) {
+    /**
+     * 翻译语言包 translate 函数的别名
+     *
+     * @param string $key
+     * @param array  $replace
+     * @param string $locale
+     * @param bool   $fallback
+     */
+    function __(string $key, array $replace = [], string $locale = 'zh-CN', bool $fallback = false){
+        return translate($key, $replace, $locale, $fallback);
     }
 }
