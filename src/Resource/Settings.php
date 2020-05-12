@@ -80,4 +80,14 @@ return [
         // 非集群方式
         'TICKTOCKS'         => '10.10.159.251:6379',
     ],
+    // 国际化语言包
+    'I18N'                  => [
+        // 默认语言
+        'locale'            => 'zh_CN',
+        // 回退语言，当默认语言的语言文本没有提供时，就会使用回退语言的对应语言文本
+        'fallback_locale'   => 'en',
+        // 语言文件存放的文件夹
+        // Karthus 会自动扫描 path 下所有语言包信息
+        'path'              => KARTHUS_ROOT . '/languages',
+    ],
 ];

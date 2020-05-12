@@ -64,9 +64,9 @@ class TableConfig extends AbstractConfig {
      */
     public function setConf($key, $val): bool {
         if (strpos($key, ".") > 0) {
-            $temp = explode(".", $key);
-            $key = array_shift($temp);
-            $data = $this->getConf($key);
+            $temp   = explode(".", $key);
+            $key    = array_shift($temp);
+            $data   = $this->getConf($key);
             if (is_array($data)) {
                 $data = new SplArray($data);
             } else {

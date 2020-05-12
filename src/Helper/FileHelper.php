@@ -8,13 +8,13 @@ namespace Karthus\Helper;
  * @package Karthus\Helper
  */
 class FileHelper {
+
     /**
      * 创建目录
      *
      * @param string  $dirPath     需要创建的目录
      * @param integer $permissions 目录权限
      * @return bool
-     * @author : evalor <master@evalor.cn>
      */
     public static function createDirectory($dirPath, $permissions = 0755) {
         if (!is_dir($dirPath)) {
@@ -34,7 +34,6 @@ class FileHelper {
      * @param string $dirPath       需要创建的目录
      * @param bool   $keepStructure 是否保持目录结构
      * @return bool
-     * @author : evalor <master@evalor.cn>
      */
     public static function cleanDirectory($dirPath, $keepStructure = false) {
         $scanResult = static::scanDirectory($dirPath);
@@ -57,7 +56,6 @@ class FileHelper {
      *
      * @param $dirPath
      * @return bool
-     * @author : evalor <master@evalor.cn>
      */
     public static function deleteDirectory($dirPath) {
         $dirPath = realpath($dirPath);
@@ -73,7 +71,6 @@ class FileHelper {
      * @param string $target    目标位置
      * @param bool   $overwrite 是否覆盖目标文件
      * @return bool
-     * @author : evalor <master@evalor.cn>
      */
     public static function copyDirectory($source, $target, $overwrite = true) {
         $scanResult = static::scanDirectory($source);
@@ -99,7 +96,6 @@ class FileHelper {
      * @param string $target    目标位置
      * @param bool   $overwrite 是否覆盖目标文件
      * @return bool
-     * @author : evalor <master@evalor.cn>
      */
     public static function moveDirectory($source, $target, $overwrite = true) {
         $scanResult = static::scanDirectory($source);
@@ -126,16 +122,21 @@ class FileHelper {
      * @param string $target    目标位置
      * @param bool   $overwrite 是否覆盖目标文件
      * @return bool
-     * @author : evalor <master@evalor.cn>
      */
     public static function copyFile($source, $target, $overwrite = true) {
-        if (!file_exists($source)) return false;
-        if (file_exists($target) && $overwrite == false) return false;
-        elseif (file_exists($target) && $overwrite == true) {
+        if (!file_exists($source)) {
+            return false;
+        }
+        if (file_exists($target) && $overwrite == false) {
+            return false;
+        } elseif (file_exists($target) && $overwrite == true) {
             if (!unlink($target)) return false;
         }
         $targetDir = dirname($target);
-        if (!self::createDirectory($targetDir)) return false;
+        if (!self::createDirectory($targetDir)) {
+            return false;
+        }
+
         return copy($source, $target);
     }
 
@@ -145,7 +146,6 @@ class FileHelper {
      * @param $filePath
      * @param $overwrite
      * @return bool
-     * @author : evalor <master@evalor.cn>
      */
     public static function touchFile($filePath, $overwrite = true) {
         if (file_exists($filePath) && $overwrite == false) {
@@ -191,7 +191,6 @@ class FileHelper {
      * @param string $target    目标位置
      * @param bool   $overwrite 是否覆盖目标文件
      * @return bool
-     * @author : evalor <master@evalor.cn>
      */
     public static function moveFile($source, $target, $overwrite = true) {
         if (!file_exists($source)) return false;
@@ -209,7 +208,6 @@ class FileHelper {
      *
      * @param string $dirPath
      * @return array|bool
-     * @author : evalor <master@evalor.cn>
      */
     public static function scanDirectory($dirPath) {
         if (!is_dir($dirPath)) return false;
@@ -221,16 +219,16 @@ class FileHelper {
 
         try {
             do {
-                $workDir = array_pop($dirs);
+                $workDir    = array_pop($dirs);
                 $scanResult = scandir($workDir);
                 foreach ($scanResult as $files) {
                     if ($files == '.' || $files == '..') continue;
                     $realPath = $workDir . $files;
                     if (is_dir($realPath)) {
                         array_push($dirs, $realPath . '/');
-                        $dirContainer[] = $realPath;
+                        $dirContainer[]     = $realPath;
                     } elseif (is_file($realPath)) {
-                        $fileContainer[] = $realPath;
+                        $fileContainer[]    = $realPath;
                     }
                 }
             } while ($dirs);
@@ -238,6 +236,9 @@ class FileHelper {
             return false;
         }
 
-        return ['files' => $fileContainer, 'dirs' => $dirContainer];
+        return [
+            'files' => $fileContainer,
+            'dirs' => $dirContainer
+        ];
     }
 }

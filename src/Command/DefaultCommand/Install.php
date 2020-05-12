@@ -19,12 +19,16 @@ class Install implements CommandInterface {
      */
     public function exec(array $args): ?string {
         echo welcome();
+
+        // 先删除可执行文件karthus
         if(is_file(KARTHUS_ROOT . '/karthus')){
             @unlink(KARTHUS_ROOT . '/karthus');
         }
 
         //保存一个可执行文件
-        @copy(__DIR__.'/../../../bin/karthus', KARTHUS_ROOT . '/karthus');
+        FileHelper::copyFile(__DIR__.'/../../../bin/karthus', KARTHUS_ROOT . '/karthus');
+        // 设置一下权限
+        @chmod(KARTHUS_ROOT . '/karthus', 0755);
 
         releaseResource(__DIR__ . '/../../Resource/KarthusEvent.php', KARTHUS_ROOT . '/KarthusEvent.php');
         releaseResource(__DIR__ . '/../../Resource/Http/Index.php', KARTHUS_ROOT . '/Apps/Controller/Index.php');

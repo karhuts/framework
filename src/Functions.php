@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 use Karthus\Helper\FileHelper;
+use Karthus\I18N\I18N;
 
 if(!function_exists('welcome')){
 
@@ -144,3 +145,17 @@ if(!function_exists('isMac')){
     }
 }
 
+if(!function_exists('translate')) {
+
+    /**
+     * 翻译语言包
+     *
+     * @param string $key
+     * @param array  $replace
+     * @param string $locale
+     * @param bool   $fallback
+     */
+    function translate(string $key, array $replace = [], string $locale = 'zh-CN', bool $fallback = false){
+        I18N::getInstance()->translate($key, $replace, $locale, $fallback);
+    }
+}
