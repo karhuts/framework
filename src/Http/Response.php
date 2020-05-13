@@ -3,10 +3,12 @@ declare(strict_types=1);
 namespace Karthus\Http;
 
 use Swoole\Http\Status;
+use Swoole\Http\Response as SWResponse;
+use Karthus\Http\Message\Response as MessageResponse;
 
-class Response extends Message\Response {
+class Response extends MessageResponse {
     /**
-     * @var \Swoole\Http\Response|null
+     * @var SWResponse|null
      */
     private $response;
     public const STATUS_NOT_END         = 0;
@@ -21,9 +23,9 @@ class Response extends Message\Response {
     /**
      * Response constructor.
      *
-     * @param \Swoole\Http\Response|null $response
+     * @param SWResponse|null $response
      */
-    final public function __construct(\Swoole\Http\Response $response = null) {
+    final public function __construct(SWResponse $response = null) {
         $this->response = $response;
         parent::__construct();
         $this->withAddedHeader('Server','Karthus-Server');
@@ -115,13 +117,19 @@ class Response extends Message\Response {
      * @param string $path
      * @param string $domain
      * @param bool   $secure
-     * @param bool   $httponly
+     * @param bool   $httpOnly
      * @return bool
      */
-    public function setCookie($name, $value = null, $expire = null, $path = '/', $domain = '', $secure = false, $httponly = false){
+    public function setCookie($name,
+                              $value = null,
+                              $expire = null,
+                              $path = '/',
+                              $domain = '',
+                              $secure = false,
+                              $httpOnly = false){
         if(!$this->isEndResponse()){
             $this->withAddedCookie([
-                $name,$value,$expire,$path,$domain,$secure,$httponly
+                $name, $value, $expire, $path, $domain, $secure, $httpOnly
             ]);
             return true;
         }else{
@@ -131,7 +139,7 @@ class Response extends Message\Response {
     }
 
     /**
-     * @return \Swoole\Http\Response|null
+     * @return SWResponse|null
      */
     public function getSwooleResponse() {
         return $this->response;
@@ -167,7 +175,7 @@ class Response extends Message\Response {
      * @return Response
      */
     static function createFromFd(int $fd): Response {
-        $resp = \Swoole\Http\Response::create($fd);
+        $resp = SWResponse::create($fd);
         return new Response($resp);
     }
 

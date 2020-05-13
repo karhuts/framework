@@ -179,16 +179,17 @@ class Core {
     }
 
     /**
-     *
      * 加载路由配置文件
      */
     private function loadRouter(){
         $file           = KARTHUS_ROOT . '/Config/Router.php';
-        $data           = $data = require_once($file);
+        $data           = require_once($file);
         $this->routers  = $data;
     }
 
     /**
+     * 获取路由配置信息
+     *
      * @return array
      */
     public function getRouters(): array{

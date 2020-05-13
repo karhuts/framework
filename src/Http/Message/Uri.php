@@ -20,23 +20,33 @@ class Uri implements UriInterface {
      */
     public function __construct($url = '') {
         $parts = parse_url($url);
-        $this->scheme = isset($parts['scheme']) ? $parts['scheme'] : '';
-        $this->userInfo = isset($parts['user']) ? $parts['user'] : '';
-        $this->host = isset($parts['host']) ? $parts['host'] : '';
-        $this->port = isset($parts['port']) ? $parts['port'] : 80;
-        $this->path = isset($parts['path']) ? $parts['path'] : '';
-        $this->query = isset($parts['query']) ? $parts['query'] : '';
-        $this->fragment = isset($parts['fragment']) ? $parts['fragment'] : '';
+        $this->scheme   = $parts['scheme'] ?? '';
+        $this->userInfo = $parts['user'] ?? '';
+        $this->host     = $parts['host'] ?? '';
+        $this->port     = $parts['port'] ?? 80;
+        $this->path     = $parts['path'] ?? '';
+        $this->query    = $parts['query'] ?? '';
+        $this->fragment = $parts['fragment'] ?? '';
         if (isset($parts['pass'])) {
             $this->userInfo .= ':' . $parts['pass'];
         }
     }
 
-    public function getScheme() {
+    /**
+     * 获取scheme
+     *
+     * @return string
+     */
+    public function getScheme(): string {
         return $this->scheme;
     }
 
-    public function getAuthority() {
+    /**
+     * 获取认证头
+     *
+     * @return mixed|string
+     */
+    public function getAuthority(): string {
         $authority = $this->host;
         if (!empty($this->userInfo)) {
             $authority = $this->userInfo . '@' . $authority;
@@ -47,31 +57,67 @@ class Uri implements UriInterface {
         return $authority;
     }
 
-    public function getUserInfo() {
+    /**
+     * 获取用户信息
+     *
+     * @return string
+     */
+    public function getUserInfo(): string {
         return $this->userInfo;
     }
 
-    public function getHost() {
+    /**
+     * 获取host
+     *
+     * @return string
+     */
+    public function getHost(): string {
         return $this->host;
     }
 
+    /**
+     * 获取端口
+     *
+     * @return int|mixed|null
+     */
     public function getPort() {
         return $this->port;
     }
 
+    /**
+     * 获取Path
+     *
+     * @return mixed|string
+     */
     public function getPath() {
         return $this->path;
     }
 
+    /**
+     * 获取Query
+     *
+     * @return mixed|string
+     */
     public function getQuery() {
         return $this->query;
     }
 
+    /**
+     * 获取Fragment
+     *
+     * @return mixed|string
+     */
     public function getFragment() {
         return $this->fragment;
     }
 
-    public function withScheme($scheme) {
+    /**
+     * 设置协议头
+     *
+     * @param string $scheme
+     * @return $this
+     */
+    public function withScheme($scheme): Uri{
         if ($this->scheme === $scheme) {
             return $this;
         }
@@ -79,7 +125,14 @@ class Uri implements UriInterface {
         return $this;
     }
 
-    public function withUserInfo($user, $password = null) {
+    /**
+     * 设置用户信息
+     *
+     * @param string $user
+     * @param null   $password
+     * @return $this
+     */
+    public function withUserInfo($user, $password = null): Uri{
         $info = $user;
         if ($password != '') {
             $info .= ':' . $password;
@@ -91,7 +144,13 @@ class Uri implements UriInterface {
         return $this;
     }
 
-    public function withHost($host) {
+    /**
+     * 设置Host
+     *
+     * @param string $host
+     * @return $this
+     */
+    public function withHost($host): Uri{
         $host = strtolower($host);
         if ($this->host === $host) {
             return $this;
@@ -100,7 +159,13 @@ class Uri implements UriInterface {
         return $this;
     }
 
-    public function withPort($port) {
+    /**
+     * 设置端口
+     *
+     * @param int|null $port
+     * @return $this
+     */
+    public function withPort($port): Uri{
         if ($this->port === $port) {
             return $this;
         }
@@ -108,7 +173,13 @@ class Uri implements UriInterface {
         return $this;
     }
 
-    public function withPath($path) {
+    /**
+     * 设置Path
+     *
+     * @param string $path
+     * @return $this
+     */
+    public function withPath($path): Uri{
         if ($this->path === $path) {
             return $this;
         }
@@ -116,7 +187,13 @@ class Uri implements UriInterface {
         return $this;
     }
 
-    public function withQuery($query) {
+    /**
+     * 设置Query参数
+     *
+     * @param string $query
+     * @return $this|Uri
+     */
+    public function withQuery($query): Uri{
         if ($this->query === $query) {
             return $this;
         }
@@ -124,7 +201,13 @@ class Uri implements UriInterface {
         return $this;
     }
 
-    public function withFragment($fragment) {
+    /**
+     * 设置Fragment
+     *
+     * @param string $fragment
+     * @return $this
+     */
+    public function withFragment($fragment): Uri {
         if ($this->fragment === $fragment) {
             return $this;
         }
@@ -132,6 +215,11 @@ class Uri implements UriInterface {
         return $this;
     }
 
+    /**
+     * 格式化字符串
+     *
+     * @return string
+     */
     public function __toString() {
         $uri = '';
         // weak type checks to also accept null until we can add scalar type hints

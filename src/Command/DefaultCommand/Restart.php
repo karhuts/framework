@@ -72,7 +72,7 @@ class Restart implements CommandInterface{
                     break;
                 } else {
                     if (time() - $time > 15) {
-                        return "stop server fail , try : php easyswoole stop force";
+                        return "stop server fail , try : php karthus stop force";
                         break;
                     }
                 }

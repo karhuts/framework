@@ -47,9 +47,9 @@ class Router extends AbstractRouter{
         if(empty($config)){
             return;
         }
-        $method = $config['method'] ?? RouterMethod::GET;
-        // 如果有handle 就使用handle，如果
-        $handle = "";
+        $method         = $config['method'] ?? RouterMethod::GET;
+        $method         = strtolower($method);
+        // 如果有handle 就使用handle
         if(isset($config['handle'])) {
             $handle     = $config['handle'];
         } else {

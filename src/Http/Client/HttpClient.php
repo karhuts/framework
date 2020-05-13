@@ -70,7 +70,8 @@ class HttpClient {
         }
         $info       = parse_url($url);
         if (empty($info['scheme'])) {
-            $info   = parse_url('//' . $url); // 防止无scheme导致的host解析异常 默认作为http处理
+            // 防止无scheme导致的host解析异常 默认作为http处理
+            $info   = parse_url('//' . $url);
         }
         $this->url  = new Url($info);
         if (empty($this->url->getHost())) {
@@ -262,10 +263,10 @@ class HttpClient {
     /**
      * 解析当前的请求Url
      *
-     * @param array|null $qurey
+     * @param array|null $query
      * @return Url
      */
-    protected function pathInfo(?array $qurey = null) :Url {
+    protected function pathInfo(?array $query = null) :Url {
         // 请求时当前对象没有设置Url
         if (!($this->url instanceof Url)) {
             throw new Exception("HttpClient: Url is empty");

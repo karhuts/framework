@@ -19,13 +19,11 @@ class Request extends Message implements RequestInterface {
      * @param Stream|null $body
      * @param string      $protocolVersion
      */
-    public function __construct(
-        string $method = 'GET',
-        Uri $uri = null,
-        array $headers = null,
-        Stream $body = null,
-        string $protocolVersion = '1.1'
-    ) {
+    public function __construct(string $method = 'GET',
+                                Uri $uri = null,
+                                array $headers = null,
+                                Stream $body = null,
+                                string $protocolVersion = '1.1') {
         $this->method = $method;
         if($uri != null){
             $this->uri = $uri;
@@ -93,7 +91,6 @@ class Request extends Message implements RequestInterface {
      * @return $this|RequestInterface
      */
     public function withUri(UriInterface $uri, $preserveHost = false) {
-        // TODO: Implement withUri() method.
         if ($uri === $this->uri) {
             return $this;
         }

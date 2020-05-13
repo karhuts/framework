@@ -3,6 +3,6 @@ declare(strict_types=1);
 namespace Karthus\Context;
 
 interface ContextItemHandlerInterface {
-    function onContextCreate();
-    function onDestroy($context);
+    public function onContextCreate();
+    public function onDestroy($context);
 }

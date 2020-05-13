@@ -62,6 +62,8 @@ class KarthusEvent implements Event {
                     $item     = $_config;
                 }
 
+                // 强制变成大写
+                $key            = strtoupper($key);
                 $clusterConfig  = new RedisClusterConfig($item);
                 Redis::getInstance()->register($key, $clusterConfig);
             }

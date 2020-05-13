@@ -41,15 +41,11 @@ class Runner {
      * @throws \Exception
      * @throws \Throwable
      */
-    function run(array $args):?string {
+    public function run(array $args):?string {
         $command        = array_shift($args);
         if(empty($command)){
             $command    = $this->defaultCommand;
         }elseif($command !== 'install'){
-            //预先加载配置
-            if(in_array('produce', $args)){
-                Core::getInstance()->setDev(false);
-            }
             Core::getInstance()->initialize();
         }
         if(!CommandContainer::getInstance()->get($command)){

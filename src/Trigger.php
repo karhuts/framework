@@ -37,7 +37,6 @@ class Trigger implements TriggerInterface {
      */
     public function error($msg,int $errorCode = E_USER_ERROR,
                           Location $location = null) {
-        // TODO: Implement error() method.
         if($location == null){
             $location = $this->getLocation();
         }
@@ -78,10 +77,10 @@ class Trigger implements TriggerInterface {
      * @return Location
      */
     private function getLocation():Location {
-        $location = new Location();
+        $location   = new Location();
         $debugTrace = debug_backtrace();
         array_shift($debugTrace);
-        $caller = array_shift($debugTrace);
+        $caller     = array_shift($debugTrace);
         $location->setLine($caller['line']);
         $location->setFile($caller['file']);
         return $location;

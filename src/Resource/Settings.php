@@ -26,11 +26,31 @@ return [
         'RUN_MODEL'     => SWOOLE_PROCESS,
         'SETTING'       => [
             // worker数量
-            'worker_num'    => 8,
-            // 是否开启异步
-            'reload_async'  => true,
+            'worker_num'        => 8,
+            // 设置异步重启开关
+            // 设置异步重启开关。设置为 true 时，将启用异步安全重启特性，Worker 进程会等待异步事件完成后再退出。
+            // 详细信息请参见 如何正确的重启服务
+            'reload_async'      => true,
             // 最大等待时间
-            'max_wait_time' => 3,
+            'max_wait_time'     => 3,
+            // 开启CPU 亲和
+            'open_cpu_affinity' => true,
+            // 设置 worker 进程的最大任务数。【默认值：0 即不会退出进程】
+            // 一个 worker 进程在处理完超过此数值的任务后将自动退出，进程退出后会释放所有内存和资源
+            'max_request'       => 100000,
+            // 数据包分发策略。【默认值：2】
+            // 1	轮循模式	收到会轮循分配给每一个 Worker 进程
+            // 2	固定模式	根据连接的文件描述符分配 Worker。这样可以保证同一个连接发来的数据只会被同一个 Worker 处理
+            // 3	抢占模式	主进程会根据 Worker 的忙闲状态选择投递，只会投递给处于闲置状态的 Worker
+            // 4	IP 分配	根据客户端 IP 进行取模 hash，分配给一个固定的 Worker 进程。
+            // 可以保证同一个来源 IP 的连接数据总会被分配到同一个 Worker 进程。算法为 ip2long(ClientIP) % worker_num
+            // 5	UID 分配	需要用户代码中调用 Server->bind() 将一个连接绑定 1 个 uid。然后底层根据 UID 的值分配到不同的 Worker 进程。
+            // 算法为 UID % worker_num，如果需要使用字符串作为 UID，可以使用 crc32(UID_STRING)
+            // 7	stream 模式	空闲的 Worker 会 accept 连接，并接受 Reactor 的新请求
+            'dispatch_mode'     => 3,
+            // 开启后 TCP 连接发送数据时会关闭 Nagle 合并算法，立即发往对端 TCP 连接。在某些场景下，如命令行终端，敲一个命令就需要立马发到服务器，可以提升响应速度，请自行 Google Nagle 算法。
+            // 启用 open_tcp_nodelay【默认值：false】
+            'open_tcp_nodelay'  => true,
         ],
         'TASK'          => [
             // 异步任务数量
@@ -89,5 +109,13 @@ return [
         // 语言文件存放的文件夹
         // Karthus 会自动扫描 path 下所有语言包信息
         'path'              => KARTHUS_ROOT . '/Languages',
+    ],
+    'METRICS'               => [
+        // 是否使用 独立监控进程。推荐开启。关闭后将在 Worker 进程 中处理指标收集与上报。
+        'use_standalone_process'    => true,
+        // 是否统计默认指标。默认指标包括内存占用、系统 CPU 负载以及 Swoole Server 指标和 Swoole Coroutine 指标。
+        'enable_default_metric'     => true,
+        //  默认指标推送周期，单位为秒，下同。
+        'default_metric_interval'   => 5,
     ],
 ];

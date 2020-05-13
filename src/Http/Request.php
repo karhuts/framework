@@ -6,18 +6,25 @@ use Karthus\Http\Message\ServerRequest;
 use Karthus\Http\Message\Stream;
 use Karthus\Http\Message\UploadFile;
 use Karthus\Http\Message\Uri;
+use Swoole\Http\Request as SWRequest;
 
 class Request extends ServerRequest{
     /**
-     * @var \Swoole\Http\Request
+     * @var SWRequest
      */
     private $request;
 
-    public function __construct(\Swoole\Http\Request $request = null) {
+    /**
+     * Request constructor.
+     *
+     * @param SWRequest|null $request
+     */
+    public function __construct(SWRequest $request = null) {
         $this->request  = $request;
         $this->initHeaders();
-        $protocol       = str_replace('HTTP/', '', $request->server['server_protocol']) ;
-        //为单元测试准备
+        // 将协议进行简单的格式化
+        $protocol       = str_replace('HTTP/', '', $request->server['server_protocol']);
+        // 为单元测试准备
         if($request->fd){
             $body       = new Stream($request->rawContent());
         }else{
@@ -56,7 +63,7 @@ class Request extends ServerRequest{
     }
 
     /**
-     * @return \Swoole\Http\Request
+     * @return SWRequest
      */
     public function getSwooleRequest() {
         return $this->request;
@@ -68,21 +75,23 @@ class Request extends ServerRequest{
      * @return Uri
      */
     private function initUri() {
-        $uri = new Uri();
-        $uri->withScheme("http")
-            ->withPath($this->request->server['path_info']);
-        $query = $this->request->server['query_string'] ?? '';
-        $uri->withQuery($query);
+        $query  = $this->request->server['query_string'] ?? '';
+        $uri    = new Uri();
+        $uri->withScheme('http')
+            ->withPath($this->request->server['path_info'])
+            ->withQuery($query);
+
         //host与port以header为准，防止经过proxy
         if(isset($this->request->header['host'])){
-            $host = $this->request->header['host'];
-            $host = explode(":",$host);
-            $realHost = $host[0];
-            $port = isset($host[1]) ? $host[1] : 80;
+            $host       = $this->request->header['host'];
+            $host       = explode(":",$host);
+            $realHost   = $host[0];
+            $port       = $host[1] ?? 80;
         }else{
-            $realHost = '127.0.0.1';
-            $port = $this->request->server['server_port'];
+            $realHost   = '127.0.0.1';
+            $port       = $this->request->server['server_port'];
         }
+
         $uri->withHost($realHost);
         $uri->withPort($port);
         return $uri;
@@ -139,6 +148,8 @@ class Request extends ServerRequest{
     }
 
     /**
+     * 初始化Cookies
+     *
      * @return array
      */
     private function initCookie() {
@@ -146,6 +157,8 @@ class Request extends ServerRequest{
     }
 
     /**
+     * 初始化POST
+     *
      * @return array
      */
     private function initPost() {
@@ -153,23 +166,32 @@ class Request extends ServerRequest{
     }
 
     /**
+     * 初始化GET
+     *
      * @return array
      */
     private function initGet() {
         return $this->request->get ?? [];
     }
 
+    /**
+     * @return string
+     */
     final public function __toString():string {
         return "";
     }
 
-
+    /**
+     * 销毁
+     */
     public function __destruct() {
         $this->getBody()->close();
     }
 
 
     /**
+     * 获取远程IP
+     *
      * @return string
      */
     public function getRemoteIP(): string {

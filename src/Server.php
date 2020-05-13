@@ -36,6 +36,8 @@ class Server {
     }
 
     /**
+     * 获取swoole 服务器
+     *
      * @param string $serverName
      * @return null|\Swoole\Server|Port|\Swoole\WebSocket\Server|\Swoole\Http\Server
      */
@@ -89,6 +91,8 @@ class Server {
 
 
     /**
+     * 新增服务
+     *
      * @param string $serverName
      * @param int    $port
      * @param int    $type
@@ -96,24 +100,30 @@ class Server {
      * @param array  $setting
      * @return EventRegister
      */
-    public function addServer(string $serverName,int $port,int $type = SWOOLE_TCP,string $listenAddress = '0.0.0.0',array $setting = []):EventRegister {
-        $eventRegister = new EventRegister();
-        $subPort = $this->swooleServer->addlistener($listenAddress,$port,$type);
+    public function addServer(string $serverName,
+                              int $port,
+                              int $type = SWOOLE_TCP,
+                              string $listenAddress = '0.0.0.0',
+                              array $setting = []) :EventRegister {
+        $eventRegister  = new EventRegister();
+        $subPort        = $this->swooleServer->addlistener($listenAddress, $port, $type);
         if(!empty($setting)){
             $subPort->set($setting);
         }
-        $this->subServer[$serverName] = $subPort;
-        $this->subServerRegister[$serverName] = [
-            'port'=>$port,
-            'listenAddress'=>$listenAddress,
-            'type'=>$type,
-            'setting'=>$setting,
-            'eventRegister'=>$eventRegister
+        $this->subServer[$serverName]           = $subPort;
+        $this->subServerRegister[$serverName]   = [
+            'port'          => $port,
+            'listenAddress' => $listenAddress,
+            'type'          => $type,
+            'setting'       => $setting,
+            'eventRegister' => $eventRegister
         ];
         return $eventRegister;
     }
 
     /**
+     * 新增进程
+     *
      * @param AbstractProcess $process
      * @param string|null     $processName
      * @throws \Exception

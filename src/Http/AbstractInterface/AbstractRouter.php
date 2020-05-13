@@ -16,12 +16,12 @@ abstract class AbstractRouter {
     /**
      * AbstractRouter constructor.
      */
-    final function __construct() {
-        $this->routeCollector = new RouteCollector(new Std(),new GroupCountBased());
+    final public function __construct() {
+        $this->routeCollector = new RouteCollector(new Std(), new GroupCountBased());
         $this->initialize($this->routeCollector);
     }
 
-    abstract function initialize(RouteCollector $routeCollector);
+    abstract public function initialize(RouteCollector $routeCollector);
 
     /**
      * @return RouteCollector

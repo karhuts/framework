@@ -15,6 +15,9 @@ use Swoole\Http\Status;
 
 class Dispatcher {
     private $router = null;
+    /**
+     * @var AbstractRouter
+     */
     private $routerRegister = null;
     private $controllerNameSpacePrefix;
     private $maxDepth;
@@ -116,9 +119,10 @@ class Dispatcher {
             }elseif(is_string($handler)){
                 $this->controllerHandler($request, $response, $handler);
             }
-            /*
-                * 全局模式的时候，都拦截。非全局模式，否则继续往下
-            */
+
+            /**
+             * 全局模式的时候，都拦截。非全局模式，否则继续往下
+             */
             if($this->routerRegister->isGlobalMode()){
                 return;
             }

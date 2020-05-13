@@ -74,11 +74,6 @@ class Start implements CommandInterface{
             $index++;
         }
 
-        $ips        = getLocalIP();
-        foreach ($ips as $eth => $val) {
-            $msg    = $msg . displayItem('ip@' . $eth, $val) . "\n";
-        }
-
         $data       = $conf->getConf('MAIN_SERVER.SETTING');
         if(empty($data['user'])){
             $data['user'] = get_current_user();

@@ -49,11 +49,11 @@ class Di {
      */
     public function get($key) {
         if(isset($this->container[$key])){
-            $obj = $this->container[$key]['obj'];
+            $obj    = $this->container[$key]['obj'];
             $params = $this->container[$key]['params'];
             if(is_object($obj) || is_callable($obj)){
                 return $obj;
-            }else if(is_string($obj) && class_exists($obj)){
+            }elseif(is_string($obj) && class_exists($obj)){
                 try{
                     $this->container[$key]['obj'] = new $obj(...$params);
                     return $this->container[$key]['obj'];

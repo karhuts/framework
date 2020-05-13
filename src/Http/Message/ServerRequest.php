@@ -22,14 +22,12 @@ class ServerRequest extends Request implements ServerRequestInterface {
      * @param string      $protocolVersion
      * @param array       $serverParams
      */
-    public function __construct(
-        string $method = 'GET',
-        Uri $uri = null,
-        array $headers = null,
-        Stream $body = null,
-        string $protocolVersion = '1.1',
-        array $serverParams = array()
-    ) {
+    public function __construct(string $method = 'GET',
+                                Uri $uri = null,
+                                array $headers = null,
+                                Stream $body = null,
+                                string $protocolVersion = '1.1',
+                                array $serverParams = array()) {
         $this->serverParams = $serverParams;
         parent::__construct($method, $uri, $headers, $body, $protocolVersion);
     }
@@ -98,11 +96,18 @@ class ServerRequest extends Request implements ServerRequestInterface {
         }
     }
 
+    /**
+     * @param array $query
+     * @return $this|ServerRequest
+     */
     public function withQueryParams(array $query) {
         $this->queryParams = $query;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getUploadedFiles() {
         return $this->uploadedFiles;
     }
@@ -127,6 +132,10 @@ class ServerRequest extends Request implements ServerRequestInterface {
         return $this;
     }
 
+    /**
+     * @param null $name
+     * @return array|mixed|object|null
+     */
     public function getParsedBody($name = null) {
         if($name !== null){
             if(isset($this->parsedBody[$name])){
@@ -139,15 +148,27 @@ class ServerRequest extends Request implements ServerRequestInterface {
         }
     }
 
+    /**
+     * @param array|object|null $data
+     * @return $this|ServerRequest
+     */
     public function withParsedBody($data) {
         $this->parsedBody = $data;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getAttributes() {
         return $this->attributes;
     }
 
+    /**
+     * @param string $name
+     * @param null   $default
+     * @return mixed|null
+     */
     public function getAttribute($name, $default = null) {
         if (false === array_key_exists($name, $this->attributes)) {
             return $default;
