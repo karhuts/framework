@@ -103,7 +103,10 @@ class Core {
         if(!is_dir($logDir)){
             FileHelper::createDirectory($logDir);
         }
-        defined('KARTHUS_LOG_DIR') or define('KARTHUS_LOG_DIR', $logDir);
+        defined('KARTHUS_LOG_DIR') or define('KARTHUS_LOG_DIR', $logDir . "/logs");
+        if(!is_dir(KARTHUS_LOG_DIR)){
+            FileHelper::createDirectory(KARTHUS_LOG_DIR);
+        }
 
         // 设置默认文件目录值(如果自行指定了目录则优先使用指定的)
         if (!Config::getInstance()->getConf('MAIN_SERVER.SETTING.pid_file')) {
