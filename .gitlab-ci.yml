@@ -1,0 +1,5 @@
+# usermod -aG docker gitlab-runner
+
+stages:
+  - build
+  - deploy
