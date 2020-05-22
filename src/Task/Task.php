@@ -9,6 +9,9 @@ use Swoole\Atomic\Long;
 use Swoole\Server;
 use Swoole\Table;
 
+use function \Opis\Closure\unserialize;
+use function \Opis\Closure\serialize;
+
 class Task {
     private $taskIdAtomic;
     private $table;
@@ -98,4 +101,87 @@ class Task {
         return $this->config->getTempDir()."/{$this->config->getServerName()}-TaskWorker-{$id}.sock";
     }
 
+    /**
+     * @param               $task
+     * @param callable|null $finishCallback
+     * @param null          $taskWorkerId
+     * @return int|null
+     */
+    public function async($task,callable $finishCallback = null,$taskWorkerId = null):?int {
+        if($taskWorkerId === null){
+            $id = $this->findFreeId();
+        }else{
+            $id = $taskWorkerId;
+        }
+        if($id !== null){
+            $package = new Package();
+            $package->setType($package::ASYNC);
+            $package->setTask($task);
+            $package->setOnFinish($finishCallback);
+            $package->setExpire(round(microtime(true) + $this->config->getTimeout() - 0.01,3));
+            return $this->sendAndRecv($package,$id);
+        }else{
+            return null;
+        }
+    }
+
+    /*
+     * 同步返回执行结果
+     */
+    public function sync($task,$timeout = 3.0,$taskWorkerId = null) {
+        if($taskWorkerId === null){
+            $id = $this->findFreeId();
+        }else{
+            $id = $taskWorkerId;
+        }
+        if($id !== null){
+            $package = new Package();
+            $package->setType($package::SYNC);
+            $package->setTask($task);
+            $package->setExpire(round(microtime(true) + $timeout - 0.01,4));
+            return $this->sendAndRecv($package,$id,$timeout);
+        }else{
+            return null;
+        }
+    }
+
+    /**
+     * 随机找出空闲进程
+     *
+     * @return int|null
+     */
+    private function findFreeId():?int {
+        mt_srand();
+        if($this->attachServer){
+            $info = $this->status();
+            if(!empty($info)){
+                $array_column   = array_column($info,'running');
+                array_multisort($array_column,SORT_ASC, $info);
+                return $info[0]['workerIndex'];
+            }
+        }
+        return rand(0, $this->config->getWorkerNum() - 1);
+    }
+
+    /**
+     * @param Package    $package
+     * @param int        $id
+     * @param float|null $timeout
+     * @return mixed|null
+     */
+    private function sendAndRecv(Package $package,int $id,float $timeout = null) {
+        if($timeout === null){
+            $timeout    = $this->config->getTimeout();
+        }
+        $client         = new UnixClient($this->getUnixID($id));
+        $client->send(Protocol::pack(serialize($package)));
+        $ret            = $client->recv($timeout);
+        $client->close();
+
+        if (!empty($ret)) {
+            return unserialize(Protocol::unpack($ret));
+        }else{
+            return null;
+        }
+    }
 }
