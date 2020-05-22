@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Karthus;
 
+use Karthus\Component\Process\Manager;
+use Karthus\Task\Config as TaskConfig;
 use Karthus\AbstractInterface\Event;
 use Karthus\Component\Di;
 use Karthus\Component\Singleton;
@@ -13,6 +15,7 @@ use Karthus\Http\Dispatcher;
 use Karthus\Http\Request;
 use Karthus\Http\Response;
 use Karthus\Logger\LoggerInterface;
+use Karthus\Task\TaskManager;
 use Karthus\Trigger\Location;
 use Karthus\Trigger\TriggerInterface;
 use Swoole\Http\Status;
@@ -63,7 +66,7 @@ class Core {
         //检查全局文件是否存在.
         $file = KARTHUS_ROOT . '/KarthusEvent.php';
         if(file_exists($file)){
-            require_once $file;
+            require_once($file);
             try{
                 $ref = new \ReflectionClass('Karthus\KarthusEvent');
                 if(!$ref->implementsInterface(Event::class)){
@@ -71,10 +74,10 @@ class Core {
                 }
                 unset($ref);
             }catch (\Throwable $throwable){
-                die($throwable->getMessage());
+                exit($throwable->getMessage());
             }
         }else{
-            die('global event file missing');
+            exit('global event file missing');
         }
         // 先加载配置文件
         $this->loadConfig();
@@ -93,9 +96,10 @@ class Core {
      * 临时文件和Log目录初始化
      */
     private function directoryInit(){
-        $logDir = Config::getInstance()->getConf('LOG_DIR');
+        // 初始化LOG目录，如果目录不存在则默认一个
+        $logDir     = Config::getInstance()->getConf('LOG_DIR');
         if(empty($logDir)){
-            $logDir = KARTHUS_ROOT.'/Logs';
+            $logDir = KARTHUS_ROOT . '/Logs';
             Config::getInstance()->setConf('LOG_DIR',$logDir);
         }else{
             $logDir = rtrim($logDir,'/');
@@ -103,9 +107,16 @@ class Core {
         if(!is_dir($logDir)){
             FileHelper::createDirectory($logDir);
         }
+
         defined('KARTHUS_LOG_DIR') or define('KARTHUS_LOG_DIR', $logDir . "/logs");
+        defined('KARTHUS_TEMP_DIR') or define('KARTHUS_TEMP_DIR', $logDir . "/temp");
+
         if(!is_dir(KARTHUS_LOG_DIR)){
             FileHelper::createDirectory(KARTHUS_LOG_DIR);
+        }
+
+        if(!is_dir(KARTHUS_TEMP_DIR)){
+            FileHelper::createDirectory(KARTHUS_TEMP_DIR);
         }
 
         // 设置默认文件目录值(如果自行指定了目录则优先使用指定的)
@@ -280,11 +291,24 @@ class Core {
     }
 
     /**
-     * @todo
      *
      * 注册额外的handler
      */
-    private function extraHandler() {}
+    private function extraHandler() {
+        $serverName = Config::getInstance()->getConf('SERVER_NAME');
+        //注册Task进程
+        $config = Config::getInstance()->getConf('MAIN_SERVER.TASK');
+        $config = new TaskConfig($config);
+        $config->setTempDir(KARTHUS_TEMP_DIR);
+        $config->setServerName($serverName);
+        $config->setOnException(function (\Throwable $throwable){
+            Trigger::getInstance()->throwable($throwable);
+        });
+        $server = Server::getInstance()->getSwooleServer();
+        TaskManager::getInstance($config)->addToServer($server);
+        //初始化进程管理器
+        Manager::getInstance()->addToServer($server);
+    }
 
     /**
      * 启动服务
