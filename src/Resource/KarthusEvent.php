@@ -43,7 +43,7 @@ class KarthusEvent implements Event {
 
                         // 进行配置注入
                         $config         = new MysqlConfig($server);
-                        $model          = strtoupper($model);
+                        $model          = strtolower($model);
                         Manager::getInstance()->register(new Connection($config),
                             "{$serverName}_{$model}");
                     }
@@ -63,7 +63,7 @@ class KarthusEvent implements Event {
                 }
 
                 // 强制变成大写
-                $key            = strtoupper($key);
+                $key            = strtolower($key);
                 $clusterConfig  = new RedisClusterConfig($item);
                 Redis::getInstance()->register($key, $clusterConfig);
             }
