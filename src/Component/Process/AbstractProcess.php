@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Karthus\Process;
+namespace Karthus\Component\Process;
 
 use Swoole\Coroutine\Scheduler;
 use Swoole\Event;

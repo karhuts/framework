@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Karthus\Process;
-
+namespace Karthus\Component\Process;
 
 use Karthus\Spl\SplBean;
 
@@ -12,6 +11,8 @@ class Config extends SplBean {
     public const PIPE_TYPE_SOCK_DGRAM = 2;
 
     protected $processName;
+    /** @var string */
+    protected $processGroup = null;
     protected $arg;
     protected $redirectStdinStdout = false;
     protected $pipeType = self::PIPE_TYPE_SOCK_DGRAM;
@@ -100,5 +101,19 @@ class Config extends SplBean {
      */
     public function setMaxExitWaitTime(int $maxExitWaitTime): void {
         $this->maxExitWaitTime = $maxExitWaitTime;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProcessGroup(): ?string {
+        return $this->processGroup;
+    }
+
+    /**
+     * @param string $processGroup
+     */
+    public function setProcessGroup(string $processGroup): void {
+        $this->processGroup = $processGroup;
     }
 }
