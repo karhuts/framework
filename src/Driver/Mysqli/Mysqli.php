@@ -43,10 +43,15 @@ class Mysqli {
                 unset($config['host']);
                 if(is_array($__)){
                     $idx    = array_rand($__);
-                    $config['host'] = $__[$idx];
+                    $host   = $__[$idx];
                 }else {
-                    $config['host'] = $__;
+                    $host           = $__;
                 }
+                // $config['host'] 是一个字符串
+                list($host, $port)  = explode(':', $host);
+                $port       = $port === null ? $config['port'] : intval($port);
+                $config['port']     = $port;
+                $config['host']     = $host;
                 $ret = $this->coroutineMysqlClient->connect($config);
                 if ($ret) {
                     $this->currentReconnectTimes = 0;
@@ -58,7 +63,7 @@ class Mysqli {
                         $this->currentReconnectTimes++;
                         return $this->connect();
                     }
-                    throw new ConnectFail("connect to {$this->config->getUser()}@{$this->config->getHost()} at port {$this->config->getPort()} fail: {$errno} {$error}");
+                    throw new ConnectFail("connect to {$this->config->getUser()}@{$host} at port {$port} fail: {$errno} {$error}");
                 }
             } catch (\Throwable $throwable) {
                 throw $throwable;

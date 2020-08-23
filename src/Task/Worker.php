@@ -35,13 +35,14 @@ class Worker extends AbstractUnixProcess{
         $this->infoTable    = $arg['infoTable'];
         $this->taskIdAtomic = $arg['taskIdAtomic'];
         $this->taskConfig   = $arg['taskConfig'];
-        $this->infoTable->set($this->workerIndex,[
+        $data               = [
             'running'       => 0,
             'success'       => 0,
             'fail'          => 0,
-            'pid'           => $this->getProcess()->pid,
-            'workerIndex'   => $this->workerIndex
-        ]);
+            'pid'           => intval($this->getProcess()->pid),
+            'workerIndex'   => intval($this->workerIndex),
+        ];
+        $this->infoTable->set((string) $this->workerIndex, $data);
         /*
          * 定时检查任务队列
          */
@@ -58,7 +59,7 @@ class Worker extends AbstractUnixProcess{
                 }catch (\Throwable $exception){
                     $this->onException($exception);
                 }finally{
-                    $this->infoTable->decr($this->workerIndex,'running',1);
+                    $this->infoTable->decr((string) $this->workerIndex, 'running', 1);
                 }
             });
         }
@@ -95,7 +96,7 @@ class Worker extends AbstractUnixProcess{
         }
 
         try{
-            if($this->infoTable->incr($this->workerIndex,'running',1) <= $this->taskConfig->getMaxRunningNum()){
+            if($this->infoTable->incr((string) $this->workerIndex,'running',1) <= $this->taskConfig->getMaxRunningNum()){
                 $taskId = $this->taskIdAtomic->add(1);
                 switch ($package->getType()){
                     case $package::ASYNC:{
@@ -132,7 +133,7 @@ class Worker extends AbstractUnixProcess{
             }
             throw $exception;
         }finally{
-            $this->infoTable->decr($this->workerIndex, 'running', 1);
+            $this->infoTable->decr((string) $this->workerIndex, 'running', 1);
         }
     }
 
@@ -168,20 +169,20 @@ class Worker extends AbstractUnixProcess{
             }
             if($task instanceof TaskInterface){
                 try{
-                    $reply = $task->run($taskId,$this->workerIndex);
+                    $reply = $task->run($taskId, $this->workerIndex);
                 }catch (\Throwable $throwable){
-                    $reply = $task->onException($throwable,$taskId,$this->workerIndex);
+                    $reply = $task->onException($throwable, $taskId, $this->workerIndex);
                 }
             }else if(is_callable($task)){
-                $reply = call_user_func($task,$taskId,$this->workerIndex);
+                $reply = call_user_func($task, $taskId, $this->workerIndex);
             }
             if(is_callable($package->getOnFinish())){
                 $reply = call_user_func($package->getOnFinish(),$reply, $taskId, $this->workerIndex);
             }
-            $this->infoTable->incr($this->workerIndex,'success',1);
+            $this->infoTable->incr((string) $this->workerIndex,'success',1);
             return $reply;
         }catch (\Throwable $throwable){
-            $this->infoTable->incr($this->workerIndex,'fail',1);
+            $this->infoTable->incr((string) $this->workerIndex,'fail',1);
             $this->onException($throwable);
             return;
         }

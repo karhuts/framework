@@ -19,7 +19,7 @@ class TableConfig extends AbstractConfig {
      */
     public function __construct() {
         $this->table = new Table(1024);
-        $this->table->column('data', Table::TYPE_STRING, 2048);
+        $this->table->column('data', Table::TYPE_STRING, 4096);
         $this->table->create();
     }
 

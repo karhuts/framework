@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Karthus;
 
 use Karthus\Component\Process\Manager;
+use Karthus\Task\AbstractInterface\AbstractTask;
 use Karthus\Task\Config as TaskConfig;
 use Karthus\AbstractInterface\Event;
 use Karthus\Component\Di;
