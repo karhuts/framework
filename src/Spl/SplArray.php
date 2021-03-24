@@ -12,12 +12,10 @@ class SplArray extends ArrayObject {
      * @return mixed|null
      */
     public function __get($name) {
-        if (isset($this[$name])) {
-            return $this[$name];
-        } else {
-            return null;
-        }
+        return $this[$name] ?? null;
     }
+
+    public function __isset($name){}
 
     /**
      * @param $name
@@ -57,7 +55,7 @@ class SplArray extends ArrayObject {
     /**
      * @param $path
      */
-    public function unset($path) {
+    public function unset($path): void {
         $finalKey = null;
         $path = explode(".", $path);
         $temp = $this;
@@ -74,14 +72,14 @@ class SplArray extends ArrayObject {
      * @param $path
      * @return array|mixed|null
      */
-    public function get($path) {
+    public function get($path): ?array{
         $paths = explode(".", $path);
         $data = $this->getArrayCopy();
         while ($key = array_shift($paths)) {
             if (isset($data[ $key ])) {
                 $data = $data[ $key ];
             } else {
-                if ($key == '*') {
+                if ($key === '*') {
                     $temp = [];
                     if (is_array($data)) {
                         if (!empty($paths)) {
@@ -91,7 +89,7 @@ class SplArray extends ArrayObject {
                         }
                         foreach ($data as $key => $datum) {
                             if (is_array($datum)) {
-                                $ctemp = (new SplArray($datum))->get($path);
+                                $ctemp = (new self($datum))->get($path);
                                 if ($ctemp !== null) {
                                     $temp[][ $path ] = $ctemp;
                                 }
@@ -102,9 +100,9 @@ class SplArray extends ArrayObject {
                         }
                     }
                     return $temp;
-                } else {
-                    return null;
                 }
+
+                return null;
             }
         }
         return $data;
@@ -123,7 +121,7 @@ class SplArray extends ArrayObject {
      * @return SplArray
      */
     public function unique(): SplArray {
-        return new SplArray(array_unique($this->getArrayCopy(), SORT_REGULAR));
+        return new self(array_unique($this->getArrayCopy(), SORT_REGULAR));
     }
 
     /**
@@ -133,12 +131,12 @@ class SplArray extends ArrayObject {
      */
     public function multiple(): SplArray {
         $unique_arr = array_unique($this->getArrayCopy(), SORT_REGULAR);
-        return new SplArray(array_udiff_uassoc($this->getArrayCopy(), $unique_arr, function ($key1, $key2) {
+        return new self(array_udiff_uassoc($this->getArrayCopy(), $unique_arr, static function ($key1, $key2) {
             if ($key1 === $key2) {
                 return 0;
             }
             return 1;
-        }, function ($value1, $value2) {
+        }, static function ($value1, $value2) {
             if ($value1 === $value2) {
                 return 0;
             }
@@ -149,20 +147,22 @@ class SplArray extends ArrayObject {
     /**
      * 按照键值升序
      *
+     * @param int $flags
      * @return SplArray
      */
-    public function asort(): SplArray {
-        parent::asort();
+    public function asort($flags = SORT_REGULAR): SplArray {
+        parent::asort($flags);
         return $this;
     }
 
     /**
      * 按照键升序
      *
+     * @param int $flags
      * @return SplArray
      */
-    public function ksort(): SplArray {
-        parent::ksort();
+    public function ksort($flags = SORT_REGULAR): SplArray {
+        parent::ksort($flags);
         return $this;
     }
 
@@ -175,18 +175,18 @@ class SplArray extends ArrayObject {
     public function sort($sort_flags = SORT_REGULAR): SplArray {
         $temp = $this->getArrayCopy();
         sort($temp, $sort_flags);
-        return new SplArray($temp);
+        return new self($temp);
     }
 
     /**
      * 取得某一列
      *
-     * @param string      $column
+     * @param string $column
      * @param null|string $index_key
      * @return SplArray
      */
-    public function column($column, $index_key = null): SplArray {
-        return new SplArray(array_column($this->getArrayCopy(), $column, $index_key));
+    public function column(string $column, $index_key = null): SplArray {
+        return new self(array_column($this->getArrayCopy(), $column, $index_key));
     }
 
     /**
@@ -195,7 +195,7 @@ class SplArray extends ArrayObject {
      * @return SplArray
      */
     public function flip(): SplArray {
-        return new SplArray(array_flip($this->getArrayCopy()));
+        return new self(array_flip($this->getArrayCopy()));
     }
 
     /**
@@ -217,7 +217,7 @@ class SplArray extends ArrayObject {
                 in_array($name, $keys) ? null : $new[ $name ] = $value;
             }
         }
-        return new SplArray($new);
+        return new self($new);
     }
 
 
@@ -230,9 +230,9 @@ class SplArray extends ArrayObject {
             $temp = $this->get($path);
             if (is_array($temp)) {
                 return array_keys($temp);
-            } else {
-                return [];
             }
+
+            return [];
         }
         return array_keys((array) $this);
     }
@@ -243,7 +243,7 @@ class SplArray extends ArrayObject {
      * @return SplArray
      */
     public function values(): SplArray {
-        return new SplArray(array_values($this->getArrayCopy()));
+        return new self(array_values($this->getArrayCopy()));
     }
 
     /**
@@ -260,8 +260,8 @@ class SplArray extends ArrayObject {
      * @param array $data
      * @return $this
      */
-    public function loadArray(array $data) {
-        parent::__construct($data);
+    public function loadArray(array $data): SplArray {
+        $this->__construct($data);
         return $this;
     }
 
@@ -269,7 +269,7 @@ class SplArray extends ArrayObject {
      * @param array $data
      * @return $this
      */
-    public function merge(array $data) {
+    public function merge(array $data): SplArray {
         return $this->loadArray($data + $this->getArrayCopy());
     }
 }
