@@ -32,7 +32,7 @@
         "symfony/dotenv": "^4.4",
         "hassankhan/config": "^2.1",
         "phpunit/phpunit": "^8.5",
-        "opis/closure": "^3.5",
+        "opis/closure": "^3.5"
     },
     "require-dev": {
         "ext-swoole": ">=4.1",
