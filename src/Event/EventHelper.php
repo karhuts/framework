@@ -28,7 +28,7 @@ class EventHelper {
      * @param string   $event
      * @param callable $callback
      */
-    public static function on(Server $server, string $event, callable $callback) {
+    public static function on(Server $server, string $event, callable $callback): void{
         $server->on($event,$callback);
     }
 }

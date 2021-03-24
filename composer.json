@@ -47,7 +47,8 @@
         "ext-apcu": ">=5.1.7",
         "ext-simplexml": "*",
         "ext-ctype": "*",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "swoole/ide-helper": ">=4.6.4"
     },
     "license": "Apache License 2",
     "authors": [
