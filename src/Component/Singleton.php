@@ -12,7 +12,7 @@ trait Singleton {
      * @param mixed ...$args
      * @return static
      */
-    public static function getInstance(...$args): Singleton{
+    public static function getInstance(...$args) {
         if(!isset(self::$instance)){
             self::$instance = new static(...$args);
         }
