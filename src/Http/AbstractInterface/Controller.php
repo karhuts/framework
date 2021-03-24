@@ -5,7 +5,12 @@ namespace Karthus\Http\AbstractInterface;
 
 use Karthus\Http\Request;
 use Karthus\Http\Response;
+use Karthus\Template\View;
+use ReflectionClass;
+use SimpleXMLElement;
+use stdClass;
 use Swoole\Http\Status;
+use Throwable;
 
 abstract class Controller {
     private $request;
@@ -14,6 +19,7 @@ abstract class Controller {
     private $defaultProperties = [];
     private $allowMethodReflections = [];
     private $propertyReflections = [];
+
 
     /**
      * Controller constructor.
@@ -40,7 +46,7 @@ abstract class Controller {
         ];
 
         //支持在子类控制器中以private，protected来修饰某个方法不可见
-        $ref = new \ReflectionClass(static::class);
+        $ref = new ReflectionClass(static::class);
         $public = $ref->getMethods(\ReflectionMethod::IS_PUBLIC);
         foreach ($public as $item) {
             if((!in_array($item->getName(), $forbidList)) && (!$item->isStatic())){
@@ -49,7 +55,7 @@ abstract class Controller {
         }
 
         //获取，生成属性默认值
-        $ref = new \ReflectionClass(static::class);
+        $ref = new ReflectionClass(static::class);
         $properties = $ref->getProperties();
         foreach ($properties as $property) {
             //不重置静态变量与保护私有变量
@@ -71,7 +77,7 @@ abstract class Controller {
     /**
      * @return array
      */
-    protected function getAllowMethodReflections() {
+    protected function getAllowMethodReflections(): array{
         return $this->allowMethodReflections;
     }
 
@@ -79,7 +85,7 @@ abstract class Controller {
         return $this->propertyReflections;
     }
 
-    protected function gc() {
+    protected function gc(): void {
         //恢复默认值
         foreach ($this->defaultProperties as $property => $value) {
             $this->{$property} = $value;
@@ -89,7 +95,7 @@ abstract class Controller {
     /**
      * @param string|null $action
      */
-    protected function actionNotFound(?string $action) {
+    protected function actionNotFound(?string $action): void {
         $this->response()->withStatus(Status::NOT_FOUND);
     }
 
@@ -97,10 +103,10 @@ abstract class Controller {
     }
 
     /**
-     * @param \Throwable $throwable
-     * @throws \Throwable
+     * @param Throwable $throwable
+     * @throws Throwable
      */
-    protected function onException(\Throwable $throwable): void {
+    protected function onException(Throwable $throwable): void {
         throw $throwable;
     }
 
@@ -110,6 +116,13 @@ abstract class Controller {
      */
     protected function onRequest(?string $action): ?bool {
         return true;
+    }
+
+    /**
+     * @return View
+     */
+    protected function view(): View{
+        return View::getInstance();
     }
 
     /**
@@ -125,7 +138,7 @@ abstract class Controller {
      * @param Response      $response
      * @param callable|null $actionHook
      * @return mixed|void|null
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function hook(?string $actionName, Request $request, Response $response,callable $actionHook = null) {
         $forwardPath        = null;
@@ -136,7 +149,7 @@ abstract class Controller {
             if ($this->onRequest($actionName) !== false) {
                 if (isset($this->allowMethodReflections[$actionName])) {
                     if($actionHook){
-                        $forwardPath = call_user_func($actionHook);
+                        $forwardPath = $actionHook();
                     }else{
                         $forwardPath = $this->$actionName();
                     }
@@ -144,18 +157,18 @@ abstract class Controller {
                     $this->actionNotFound($actionName);
                 }
             }
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             //若没有重构onException，直接抛出给上层
             $this->onException($throwable);
         } finally {
             try {
                 $this->afterAction($actionName);
-            } catch (\Throwable $throwable) {
+            } catch (Throwable $throwable) {
                 $this->onException($throwable);
             } finally {
                 try {
                     $this->gc();
-                } catch (\Throwable $throwable) {
+                } catch (Throwable $throwable) {
                     $this->onException($throwable);
                 }
             }
@@ -192,12 +205,12 @@ abstract class Controller {
             $request_id     = $requestParam['request_id'] ?? '-';
             $request_time   = $requestParam['request_time_float'] ?? 0;
             $output         = array(
-                'code'          => isset($data['code']) ? intval($data['code']) : $status,
-                'message'       => isset($data['message']) && $data['message'] ? strval($data['message']) : Status::getReasonPhrase($status),
-                'data'          => isset($data['data']) && $data['data'] ? $data['data'] : new \stdClass(),
-                'extra'         => isset($data['extra']) && $data['extra'] ? $data['extra'] : new \stdClass(),
+                'code'          => isset($data['code']) ? (int)$data['code'] : $status,
+                'message'       => isset($data['message']) && $data['message'] ? (string)$data['message'] : Status::getReasonPhrase($status),
+                'data'          => isset($data['data']) && $data['data'] ? $data['data'] : new stdClass(),
+                'extra'         => isset($data['extra']) && $data['extra'] ? $data['extra'] : new stdClass(),
                 'request_id'    => $request_id,
-                'request_time'  => floatval($request_time),
+                'request_time'  => (float)$request_time,
                 'response_time' => microtime(true),
             );
             $this->response()
@@ -208,9 +221,9 @@ abstract class Controller {
                 $this->response()->end();
             }
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -223,9 +236,9 @@ abstract class Controller {
     /**
      * @param int    $options
      * @param string $className
-     * @return \SimpleXMLElement
+     * @return SimpleXMLElement
      */
-    protected function xml($options = LIBXML_NOERROR | LIBXML_NOCDATA, string $className = 'SimpleXMLElement') {
+    protected function xml($options = LIBXML_NOERROR | LIBXML_NOCDATA, string $className = 'SimpleXMLElement'): SimpleXMLElement {
         //禁止引用外部xml实体
         libxml_disable_entity_loader(true);
         return simplexml_load_string($this->request()->getBody()->__toString(), $className, $options);

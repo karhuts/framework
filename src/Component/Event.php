@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Karthus\Component;
 
+use Throwable;
+
 class Event extends Container {
     /**
      * @param $key
@@ -20,14 +22,14 @@ class Event extends Container {
      * @param       $event
      * @param mixed ...$args
      * @return mixed|null
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function hook($event, ...$args) {
         $call = $this->get($event);
         if (is_callable($call)) {
             return $call(...$args);
-        } else {
-            return null;
         }
+
+        return null;
     }
 }

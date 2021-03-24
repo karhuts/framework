@@ -7,7 +7,7 @@ class SystemConst {
     public const LOGGER_HANDLER     = 'LOGGER_HANDLER';
     public const ERROR_HANDLER      = 'ERROR_HANDLER';
     public const TRIGGER_HANDLER    = 'TRIGGER_HANDLER';
-    public const KARTHUS_VERSION    = '2.0.29';
+    public const KARTHUS_VERSION    = '2.0.30';
 
     public const HTTP_CONTROLLER_NAMESPACE      = 'HTTP_CONTROLLER_NAMESPACE';
     public const HTTP_CONTROLLER_MAX_DEPTH      = 'CONTROLLER_MAX_DEPTH';

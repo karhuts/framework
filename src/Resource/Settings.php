@@ -118,4 +118,21 @@ return [
         //  默认指标推送周期，单位为秒，下同。
         'default_metric_interval'   => 5,
     ],
+    // 模板视图配置
+    'VIEW'  => [
+        // 模板目录
+        'template_path'         => 'View',
+        // 编译目录
+        'template_c_path'       => KARTHUS_ROOT. '/Data/Tpl',
+        // 模板文件类型
+        'template_type'         => 'html',
+        // 模板编译文件类型
+        'template_c_type'       => 'tpl.php',
+        // 左标签
+        'template_tag_left'     => '<!--{',
+        // 右标签
+        'template_tag_right'    => '}-->',
+        // 是否需要每次编译
+        'is_compile'            => true,
+    ],
 ];

@@ -11,5 +11,6 @@ class Index extends Controller {
      *
      * @return mixed|void
      */
-    public function execute() {}
+    public function execute() {
+    }
 }

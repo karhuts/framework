@@ -11,14 +11,13 @@ if(!function_exists('welcome')){
      * @return string
      */
     function welcome() : string {
-        $string =  <<<EOL
+        return <<<EOL
  _  __          _   _
  | |/ /__ _ _ __| |_| |__  _   _ ___
  | ' // _` | '__| __| '_ \| | | / __|
  | . \ (_| | |  | |_| | | | |_| \__ \
  |_|\_\__,_|_|   \__|_| |_|\__,_|___/\n\n
 EOL;
-        return $string;
     }
 }
 
