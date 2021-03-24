@@ -2,18 +2,22 @@
 declare(strict_types=1);
 namespace Karthus\Spl;
 
+use JsonSerializable;
 use Karthus\Exception\Exception;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionProperty;
 
 /**
  * Class SplBean
  *
  * @package Karthus\Spl
  */
-class SplBean implements \JsonSerializable {
-    const FILTER_NOT_NULL = 1;
-    const FILTER_NOT_EMPTY = 2;
-    const FILTER_NULL = 3;
-    const FILTER_EMPTY = 4;
+class SplBean implements JsonSerializable {
+    public const FILTER_NOT_NULL = 1;
+    public const FILTER_NOT_EMPTY = 2;
+    public const FILTER_NULL = 3;
+    public const FILTER_EMPTY = 4;
 
 
     /**
@@ -21,7 +25,7 @@ class SplBean implements \JsonSerializable {
      *
      * @param array|null $data
      * @param bool       $autoCreateProperty
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function __construct(array $data = null, $autoCreateProperty = false) {
         if ($data) {
@@ -33,19 +37,18 @@ class SplBean implements \JsonSerializable {
 
     /**
      * @return array
-     * @throws \ReflectionException
      */
     final public function allProperty(): array {
         $data   = [];
-        $class  = new \ReflectionClass($this);
+        $class  = new ReflectionClass($this);
         $protectedAndPublic = $class->getProperties(
-            \ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED
+            ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED
         );
         foreach ($protectedAndPublic as $item) {
             if ($item->isStatic()) {
                 continue;
             }
-            array_push($data, $item->getName());
+            $data[] = $item->getName();
         }
         $data = array_flip($data);
         unset($data['_keyMap']);
@@ -64,22 +67,30 @@ class SplBean implements \JsonSerializable {
             $data = array_intersect_key($data, array_flip($columns));
         }
         if ($filter === self::FILTER_NOT_NULL) {
-            return array_filter($data, function ($val) {
+            return array_filter($data, static function ($val) {
                 return !is_null($val);
             });
-        } else if ($filter === self::FILTER_NOT_EMPTY) {
-            return array_filter($data, function ($val) {
+        }
+
+        if ($filter === self::FILTER_NOT_EMPTY) {
+            return array_filter($data, static function ($val) {
                 return !empty($val);
             });
-        } else if ($filter === self::FILTER_NULL) {
-            return array_filter($data, function ($val) {
+        }
+
+        if ($filter === self::FILTER_NULL) {
+            return array_filter($data, static function ($val) {
                 return is_null($val);
             });
-        } else if ($filter === self::FILTER_EMPTY) {
-            return array_filter($data, function ($val) {
+        }
+
+        if ($filter === self::FILTER_EMPTY) {
+            return array_filter($data, static function ($val) {
                 return empty($val);
             });
-        } else if (is_callable($filter)) {
+        }
+
+        if (is_callable($filter)) {
             return array_filter($data, $filter);
         }
         return $data;
@@ -88,7 +99,7 @@ class SplBean implements \JsonSerializable {
     /*
      * 返回转化后的array
      */
-    public function toArrayWithMapping(array $columns = null, $filter = null) {
+    public function toArrayWithMapping(array $columns = null, $filter = null): array {
         $array = $this->toArray();
         $array = $this->beanKeyMap($array);
 
@@ -96,18 +107,22 @@ class SplBean implements \JsonSerializable {
             $array = array_intersect_key($array, array_flip($columns));
         }
         if ($filter === self::FILTER_NOT_NULL) {
-            return array_filter($array, function ($val) {
+            return array_filter($array, static function ($val) {
                 return !is_null($val);
             });
-        } else if ($filter === self::FILTER_NOT_EMPTY) {
-            return array_filter($array, function ($val) {
+        }
+
+        if ($filter === self::FILTER_NOT_EMPTY) {
+            return array_filter($array, static function ($val) {
                 if ($val === 0 || $val === '0') {
                     return true;
-                } else {
-                    return !empty($val);
                 }
+
+                return !empty($val);
             });
-        } else if (is_callable($filter)) {
+        }
+
+        if (is_callable($filter)) {
             return array_filter($array, $filter);
         }
         return $array;
@@ -117,13 +132,12 @@ class SplBean implements \JsonSerializable {
      * @param array $data
      * @param bool  $autoCreateProperty
      * @return SplBean
-     * @throws \ReflectionException
      */
-    final private function arrayToBean(array $data, $autoCreateProperty = false): SplBean {
+    private function arrayToBean(array $data, $autoCreateProperty = false): SplBean {
 
         $data = $this->dataKeyMap($data);
 
-        if ($autoCreateProperty == false) {
+        if ($autoCreateProperty === false) {
             $data = array_intersect_key($data, array_flip($this->allProperty()));
         }
         foreach ($data as $key => $item) {
@@ -142,18 +156,16 @@ class SplBean implements \JsonSerializable {
 
     /**
      * @param $name
-     * @return |null
+     * @return null
      */
     final public function getProperty($name) {
-        if (isset($this->$name)) {
-            return $this->$name;
-        } else {
-            return null;
-        }
+        return $this->$name ?? null;
     }
 
-    final public function jsonSerialize(): array
-    {
+    /**
+     * @return array
+     */
+    final public function jsonSerialize(): array{
         $data = [];
         foreach ($this as $key => $item) {
             $data[$key] = $item;
@@ -164,10 +176,10 @@ class SplBean implements \JsonSerializable {
     }
 
     /**
-     * @return false|string
+     * @return string
      */
-    public function __toString() {
-        return json_encode($this->jsonSerialize(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    public function __toString(): string{
+        return (string)json_encode($this->jsonSerialize(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
     /*
@@ -195,9 +207,9 @@ class SplBean implements \JsonSerializable {
      * @param array $data
      * @param bool  $autoCreateProperty
      * @return $this
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
-    public function restore(array $data = [], $autoCreateProperty = false) {
+    public function restore(array $data = [], $autoCreateProperty = false): SplBean{
         $this->clear();
         $this->arrayToBean($data + get_class_vars(static::class), $autoCreateProperty);
         $this->initialize();
@@ -206,11 +218,10 @@ class SplBean implements \JsonSerializable {
     }
 
     /**
-     * @throws \ReflectionException
      */
-    private function clear() {
+    private function clear(): void {
         $keys = $this->allProperty();
-        $ref = new \ReflectionClass(static::class);
+        $ref = new ReflectionClass(static::class);
         $fields = array_keys($ref->getDefaultProperties());
         $fields = array_merge($fields, array_values($this->setKeyMapping()));
         // 多余的key
@@ -222,9 +233,9 @@ class SplBean implements \JsonSerializable {
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
-    private function classMap() {
+    private function classMap(): void {
         $propertyList = $this->allProperty();
         foreach ($this->setClassMapping() as $property => $class) {
             if (in_array($property, $propertyList)) {
@@ -255,10 +266,10 @@ class SplBean implements \JsonSerializable {
      * @param string $class
      * @param null   $arg
      * @return object
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
-    private function createClass(string $class, $arg = null) {
-        $ref = new \ReflectionClass($class);
+    private function createClass(string $class, $arg = null): object {
+        $ref = new ReflectionClass($class);
         return $ref->newInstance($arg);
     }
 
@@ -269,7 +280,7 @@ class SplBean implements \JsonSerializable {
      * @param array $array
      * @return array
      */
-    final private function beanKeyMap(array $array): array {
+    private function beanKeyMap(array $array): array {
         foreach ($this->setKeyMapping() as $dataKey => $beanKey) {
             if (array_key_exists($beanKey, $array)) {
                 $array[$dataKey] = $array[$beanKey];
@@ -286,7 +297,7 @@ class SplBean implements \JsonSerializable {
      * @param array $array
      * @return array
      */
-    final private function dataKeyMap(array $array): array {
+    private function dataKeyMap(array $array): array {
         foreach ($this->setKeyMapping() as $dataKey => $beanKey) {
             if (array_key_exists($dataKey, $array)) {
                 $array[$beanKey] = $array[$dataKey];

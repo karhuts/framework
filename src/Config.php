@@ -39,9 +39,9 @@ class Config {
     /**
      * 获取配置项
      * @param string $keyPath 配置项名称 支持点语法
-     * @return array|mixed|null
+     * @return array|mixed|null|string
      */
-    public function getConf($keyPath = ''): ?array {
+    public function getConf($keyPath = '') {
         if ($keyPath === '') {
             return $this->toArray();
         }

@@ -70,9 +70,9 @@ class SplArray extends ArrayObject {
 
     /**
      * @param $path
-     * @return array|mixed|null
+     * @return array|mixed|null|int
      */
-    public function get($path): ?array{
+    public function get($path) {
         $paths = explode(".", $path);
         $data = $this->getArrayCopy();
         while ($key = array_shift($paths)) {
