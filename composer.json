@@ -12,7 +12,7 @@
         "http",
         "http-server"
     ],
-    "homepage": "https://git.blued.cn/min/karthus",
+    "homepage": "https://git.ourbluecity.com/karthus/framework",
     "require": {
         "php": ">=7.2",
         "psr/log": "^1.1.2",
@@ -55,13 +55,13 @@
         {
             "name": "Min",
             "email": "min@blued.com",
-            "homepage": "https://git.blued.cn/min",
+            "homepage": "https://git.ourbluecity.com/min",
             "role": "Developer"
         },
         {
             "name": "Xu Zhaorong",
             "email": "xuzhaorong@blued.com",
-            "homepage": "https://git.blued.cn/xuzhaorong",
+            "homepage": "https://git.ourbluecity.com/xuzhaorong",
             "role": "Developer"
         }
     ],
@@ -78,9 +78,9 @@
         "url": "https://composer.blued.cn"
     }],
     "support": {
-        "issues": "https://git.blued.cn/min/karthus/issues",
+        "issues": "https://git.ourbluecity.com/min/karthus/issues",
         "email": "php@blued.com",
-        "source": "https://git.blued.cn/min/karthus/"
+        "source": "https://git.ourbluecity.com/min/karthus/"
     },
     "extra": {
         "branch-alias": {
