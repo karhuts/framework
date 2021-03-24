@@ -51,16 +51,18 @@ class Di {
         if(isset($this->container[$key])){
             $obj    = $this->container[$key]['obj'];
             $params = $this->container[$key]['params'];
-            if(is_object($obj) || is_callable($obj)){
+            if (is_object($obj) || is_callable($obj)) {
                 return $obj;
-            }elseif(is_string($obj) && class_exists($obj)){
+            }
+
+            if(is_string($obj) && class_exists($obj)) {
                 try{
                     $this->container[$key]['obj'] = new $obj(...$params);
                     return $this->container[$key]['obj'];
                 }catch (\Throwable $throwable){
                     throw $throwable;
                 }
-            }else{
+            } else{
                 return $obj;
             }
         }else{

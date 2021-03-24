@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Karthus\Command;
 
+use Exception;
 use Karthus\Command\DefaultCommand\Help;
 use Karthus\Command\DefaultCommand\Install;
 use Karthus\Command\DefaultCommand\PhpUnit;
@@ -12,6 +13,7 @@ use Karthus\Command\DefaultCommand\Stop;
 use Karthus\Command\DefaultCommand\Upgrade;
 use Karthus\Component\Singleton;
 use Karthus\Core;
+use Throwable;
 
 class Runner {
     use Singleton;
@@ -38,8 +40,8 @@ class Runner {
      *
      * @param array $args
      * @return string|null
-     * @throws \Exception
-     * @throws \Throwable
+     * @throws Exception
+     * @throws Throwable
      */
     public function run(array $args):?string {
         $command        = array_shift($args);

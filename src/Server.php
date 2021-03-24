@@ -2,9 +2,10 @@
 declare(strict_types=1);
 namespace Karthus;
 
+use Exception;
+use Karthus\Component\Process\AbstractProcess;
 use Karthus\Component\Singleton;
 use Karthus\Event\EventRegister;
-use Karthus\Process\AbstractProcess;
 use Swoole\Process;
 use Swoole\Server\Port;
 
@@ -38,18 +39,15 @@ class Server {
     /**
      * 获取swoole 服务器
      *
-     * @param string $serverName
+     * @param string|null $serverName
      * @return null|\Swoole\Server|Port|\Swoole\WebSocket\Server|\Swoole\Http\Server
      */
     public function getSwooleServer(string $serverName = null) {
         if($serverName === null){
             return $this->swooleServer;
-        }else{
-            if(isset($this->subServer[$serverName])){
-                return $this->subServer[$serverName];
-            }
-            return null;
         }
+
+        return $this->subServer[$serverName] ?? null;
     }
 
     /**
@@ -126,7 +124,7 @@ class Server {
      *
      * @param AbstractProcess $process
      * @param string|null     $processName
-     * @throws \Exception
+     * @throws Exception
      */
     public function addProcess(AbstractProcess $process, string $processName=null) {
         if ($processName === null) {
@@ -138,7 +136,7 @@ class Server {
         }
 
         if (isset($this->customProcess[$processName])) {
-            throw new \Exception("Custom process names must be unique :{$processName}");
+            throw new Exception("Custom process names must be unique :{$processName}");
         }
 
         $this->customProcess[$processName] = $process->getProcess();
@@ -170,7 +168,7 @@ class Server {
         foreach ($events as $event => $callback){
             $this->getSwooleServer()->on($event, function (...$args) use ($callback) {
                 foreach ($callback as $item) {
-                    call_user_func($item,...$args);
+                    $item(...$args);
                 }
             });
         }
@@ -197,7 +195,7 @@ class Server {
             foreach ($events as $event => $callback){
                 $subPort->on($event, function (...$args) use ($callback) {
                     foreach ($callback as $item) {
-                        call_user_func($item,...$args);
+                        $item(...$args);
                     }
                 });
             }

@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Karthus\Command;
 
-
 use Karthus\Component\Singleton;
 
 class CommandContainer {
@@ -16,7 +15,7 @@ class CommandContainer {
      * @param CommandInterface $command
      * @param bool             $cover
      */
-    public function set(CommandInterface $command,$cover = false) {
+    public function set(CommandInterface $command,$cover = false): void{
         if(!isset($this->container[strtolower($command->commandName())]) || $cover){
             $this->container[strtolower($command->commandName())] = $command;
         }
@@ -28,13 +27,9 @@ class CommandContainer {
      * @param $key
      * @return CommandInterface|null
      */
-    function get($key): ?CommandInterface {
+    public function get($key): ?CommandInterface {
         $key = strtolower($key);
-        if (isset($this->container[$key])) {
-            return $this->container[$key];
-        } else {
-            return null;
-        }
+        return $this->container[$key] ?? null;
     }
 
     /**
@@ -42,7 +37,7 @@ class CommandContainer {
      *
      * @return array
      */
-    function getCommandList() {
+    public function getCommandList(): array {
         return array_keys($this->container);
     }
 
@@ -53,7 +48,7 @@ class CommandContainer {
      * @param array $args
      * @return string|null
      */
-    function hook($commandName, array $args):?string {
+    public function hook($commandName, array $args):?string {
         $handler = $this->get($commandName);
         if($handler){
             return $handler->exec($args);

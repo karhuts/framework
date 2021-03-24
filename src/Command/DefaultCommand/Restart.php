@@ -54,7 +54,7 @@ class Restart implements CommandInterface{
         $Conf       = Config::getInstance();
         $pidFile    = $Conf->getConf("MAIN_SERVER.SETTING.pid_file");
         if (file_exists($pidFile)) {
-            $pid    = intval(file_get_contents($pidFile));
+            $pid    = (int)file_get_contents($pidFile);
             if (!Process::kill($pid, 0)) {
                 return "PID :{$pid} not exist ";
             }
@@ -64,7 +64,7 @@ class Restart implements CommandInterface{
             $time = time();
             while (true) {
                 usleep(1000);
-                if (!\swoole_process::kill($pid, 0)) {
+                if (!Process::kill($pid, 0)) {
                     if (is_file($pidFile)) {
                         unlink($pidFile);
                     }

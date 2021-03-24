@@ -22,7 +22,7 @@ class SplArrayConfig extends AbstractConfig {
      * @param null $key
      * @return array|mixed|null
      */
-    public function getConf($key = null) {
+    public function getConf($key = null): ?array{
         if ($key === null) {
             return $this->splArray->getArrayCopy();
         }

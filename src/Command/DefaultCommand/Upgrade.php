@@ -20,7 +20,7 @@ class Upgrade implements CommandInterface {
     public function exec(array $args): ?string {
         $version    = SystemConst::KARTHUS_VERSION;
         echo "current version $version, do you want to replace it? [ Y / N (default) ] : ";
-        $answer = strtolower(trim(strtoupper(fgets(STDIN))));
+        $answer = strtolower(strtoupper(trim(fgets(STDIN))));
         if (!in_array($answer, [ 'y', 'yes' ])) {
             echo "upgrade fail\n";
             return null;

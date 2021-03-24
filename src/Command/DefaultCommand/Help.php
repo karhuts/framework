@@ -20,16 +20,16 @@ class Help implements CommandInterface {
     public function exec(array $args): ?string {
         if (!isset($args[0])) {
             return $this->help($args);
-        } else {
-            $actionName = $args[0];
-            array_shift($args);
-            $call       = CommandContainer::getInstance()->get($actionName);
-            if ($call instanceof CommandInterface) {
-                return $call->help($args);
-            } else {
-                return "The Command {$actionName} not registered";
-            }
         }
+
+        $actionName = $args[0];
+        array_shift($args);
+        $call       = CommandContainer::getInstance()->get($actionName);
+        if ($call instanceof CommandInterface) {
+            return $call->help($args);
+        }
+
+        return "The Command {$actionName} not registered";
     }
 
     /**

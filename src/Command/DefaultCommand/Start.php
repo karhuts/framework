@@ -7,6 +7,7 @@ use Karthus\Config;
 use Karthus\Core;
 use Karthus\Server;
 use Karthus\SystemConst;
+use Throwable;
 
 /**
  * 启动脚本
@@ -26,7 +27,7 @@ class Start implements CommandInterface{
 
     /**
      * @inheritDoc
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function exec(array $args): ?string {
         opCacheClear();
@@ -56,22 +57,20 @@ class Start implements CommandInterface{
                 break;
         }
 
-        $msg    = $msg . displayItem('server name', $conf->getConf('SERVER_NAME')). "\n";
-        $msg    = $msg . displayItem('main server', $serverType) . "\n";
-        $msg    = $msg . displayItem('listen address', $conf->getConf('MAIN_SERVER.LISTEN_ADDRESS')) . "\n";
-        $msg    = $msg . displayItem('listen port', $conf->getConf('MAIN_SERVER.PORT')) . "\n";
+        $msg .= displayItem('server name', $conf->getConf('SERVER_NAME')) . "\n";
+        $msg .= displayItem('main server', $serverType) . "\n";
+        $msg .= displayItem('listen address', $conf->getConf('MAIN_SERVER.LISTEN_ADDRESS')) . "\n";
+        $msg .= displayItem('listen port', $conf->getConf('MAIN_SERVER.PORT')) . "\n";
 
         $list   = Server::getInstance()->getSubServerRegister();
 
-        $index  = 1;
         foreach ($list as $serverName => $item) {
             if (empty($item['setting'])) {
                 $type = $serverType;
             } else {
                 $type = $item['type'] % 2 > 0 ? 'SWOOLE_TCP' : 'SWOOLE_UDP';
             }
-            $msg = $msg . displayItem("sub server:{$serverName}", "{$type}@{$item['listenAddress']}:{$item['port']}") . "\n";
-            $index++;
+            $msg .= displayItem("sub server:{$serverName}", "{$type}@{$item['listenAddress']}:{$item['port']}") . "\n";
         }
 
         $data       = $conf->getConf('MAIN_SERVER.SETTING');
@@ -84,13 +83,13 @@ class Start implements CommandInterface{
         }
 
         foreach ($data as $key => $datum){
-            $msg = $msg . displayItem($key,$datum) . "\n";
+            $msg .= displayItem($key, $datum) . "\n";
         }
 
-        $msg = $msg . displayItem('Swoole Version', phpversion('swoole')) . "\n";
-        $msg = $msg . displayItem('PHP Version', phpversion()) . "\n";
-        $msg = $msg . displayItem('Karthus Version', SystemConst::KARTHUS_VERSION) . "\n";
-        $msg = $msg . displayItem('Log Dir', KARTHUS_LOG_DIR) . "\n";
+        $msg .= displayItem('Swoole Version', phpversion('swoole')) . "\n";
+        $msg .= displayItem('PHP Version', PHP_VERSION) . "\n";
+        $msg .= displayItem('Karthus Version', SystemConst::KARTHUS_VERSION) . "\n";
+        $msg .= displayItem('Log Dir', KARTHUS_LOG_DIR) . "\n";
         echo $msg;
         Core::getInstance()->start();
         return null;

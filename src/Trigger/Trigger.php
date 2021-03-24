@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Karthus\Trigger;
 
 use Karthus\Logger\LoggerInterface;
+use Throwable;
 
 class Trigger implements TriggerInterface {
 
@@ -27,7 +28,7 @@ class Trigger implements TriggerInterface {
      * @return mixed|void
      */
     public function error($msg, int $errorCode = E_USER_ERROR, Location $location = null) {
-        if($location == null){
+        if($location === null){
             $location = new Location();
             $debugTrace = debug_backtrace();
             $caller = array_shift($debugTrace);
@@ -38,10 +39,10 @@ class Trigger implements TriggerInterface {
     }
 
     /**
-     * @param \Throwable $throwable
+     * @param Throwable $throwable
      * @return mixed|void
      */
-    public function throwable(\Throwable $throwable) {
+    public function throwable(Throwable $throwable) {
         $msg = "{$throwable->getMessage()} at file:{$throwable->getFile()} line:{$throwable->getLine()}";
         $this->logger->console($msg, LoggerInterface::LOG_LEVEL_ERROR);
     }
@@ -64,12 +65,10 @@ class Trigger implements TriggerInterface {
             case E_RECOVERABLE_ERROR:
                 return LoggerInterface::LOG_LEVEL_WARNING;
             case E_NOTICE:
-            case E_USER_NOTICE:
-                return LoggerInterface::LOG_LEVEL_NOTICE;
             case E_STRICT:
-                return LoggerInterface::LOG_LEVEL_NOTICE;
-            case E_DEPRECATED:
             case E_USER_DEPRECATED:
+            case E_DEPRECATED:
+            case E_USER_NOTICE:
                 return LoggerInterface::LOG_LEVEL_NOTICE;
             default :
                 return LoggerInterface::LOG_LEVEL_INFO;

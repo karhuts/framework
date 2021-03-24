@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Karthus;
 
+use Exception;
 use Karthus\Component\Process\Manager;
 use Karthus\Task\AbstractInterface\AbstractTask;
 use Karthus\Task\Config as TaskConfig;
@@ -19,7 +20,11 @@ use Karthus\Logger\LoggerInterface;
 use Karthus\Task\TaskManager;
 use Karthus\Trigger\Location;
 use Karthus\Trigger\TriggerInterface;
+use ReflectionClass;
+use ReflectionException;
 use Swoole\Http\Status;
+use Throwable;
+use Karthus\KarthusEvent;
 
 class Core {
     use Singleton;
@@ -31,7 +36,7 @@ class Core {
      * 创建服务
      *
      * @return $this
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function createServer() :Core{
         $conf = Config::getInstance()->getConf('MAIN_SERVER');
@@ -60,21 +65,21 @@ class Core {
      * 初始化
      *
      * @return $this
-     * @throws \Exception
-     * @throws \Throwable
+     * @throws Exception
+     * @throws Throwable
      */
-    public function initialize(){
+    public function initialize(): Core {
         //检查全局文件是否存在.
         $file = KARTHUS_ROOT . '/KarthusEvent.php';
         if(file_exists($file)){
             require_once($file);
             try{
-                $ref = new \ReflectionClass('Karthus\KarthusEvent');
+                $ref = new ReflectionClass(KarthusEvent::class);
                 if(!$ref->implementsInterface(Event::class)){
                     exit('global file for KarthusEvent is not compatible for Karthus\KarthusEvent');
                 }
                 unset($ref);
-            }catch (\Throwable $throwable){
+            }catch (Throwable $throwable){
                 exit($throwable->getMessage());
             }
         }else{
@@ -96,7 +101,7 @@ class Core {
     /**
      * 临时文件和Log目录初始化
      */
-    private function directoryInit(){
+    private function directoryInit(): void {
         // 初始化LOG目录，如果目录不存在则默认一个
         $logDir     = Config::getInstance()->getConf('LOG_DIR');
         if(empty($logDir)){
@@ -132,9 +137,9 @@ class Core {
     /**
      * 注册捕捉错误
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
-    private function registerErrorHandler(){
+    private function registerErrorHandler(): void {
         //初始化配置Logger
         $logger = Di::getInstance()->get(SystemConst::LOGGER_HANDLER);
         if(!$logger instanceof LoggerInterface){
@@ -160,7 +165,7 @@ class Core {
              * @param null $file
              * @param null $line
              */
-            $errorHandler = function($errorCode, $description, $file = null, $line = null){
+            $errorHandler = static function($errorCode, $description, $file = null, $line = null){
                 $error = new Location();
                 $error->setFile($file);
                 $error->setLine($line);
@@ -171,7 +176,7 @@ class Core {
 
         $func = Di::getInstance()->get(SystemConst::SHUTDOWN_FUNCTION);
         if(!is_callable($func)){
-            $func = function (){
+            $func = static function (){
                 $error = error_get_last();
                 if(!empty($error)){
                     $location = new Location();
@@ -187,18 +192,18 @@ class Core {
     /**
      * 加载配置文件
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    private function loadConfig() {
+    private function loadConfig(): void {
         Config::getInstance()->loadConfig(KARTHUS_ROOT . '/Config/Settings.php');
     }
 
     /**
      * 加载路由配置文件
      */
-    private function loadRouter(){
+    private function loadRouter(): void {
         $file           = KARTHUS_ROOT . '/Config/Router.php';
-        $data           = require_once($file);
+        $data           = require($file);
         $this->routers  = $data;
     }
 
@@ -216,29 +221,29 @@ class Core {
      *
      * @param \Swoole\Server $server
      * @param int            $type
-     * @throws \Throwable
+     * @throws Throwable
      */
-    private function registerDefaultCallBack(\Swoole\Server $server, int $type){
+    private function registerDefaultCallBack(\Swoole\Server $server, int $type): void {
         if(in_array($type, [Server::SERVER_TYPE_DEFAULT_WEB, Server::SERVER_TYPE_DEFAULT_WEB_SOCKET],true)){
             $namespace      = Di::getInstance()->get(SystemConst::HTTP_CONTROLLER_NAMESPACE);
             if(empty($namespace)){
                 $namespace  = 'Apps\\Controller\\';
             }
-            $depth          = intval(Di::getInstance()->get(SystemConst::HTTP_CONTROLLER_MAX_DEPTH));
+            $depth          = (int)Di::getInstance()->get(SystemConst::HTTP_CONTROLLER_MAX_DEPTH);
             $depth          = $depth > 5 ? $depth : 5;
-            $max            = intval(Di::getInstance()->get(SystemConst::HTTP_CONTROLLER_POOL_MAX_NUM));
+            $max            = (int)Di::getInstance()->get(SystemConst::HTTP_CONTROLLER_POOL_MAX_NUM);
             if($max === 0){
                 $max = 500;
             }
-            $waitTime       = intval(Di::getInstance()->get(SystemConst::HTTP_CONTROLLER_POOL_WAIT_TIME));
-            if($waitTime == 0){
+            $waitTime       = (int)Di::getInstance()->get(SystemConst::HTTP_CONTROLLER_POOL_WAIT_TIME);
+            if($waitTime === 0){
                 $waitTime = 5;
             }
             $dispatcher     = new Dispatcher($namespace, $depth, $max);
             $dispatcher->setControllerPoolWaitTime($waitTime);
             $httpExceptionHandler = Di::getInstance()->get(SystemConst::HTTP_EXCEPTION_HANDLER);
             if(!is_callable($httpExceptionHandler)){
-                $httpExceptionHandler = function (\Throwable $throwable, Request $request, Response $response){
+                $httpExceptionHandler = static function (Throwable $throwable, Request $request, Response $response){
                     $response->withStatus(Status::INTERNAL_SERVER_ERROR);
                     $response->write(nl2br($throwable->getMessage()."\n".$throwable->getTraceAsString()));
                     Trigger::getInstance()->throwable($throwable);
@@ -258,13 +263,13 @@ class Core {
                     if(KarthusEvent::beforeRequest($request_psr,$response_psr)){
                         $dispatcher->dispatch($request_psr,$response_psr);
                     }
-                }catch (\Throwable $throwable){
+                }catch (Throwable $throwable){
                     call_user_func(Di::getInstance()->get(SystemConst::HTTP_EXCEPTION_HANDLER),
                         $throwable, $request_psr, $response_psr);
                 }finally{
                     try{
                         KarthusEvent::afterRequest($request_psr,$response_psr);
-                    }catch (\Throwable $throwable){
+                    }catch (Throwable $throwable){
                         call_user_func(Di::getInstance()->get(SystemConst::HTTP_EXCEPTION_HANDLER),
                             $throwable, $request_psr, $response_psr);
                     }
@@ -286,7 +291,7 @@ class Core {
         });
 
         EventHelper::registerWithAdd($register,$register::onWorkerExit,
-            function (\Swoole\Server $server, int $workerId){
+            static function (\Swoole\Server $server, int $workerId){
             //TODO
         });
     }
@@ -294,15 +299,16 @@ class Core {
     /**
      *
      * 注册额外的handler
+     * @throws ReflectionException
      */
-    private function extraHandler() {
+    private function extraHandler(): void {
         $serverName = Config::getInstance()->getConf('SERVER_NAME');
         //注册Task进程
         $config = Config::getInstance()->getConf('MAIN_SERVER.TASK');
         $config = new TaskConfig($config);
         $config->setTempDir(KARTHUS_TEMP_DIR);
         $config->setServerName($serverName);
-        $config->setOnException(function (\Throwable $throwable){
+        $config->setOnException(function (Throwable $throwable){
             Trigger::getInstance()->throwable($throwable);
         });
         $server = Server::getInstance()->getSwooleServer();
@@ -314,7 +320,7 @@ class Core {
     /**
      * 启动服务
      */
-    public function start() {
+    public function start(): void {
         // 命名
         $serverName = Config::getInstance()->getConf('SERVER_NAME');
         if(isWin() === false && isMac() === false){

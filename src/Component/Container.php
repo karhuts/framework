@@ -4,7 +4,7 @@ namespace Karthus\Component;
 
 class Container {
     private $container = [];
-    private $allowKeys = null;
+    private $allowKeys;
 
     /**
      * Container constructor.
@@ -32,7 +32,7 @@ class Container {
      * @param $key
      * @return $this
      */
-    public function delete($key) {
+    public function delete($key): Container {
         if (isset($this->container[ $key ])) {
             unset($this->container[ $key ]);
         }
@@ -44,14 +44,10 @@ class Container {
      * @return mixed|null
      */
     public function get($key) {
-        if (isset($this->container[ $key ])) {
-            return $this->container[ $key ];
-        } else {
-            return null;
-        }
+        return $this->container[$key] ?? null;
     }
 
-    public function clear() {
+    public function clear(): void{
         $this->container = [];
     }
 

@@ -47,7 +47,7 @@ if(!function_exists('displayItem')){
      * @param $value
      * @return string
      */
-    function displayItem($name, $value) {
+    function displayItem($name, $value): string {
         if($value === true){
             $value = 'true';
         }else if($value === false){
@@ -82,7 +82,7 @@ if(!function_exists('releaseResource')){
         if (is_file($destination)) {
             $filename   = basename($destination);
             echo "{$filename} has already existed, do you want to replace it? [ Y / N (default) ] : ";
-            $answer     = strtolower(trim(strtoupper(fgets(STDIN))));
+            $answer     = strtolower(strtoupper(trim(fgets(STDIN))));
             if (!in_array($answer, ['y', 'yes'])) {
                 $replace = false;
             }
@@ -103,9 +103,9 @@ if(!function_exists('UriPathInfo')){
         $info       = pathInfo($path);
         if($info['filename'] !== 'index'){
             if($basePath === '/'){
-                $basePath = $basePath . $info['filename'];
+                $basePath .= $info['filename'];
             }else{
-                $basePath = $basePath . '/' . $info['filename'];
+                $basePath .= '/' . $info['filename'];
             }
         }
         return $basePath;
@@ -117,7 +117,7 @@ if(!function_exists('isCli')){
      * 是否为 CLI 模式
      * @return bool
      */
-    function isCli() {
+    function isCli(): bool {
         return PHP_SAPI === 'cli';
     }
 }
@@ -127,7 +127,7 @@ if(!function_exists('isWin')){
      * 是否为 Win 系统
      * @return bool
      */
-    function isWin() {
+    function isWin(): bool {
         if (isMac()) {
             return false;
         }
@@ -140,7 +140,7 @@ if(!function_exists('isMac')){
      * 是否为 Mac 系统
      * @return bool
      */
-    function isMac() {
+    function isMac(): bool {
         return stripos(PHP_OS, 'Darwin') !== false;
     }
 }
@@ -151,9 +151,10 @@ if(!function_exists('translate')) {
      * 翻译语言包
      *
      * @param string $key
-     * @param array  $replace
+     * @param array $replace
      * @param string $locale
-     * @param bool   $fallback
+     * @param bool $fallback
+     * @return array|mixed|string
      */
     function translate(string $key, array $replace = [], string $locale = 'zh-CN', bool $fallback = false){
         return I18N::getInstance()->translate($key, $replace, $locale, $fallback);
@@ -166,9 +167,10 @@ if(!function_exists('__')) {
      * 翻译语言包 translate 函数的别名
      *
      * @param string $key
-     * @param array  $replace
+     * @param array $replace
      * @param string $locale
-     * @param bool   $fallback
+     * @param bool $fallback
+     * @return array|mixed|string
      */
     function __(string $key, array $replace = [], string $locale = 'zh-CN', bool $fallback = false){
         return translate($key, $replace, $locale, $fallback);

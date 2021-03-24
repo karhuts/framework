@@ -37,13 +37,13 @@ class Trigger implements TriggerInterface {
      */
     public function error($msg,int $errorCode = E_USER_ERROR,
                           Location $location = null) {
-        if($location == null){
+        if($location === null){
             $location = $this->getLocation();
         }
         $this->trigger->error($msg,$errorCode, $location);
         $all = $this->onError->all();
         foreach ($all as $call){
-            call_user_func($call,$msg,$errorCode,$location);
+            $call($msg, $errorCode, $location);
         }
     }
 
@@ -55,7 +55,7 @@ class Trigger implements TriggerInterface {
         $this->trigger->throwable($throwable);
         $all = $this->onException->all();
         foreach ($all as $call){
-            call_user_func($call,$throwable);
+            $call($throwable);
         }
     }
 

@@ -24,7 +24,7 @@ class Reload implements CommandInterface {
         $res        = '';
         $pidFile    = $conf->getConf("MAIN_SERVER.SETTING.pid_file");
         if (file_exists($pidFile)) {
-            $res    = $res . displayItem('Reload Type', "all-worker") . "\n";
+            $res .= displayItem('Reload Type', "all-worker") . "\n";
             opCacheClear();
             $pid    = @file_get_contents($pidFile);
             if (!Process::kill($pid, 0)) {

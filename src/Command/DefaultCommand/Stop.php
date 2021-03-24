@@ -34,7 +34,7 @@ class Stop implements CommandInterface {
         $Conf       = Config::getInstance();
         $pidFile    = $Conf->getConf("MAIN_SERVER.SETTING.pid_file");
         if (file_exists($pidFile)) {
-            $pid    = intval(file_get_contents($pidFile));
+            $pid    = (int)file_get_contents($pidFile);
             if (!Process::kill($pid, 0)) {
                 return "PID :{$pid} not exist ";
             }
@@ -52,12 +52,10 @@ class Stop implements CommandInterface {
                         unlink($pidFile);
                     }
                     return "server stop at " . date("Y-m-d H:i:s") ;
-                    break;
-                } else {
-                    if (time() - $time > 15) {
-                        return "stop server fail , try : php karthus stop force";
-                        break;
-                    }
+                }
+
+                if (time() - $time > 15) {
+                    return "stop server fail , try : php karthus stop force";
                 }
             }
             return 'stop server fail';

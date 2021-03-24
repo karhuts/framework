@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Karthus;
 
+use Exception;
 use Karthus\Component\Singleton;
 use Karthus\Config\AbstractConfig;
 use Karthus\Config\TableConfig;
@@ -20,7 +21,7 @@ class Config {
      * @param AbstractConfig|null $config
      */
     public function __construct(?AbstractConfig $config = null) {
-        if($config == null){
+        if($config === null){
             $config = new TableConfig();
         }
         $this->conf = $config;
@@ -40,8 +41,8 @@ class Config {
      * @param string $keyPath 配置项名称 支持点语法
      * @return array|mixed|null
      */
-    public function getConf($keyPath = '') {
-        if ($keyPath == '') {
+    public function getConf($keyPath = ''): ?array {
+        if ($keyPath === '') {
             return $this->toArray();
         }
         return $this->conf->getConf($keyPath);
@@ -85,11 +86,11 @@ class Config {
     /**
      * 载入一个文件的配置项
      * @param string $filePath 配置文件路径
-     * @param bool   $merge    是否将内容合并入主配置
+     * @param bool $merge 是否将内容合并入主配置
      */
-    public function loadFile($filePath, $merge = false) {
+    public function loadFile(string $filePath, $merge = false) {
         if (is_file($filePath)) {
-            $confData = require_once $filePath;
+            $confData = require($filePath);
             if (is_array($confData) && !empty($confData)) {
                 $basename = strtolower(basename($filePath, '.php'));
                 if (!$merge) {
@@ -103,16 +104,16 @@ class Config {
 
     /**
      * @param string $file
-     * @throws \Exception
+     * @throws Exception
      */
-    public function loadConfig(string $file) {
+    public function loadConfig(string $file): void {
         if(file_exists($file)){
-            $data = require_once($file);
+            $data = require($file);
             if(is_array($data)){
                 $this->load($data);
             }
         }else{
-            throw new \Exception("config file : {$file} is miss");
+            throw new Exception("config file : {$file} is miss");
         }
     }
 

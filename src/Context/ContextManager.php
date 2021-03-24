@@ -84,7 +84,7 @@ class ContextManager {
      * @param null $cid
      * @return bool
      */
-    public function unset($key, $cid = null) {
+    public function unset($key, $cid = null): bool {
         $cid = $this->getCid($cid);
         if(isset($this->context[$cid][$key])){
             if(isset($this->contextHandler[$key])){
@@ -96,15 +96,15 @@ class ContextManager {
             }
             unset($this->context[$cid][$key]);
             return true;
-        }else{
-            return false;
         }
+
+        return false;
     }
 
     /**
      * @param null $cid
      */
-    public function destroy($cid = null) {
+    public function destroy($cid = null): void {
         $cid = $this->getCid($cid);
         if(isset($this->context[$cid])){
             $data = $this->context[$cid];
@@ -153,10 +153,6 @@ class ContextManager {
      */
     public function getContextArray($cid = null):?array {
         $cid = $this->getCid($cid);
-        if(isset($this->context[$cid])){
-            return $this->context[$cid];
-        }else{
-            return null;
-        }
+        return $this->context[$cid] ?? null;
     }
 }

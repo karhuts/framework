@@ -56,7 +56,7 @@ class Manager {
             }
         }else{
             foreach ($this->table as $key => $value){
-                if($value['group'] == $pidOrGroupName){
+                if($value['group'] === $pidOrGroupName){
                     $list[$key] = $value;
                 }
             }
@@ -72,9 +72,9 @@ class Manager {
      * @param null $pidOrGroupName
      * @return array
      */
-    public function info($pidOrGroupName = null) {
+    public function info($pidOrGroupName = null): array {
         $list = [];
-        if($pidOrGroupName == null){
+        if($pidOrGroupName === null){
             foreach ($this->table as $pid =>$value){
                 $list[$pid] = $value;
             }
@@ -85,7 +85,7 @@ class Manager {
             }
         }else{
             foreach ($this->table as $key => $value){
-                if($value['group'] == $pidOrGroupName){
+                if($value['group'] === $pidOrGroupName){
                     $list[$key] = $value;
                 }
             }
@@ -104,15 +104,15 @@ class Manager {
      * @param AbstractProcess $process
      * @return $this
      */
-    public function addProcess(AbstractProcess $process) {
-        $this->processList[] = $process;;
+    public function addProcess(AbstractProcess $process): Manager{
+        $this->processList[] = $process;
         return $this;
     }
 
     /**
      * @param Server $server
      */
-    public function addToServer(Server $server) {
+    public function addToServer(Server $server): void {
         /** @var AbstractProcess $process */
         foreach ($this->processList as $process) {
             $server->addProcess($process->getProcess());
@@ -123,7 +123,7 @@ class Manager {
      * @param int $pid
      * @return bool|mixed
      */
-    public function pidExist(int $pid) {
+    public function pidExist(int $pid): bool {
         return Process::kill($pid,0);
     }
 
@@ -131,7 +131,7 @@ class Manager {
      * @param array $list
      * @return array
      */
-    protected function clearPid(array $list) {
+    protected function clearPid(array $list): array {
         foreach ($list as $pid => $value){
             if(!$this->pidExist($pid)){
                 $this->table->del($pid);
@@ -144,7 +144,7 @@ class Manager {
     /**
      * @param AbstractProcess $process
      */
-    public function __addProcessResource(AbstractProcess $process) {
+    public function addProcessResource(AbstractProcess $process) {
         $this->processResource[] = $process;
     }
 }

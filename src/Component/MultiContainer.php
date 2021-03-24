@@ -70,11 +70,7 @@ class MultiContainer {
      * @return array|null
      */
     public function get(string $key):?array {
-        if(isset($this->container[$key])){
-            return $this->container[$key];
-        }else{
-            return null;
-        }
+        return $this->container[$key] ?? null;
     }
 
     /**

@@ -11,12 +11,10 @@ use Swoole\Table;
 class Tables {
     use Singleton;
 
-    const TYPE_INT      = Table::TYPE_INT;
-    const TYPE_FLOAT    = Table::TYPE_FLOAT;
-    const TYPE_STRING   = Table::TYPE_STRING;
-
+    public const TYPE_INT      = Table::TYPE_INT;
+    public const TYPE_FLOAT    = Table::TYPE_FLOAT;
+    public const TYPE_STRING   = Table::TYPE_STRING;
     private $list = [];
-
 
     /**
      * @param $name
@@ -39,10 +37,6 @@ class Tables {
      * @return Table|null
      */
     public function get($name):?Table {
-        if(isset($this->list[$name])){
-            return $this->list[$name];
-        }else{
-            return null;
-        }
+        return $this->list[$name] ?? null;
     }
 }

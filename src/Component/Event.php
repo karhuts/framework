@@ -11,9 +11,9 @@ class Event extends Container {
     public function set($key, $item) {
         if (is_callable($item)) {
             return parent::set($key, $item);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -25,7 +25,7 @@ class Event extends Container {
     public function hook($event, ...$args) {
         $call = $this->get($event);
         if (is_callable($call)) {
-            return call_user_func($call, ...$args);
+            return $call(...$args);
         } else {
             return null;
         }

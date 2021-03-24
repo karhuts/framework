@@ -45,7 +45,7 @@ class Logger implements LoggerInterface {
      * @param string|null $msg
      * @param string      $category
      */
-    public function info(?string $msg, string $category = 'DEBUG') {
+    public function info(?string $msg, string $category = 'DEBUG'): void {
         $this->console($msg, self::LOG_LEVEL_INFO, $category);
     }
 
@@ -54,7 +54,7 @@ class Logger implements LoggerInterface {
      *
      * @param string|null $msg
      */
-    public function success(?string $msg){
+    public function success(?string $msg): void {
         $this->console($msg, self::LOG_LEVEL_SUCCESS, 'SUCCESS');
     }
 
@@ -62,7 +62,7 @@ class Logger implements LoggerInterface {
      * @param string|null $msg
      * @param string      $category
      */
-    public function notice(?string $msg, string $category = 'DEBUG') {
+    public function notice(?string $msg, string $category = 'DEBUG'): void {
         $this->console($msg, self::LOG_LEVEL_NOTICE, $category);
     }
 
@@ -70,7 +70,7 @@ class Logger implements LoggerInterface {
      * @param string|null $msg
      * @param string      $category
      */
-    public function waring(?string $msg, string $category = 'DEBUG') {
+    public function waring(?string $msg, string $category = 'DEBUG'): void  {
         $this->console($msg, self::LOG_LEVEL_WARNING, $category);
     }
 
@@ -78,7 +78,7 @@ class Logger implements LoggerInterface {
      * @param string|null $msg
      * @param string      $category
      */
-    public function error(?string $msg, string $category = 'DEBUG') {
+    public function error(?string $msg, string $category = 'DEBUG'): void {
         $this->console($msg, self::LOG_LEVEL_ERROR, $category);
     }
 
@@ -99,7 +99,7 @@ class Logger implements LoggerInterface {
         $str    = $this->logger->logger($msg, $logLevel, $category);
         $calls  = $this->callback->all();
         foreach ($calls as $call) {
-            call_user_func($call, $msg, $logLevel, $category);
+            $call($msg, $logLevel, $category);
         }
         return $str;
     }
