@@ -45,27 +45,27 @@ class Request extends ServerRequest{
      * @param mixed ...$key
      * @return array|mixed
      */
-    public function getRequestParam(...$key) {
+    public function getRequestParam(...$key): array {
         $data = array_merge($this->getParsedBody(), $this->getQueryParams());;
         if(empty($key)){
             return $data;
-        }else{
-            $res = [];
-            foreach ($key as $item){
-                $res[$item] = $data[$item] ?? null;
-            }
-            if(count($key) == 1){
-                return array_shift($res);
-            }else{
-                return $res;
-            }
         }
+
+        $res = [];
+        foreach ($key as $item){
+            $res[$item] = $data[$item] ?? null;
+        }
+        if(count($key) === 1){
+            return array_shift($res);
+        }
+
+        return $res;
     }
 
     /**
      * @return SWRequest
      */
-    public function getSwooleRequest() {
+    public function getSwooleRequest(): ?SWRequest {
         return $this->request;
     }
 
@@ -74,7 +74,7 @@ class Request extends ServerRequest{
      *
      * @return Uri
      */
-    private function initUri() {
+    private function initUri(): Uri {
         $query  = $this->request->server['query_string'] ?? '';
         $uri    = new Uri();
         $uri->withScheme('http')
@@ -100,7 +100,7 @@ class Request extends ServerRequest{
     /**
      * 初始化HEADER头
      */
-    private function initHeaders() {
+    private function initHeaders(): void {
         $headers = $this->request->header ?? [];
         foreach ($headers as $header => $val){
             $this->withAddedHeader($header,$val);
@@ -112,7 +112,7 @@ class Request extends ServerRequest{
      *
      * @return array
      */
-    private function initFiles() {
+    private function initFiles(): array {
         if(isset($this->request->files)){
             $normalized = [];
             foreach($this->request->files as $key => $value){
@@ -126,9 +126,9 @@ class Request extends ServerRequest{
                 $normalized[$key] = $this->initFile($value);
             }
             return $normalized;
-        }else{
-            return [];
         }
+
+        return [];
     }
 
     /**
@@ -137,13 +137,9 @@ class Request extends ServerRequest{
      * @param array $file
      * @return UploadFile
      */
-    private function initFile(array $file) {
-        return new UploadFile(
-            $file['tmp_name'],
-            (int) $file['size'],
-            (int) $file['error'],
-            $file['name'],
-            $file['type']
+    private function initFile(array $file): UploadFile {
+        return new UploadFile($file['tmp_name'], (int)$file['size'], (int)$file['error'],
+            $file['name'], $file['type']
         );
     }
 
@@ -152,7 +148,7 @@ class Request extends ServerRequest{
      *
      * @return array
      */
-    private function initCookie() {
+    private function initCookie(): array {
         return $this->request->cookie ?? [];
     }
 
@@ -161,7 +157,7 @@ class Request extends ServerRequest{
      *
      * @return array
      */
-    private function initPost() {
+    private function initPost(): array {
         return $this->request->post ?? [];
     }
 
@@ -170,7 +166,7 @@ class Request extends ServerRequest{
      *
      * @return array
      */
-    private function initGet() {
+    private function initGet(): array {
         return $this->request->get ?? [];
     }
 
@@ -196,7 +192,7 @@ class Request extends ServerRequest{
      */
     public function getRemoteIP(): string {
         $remoteIp = $this->request->header['x-real-ip'] ?? $this->request->server['remote_addr'];
-        $remoteIp = strval($remoteIp);
+        $remoteIp = (string)$remoteIp;
 
         return $remoteIp;
     }
@@ -207,27 +203,21 @@ class Request extends ServerRequest{
      * @return int
      */
     public function getRemoteUserID(): int{
-        $userID = $this->request->header['x-remote-userid'] ?? 0;
-
-        return $userID;
+        return $this->request->header['x-remote-userid'] ?? 0;
     }
 
     /**
      * @return string
      */
     public function getUserAgent(): string {
-        $userAgent = $this->request->header['user-agent'] ?? '';
-
-        return $userAgent;
+        return $this->request->header['user-agent'] ?? '';
     }
 
     /**
      * @return string
      */
     public function getAcceptLanguage(): string {
-        $acceptLanguage = $this->request->header['accept-language'] ?? 'en-us';
-
-        return $acceptLanguage;
+        return $this->request->header['accept-language'] ?? 'en-us';
     }
 
     /**
@@ -235,7 +225,7 @@ class Request extends ServerRequest{
      */
     public function getRemoteAddr(): string {
         $remoteAddr     = $this->request->server['remote_addr'] ?? '';
-        $remoteAddr     = strval($remoteAddr);
+        $remoteAddr     = (string)$remoteAddr;
 
         return $remoteAddr;
     }
@@ -246,9 +236,7 @@ class Request extends ServerRequest{
      * @return string
      */
     public function getRequestID(): string {
-        $requestID = $this->request->header['x-request-id'] ?? '-';
-
-        return $requestID;
+        return $this->request->header['x-request-id'] ?? '-';
     }
 
     /**
@@ -257,7 +245,7 @@ class Request extends ServerRequest{
     public function getRequestTime(): int{
         $requestID = $this->request->server['request_time'] ?? 0;
 
-        return intval($requestID);
+        return (int)$requestID;
     }
 
     /**
@@ -266,7 +254,7 @@ class Request extends ServerRequest{
     public function getRequestTimeFloat(): float {
         $requestID = $this->request->server['request_time_float'] ?? 0;
 
-        return floatval($requestID);
+        return (float)$requestID;
     }
 
     /**
@@ -275,8 +263,6 @@ class Request extends ServerRequest{
      * @return string
      */
     public function getContentType(): string{
-        $contentType = $this->request->header['content-type'] ?? '';
-
-        return $contentType;
+        return $this->request->header['content-type'] ?? '';
     }
 }

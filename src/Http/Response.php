@@ -16,7 +16,7 @@ class Response extends MessageResponse {
     public const STATUS_REAL_END        = 2;
     public const STATUS_RESPONSE_DETACH = 3;
 
-    private $sendFile       = null;
+    private $sendFile;
     private $isEndResponse  = self::STATUS_NOT_END; //1 逻辑end  2真实end 3分离响应
     private $isChunk        = false;
 
@@ -34,7 +34,7 @@ class Response extends MessageResponse {
     /**
      * 结束
      */
-    public function end(){
+    public function end(): void {
         $this->isEndResponse = self::STATUS_LOGICAL_END;
     }
 
@@ -63,21 +63,21 @@ class Response extends MessageResponse {
                 $write = null;
             }
 
-            if($this->sendFile != null){
+            if($this->sendFile !== null){
                 $this->response->sendfile($this->sendFile);
             }else{
                 $this->response->end($write);
             }
             return true;
-        }else{
-            return false;
         }
+
+        return false;
     }
 
     /**
      * @return int
      */
-    public function isEndResponse() {
+    public function isEndResponse(): int{
         return $this->isEndResponse;
     }
 
@@ -85,13 +85,13 @@ class Response extends MessageResponse {
      * @param string $str
      * @return bool
      */
-    public function write(string $str){
+    public function write(string $str): bool {
         if(!$this->isEndResponse()){
             $this->getBody()->write($str);
             return true;
-        }else{
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -99,15 +99,15 @@ class Response extends MessageResponse {
      * @param $status
      * @return bool
      */
-    public function redirect($url, $status = Status::MOVED_PERMANENTLY) {
+    public function redirect($url, $status = Status::MOVED_PERMANENTLY): bool {
         if(!$this->isEndResponse()){
             //仅支持header重定向  不做meta定向
             $this->withStatus($status);
             $this->withHeader('Location', $url);
             return true;
-        }else{
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -126,22 +126,22 @@ class Response extends MessageResponse {
                               $path = '/',
                               $domain = '',
                               $secure = false,
-                              $httpOnly = false){
+                              $httpOnly = false): bool {
         if(!$this->isEndResponse()){
             $this->withAddedCookie([
                 $name, $value, $expire, $path, $domain, $secure, $httpOnly
             ]);
             return true;
-        }else{
-            return false;
         }
+
+        return false;
 
     }
 
     /**
      * @return SWResponse|null
      */
-    public function getSwooleResponse() {
+    public function getSwooleResponse(): ?SWResponse {
         return $this->response;
     }
 
@@ -149,7 +149,7 @@ class Response extends MessageResponse {
     /**
      * @param string $sendFilePath
      */
-    public function sendFile(string $sendFilePath) {
+    public function sendFile(string $sendFilePath): void {
         $this->sendFile = $sendFilePath;
     }
 

@@ -72,15 +72,17 @@ class View extends Template {
      *
      * Controller中使用方法：view->display();
      * @param string $template
+     * @return string
      * @throws
      */
-    public static function display(string $template = ''): void {
+    public static function display(string $template = ''): string {
+        ob_start();
         if ($template !== '') {
             self::set_tpl($template);
         }
         $config   = Config::getInstance();
         $instance = self::getInstance();
-        $conf     = $config->getConf("");
+        $conf     = $config->getConf("VIEW");
         $instance->set_template_config($conf);
         if (is_array(self::$view)) {
             if ((bool)$conf['is_view_filter']) {
@@ -101,6 +103,7 @@ class View extends Template {
             }
             include_once($complie_file_name);
         }
+        return ob_get_clean();
     }
 
     /**
@@ -134,10 +137,8 @@ class View extends Template {
                 if (function_exists('htmlspecialchars')) {
                     $value[$key] =  htmlspecialchars($val);
                 } else {
-                    $value[$key] =  str_replace(
-                        array("&", '"', "'", "<", ">", "%3C", "%3E"),
-                        array("&amp;", "&quot;", "&#039;", "&lt;", "&gt;", "&lt;", "&gt;"),
-                        $val);
+                    $value[$key] =  str_replace(["&", '"', "'", "<", ">", "%3C", "%3E", ],
+                        ["&amp;", "&quot;", "&#039;", "&lt;", "&gt;", "&lt;", "&gt;", ], $val);
                 }
             }
         }

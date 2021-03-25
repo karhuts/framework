@@ -8,9 +8,11 @@ use Karthus\Exception\RouterError;
 use Karthus\Http\AbstractInterface\AbstractRouter;
 use Karthus\Http\AbstractInterface\Controller;
 use Karthus\Http\Router\Router;
+use ReflectionClass;
 use Swoole\Coroutine as Co;
 use FastRoute\Dispatcher\GroupCountBased;
 use Swoole\Http\Status;
+use Throwable;
 
 
 class Dispatcher {
@@ -65,7 +67,7 @@ class Dispatcher {
         // 初始化？
         if($this->router === null){
             try{
-                $ref = new \ReflectionClass(Router::class);
+                $ref = new ReflectionClass(Router::class);
                 if($ref->isSubclassOf(AbstractRouter::class)){
                     $this->routerRegister =  $ref->newInstance();
                     $this->router = new GroupCountBased($this->routerRegister->getRouteCollector()->getData());
@@ -73,7 +75,7 @@ class Dispatcher {
                     $this->router = false;
                     throw new RouterError("class : Router not AbstractRouter class");
                 }
-            }catch (\Throwable $throwable){
+            }catch (Throwable $throwable){
                 $this->router = false;
                 throw new RouterError($throwable->getMessage());
             }
@@ -109,9 +111,9 @@ class Dispatcher {
             if(is_callable($handler)){
                 try{
                     //若直接返回一个url path
-                    call_user_func($handler, $request, $response);
+                    $handler($request, $response);
                     return;
-                }catch (\Throwable $throwable){
+                }catch (Throwable $throwable){
                     $this->hookThrowable($throwable,$request,$response);
                     //出现异常的时候，不往下dispatch
                     return;
@@ -134,7 +136,7 @@ class Dispatcher {
      * @param Response $response
      * @param string   $handle
      */
-    private function controllerHandler(Request $request,Response $response,string $handle) {
+    private function controllerHandler(Request $request,Response $response,string $handle): void {
         $list               = explode("@", $handle);
         $actionName         = "execute";
         $finalClass         = $list[0];
@@ -146,14 +148,14 @@ class Dispatcher {
         if(!empty($finalClass)){
             try{
                 $controllerObject = $this->getController($finalClass);
-            }catch (\Throwable $throwable){
+            }catch (Throwable $throwable){
                 $this->hookThrowable($throwable, $request, $response);
                 return;
             }
             if($controllerObject instanceof Controller){
                 try{
                     $controllerObject->hook($actionName, $request, $response);
-                }catch (\Throwable $throwable){
+                }catch (Throwable $throwable){
                     $this->hookThrowable($throwable, $request, $response);
                 }finally {
                     $this->recycleController($finalClass, $controllerObject);
@@ -172,7 +174,7 @@ class Dispatcher {
     /**
      * @param string $class
      * @return mixed
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function getController(string $class) {
         $classKey = $this->generateClassKey($class);
@@ -190,7 +192,7 @@ class Dispatcher {
                 try{
                     // 包一层报错
                     return new $class();
-                }catch (\Throwable $exception){
+                }catch (Throwable $exception){
                     $this->controllerPoolCreateNum[$classKey] = $createNum;
                     //直接抛给上层
                     throw $exception;
@@ -205,7 +207,7 @@ class Dispatcher {
      * @param string     $class
      * @param Controller $obj
      */
-    protected function recycleController(string $class,Controller $obj) {
+    protected function recycleController(string $class,Controller $obj): void {
         $classKey = $this->generateClassKey($class);
         /** @var Co\Channel $channel */
         $channel = $this->$classKey;
@@ -213,11 +215,11 @@ class Dispatcher {
     }
 
     /**
-     * @param \Throwable $throwable
+     * @param Throwable $throwable
      * @param Request    $request
-     * @param Response   $response\
+     * @param Response   $response
      */
-    protected function hookThrowable(\Throwable $throwable,Request $request,Response $response) {
+    protected function hookThrowable(Throwable $throwable, Request $request, Response $response): void {
         if(is_callable($this->httpExceptionHandler)){
             call_user_func($this->httpExceptionHandler, $throwable, $request, $response);
         }else{

@@ -31,8 +31,10 @@ class UnixClient {
         }
     }
 
-
-    public function close() {
+    /**
+     * 关闭
+     */
+    public function close(): void {
         if ($this->client->isConnected()) {
             $this->client->close();
         }
@@ -42,28 +44,28 @@ class UnixClient {
      * @param string $rawData
      * @return bool|mixed
      */
-    public function send(string $rawData) {
+    public function send(string $rawData): bool {
         if ($this->client->isConnected()) {
             return $this->client->send($rawData);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
      * @param float $timeout
      * @return array|mixed|null
      */
-    public function recv(float $timeout = 0.1) {
+    public function recv(float $timeout = 0.1): ?array {
         if ($this->client->isConnected()) {
             $ret = $this->client->recv($timeout);
             if (!empty($ret)) {
                 return $ret;
-            } else {
-                return null;
             }
-        } else {
+
             return null;
         }
+
+        return null;
     }
 }

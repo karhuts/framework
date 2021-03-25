@@ -23,7 +23,7 @@ class UploadFile implements UploadedFileInterface {
      */
     public function __construct( $tempName,$size, $errorStatus, $clientFilename = null, $clientMediaType = null) {
         $this->tempName     = $tempName;
-        $this->stream       = new Stream(fopen($tempName,"r+"));
+        $this->stream       = new Stream(fopen($tempName, 'rb+'));
         $this->error        = $errorStatus;
         $this->size         = $size;
         $this->clientFileName   = $clientFilename;

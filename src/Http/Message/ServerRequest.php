@@ -50,14 +50,13 @@ class ServerRequest extends Request implements ServerRequestInterface {
     public function getCookieParams($name = null) {
         if($name === null){
             return $this->cookieParams;
-        }else{
-            if(isset($this->cookieParams[$name])){
-                return $this->cookieParams[$name];
-            }else{
-                return null;
-            }
         }
 
+        if(isset($this->cookieParams[$name])){
+            return $this->cookieParams[$name];
+        }
+
+        return null;
     }
 
     /**
@@ -89,11 +88,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
      */
     public function getQueryParam(string $name, $default = null){
         $data = $this->getQueryParams();
-        if(isset($data[$name])){
-            return $data[$name];
-        }else{
-            return $default;
-        }
+        return $data[$name] ?? $default;
     }
 
     /**
@@ -116,11 +111,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
      * 适配二维数组方式上传
      */
     public function getUploadedFile($name) {
-        if(isset($this->uploadedFiles[$name])){
-            return $this->uploadedFiles[$name];
-        }else{
-            return null;
-        }
+        return $this->uploadedFiles[$name] ?? null;
     }
 
     /**
@@ -138,14 +129,10 @@ class ServerRequest extends Request implements ServerRequestInterface {
      */
     public function getParsedBody($name = null) {
         if($name !== null){
-            if(isset($this->parsedBody[$name])){
-                return $this->parsedBody[$name];
-            }else{
-                return null;
-            }
-        }else{
-            return $this->parsedBody;
+            return $this->parsedBody[$name] ?? null;
         }
+
+        return $this->parsedBody;
     }
 
     /**

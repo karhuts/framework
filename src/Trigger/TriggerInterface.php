@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Karthus\Trigger;
 
+use Throwable;
+
 interface TriggerInterface {
     /**
      * @param               $msg
@@ -12,8 +14,8 @@ interface TriggerInterface {
     public function error($msg,int $errorCode = E_USER_ERROR, Location $location = null);
 
     /**
-     * @param \Throwable $throwable
+     * @param Throwable $throwable
      * @return mixed
      */
-    public function throwable(\Throwable $throwable);
+    public function throwable(Throwable $throwable);
 }

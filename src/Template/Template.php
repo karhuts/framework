@@ -195,8 +195,7 @@ class Template {
      * @return string
      */
     private function layout_path(string $template_name) :string {
-        $path   = KARTHUS_ROOT;
-        return "<?php include('{$path}/{$this->template_c_path}/{$template_name}.{$this->template_c_type}'); ?>";
+        return "<?php include('{$this->template_c_path}/{$template_name}.{$this->template_c_type}'); ?>";
     }
 
 

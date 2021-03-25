@@ -21,7 +21,7 @@ abstract class AbstractRouter {
         $this->initialize($this->routeCollector);
     }
 
-    abstract public function initialize(RouteCollector $routeCollector);
+    abstract public function initialize(RouteCollector $routeCollector): void;
 
     /**
      * @return RouteCollector

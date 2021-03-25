@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Karthus\Task;
 
+use Exception;
 use Karthus\Component\Process\AbstractProcess;
 use Karthus\Component\Process\Socket\UnixProcessConfig;
 use Swoole\Atomic\Long;
@@ -49,7 +50,7 @@ class Task {
      *
      * @param Server $server
      */
-    public function addToServer(Server $server) {
+    public function addToServer(Server $server): void {
         $list = $this->initProcess();
         /** @var AbstractProcess $item */
         foreach ($list as $item){
@@ -120,35 +121,32 @@ class Task {
             $package->setOnFinish($finishCallback);
             $package->setExpire(round(microtime(true) + $this->config->getTimeout() - 0.01,3));
             return $this->sendAndRecv($package,$id);
-        }else{
-            return null;
         }
+
+        return null;
     }
 
     /*
      * 同步返回执行结果
      */
     public function sync($task,$timeout = 3.0,$taskWorkerId = null) {
-        if($taskWorkerId === null){
-            $id = $this->findFreeId();
-        }else{
-            $id = $taskWorkerId;
-        }
+        $id = $taskWorkerId ?? $this->findFreeId();
         if($id !== null){
             $package = new Package();
             $package->setType($package::SYNC);
             $package->setTask($task);
             $package->setExpire(round(microtime(true) + $timeout - 0.01,4));
             return $this->sendAndRecv($package,$id,$timeout);
-        }else{
-            return null;
         }
+
+        return null;
     }
 
     /**
      * 随机找出空闲进程
      *
      * @return int|null
+     * @throws Exception
      */
     private function findFreeId():?int {
         mt_srand();
@@ -160,7 +158,7 @@ class Task {
                 return $info[0]['workerIndex'];
             }
         }
-        return rand(0, $this->config->getWorkerNum() - 1);
+        return random_int(0, $this->config->getWorkerNum() - 1);
     }
 
     /**
@@ -180,8 +178,8 @@ class Task {
 
         if (!empty($ret)) {
             return unserialize(Protocol::unpack($ret));
-        }else{
-            return null;
         }
+
+        return null;
     }
 }

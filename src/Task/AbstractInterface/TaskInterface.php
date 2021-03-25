@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Karthus\Task\AbstractInterface;
 
+use Throwable;
+
 interface TaskInterface {
     /**
      * @param int $taskId
@@ -11,10 +13,10 @@ interface TaskInterface {
     public function run(int $taskId,int $workerIndex);
 
     /**
-     * @param \Throwable $throwable
+     * @param Throwable $throwable
      * @param int        $taskId
      * @param int        $workerIndex
      * @return mixed
      */
-    public function onException(\Throwable $throwable,int $taskId,int $workerIndex);
+    public function onException(Throwable $throwable, int $taskId, int $workerIndex);
 }

@@ -61,7 +61,7 @@ class Logger implements LoggerInterface {
      * @param int    $logLevel
      * @return string
      */
-    private function colorString(string $str,int $logLevel) {
+    private function colorString(string $str, int $logLevel): string {
         switch($logLevel) {
             case self::LOG_LEVEL_NOTICE:
                 $out = "[43m";
@@ -83,7 +83,7 @@ class Logger implements LoggerInterface {
      * @param int $level
      * @return string
      */
-    private function levelMap(int $level) {
+    private function levelMap(int $level): string {
         switch ($level) {
             case self::LOG_LEVEL_INFO:
                 return 'INFO';

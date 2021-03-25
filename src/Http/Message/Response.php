@@ -25,15 +25,15 @@ class Response extends Message implements ResponseInterface {
     public function withStatus($code, $reasonPhrase = '') {
         if($code === $this->statusCode){
             return $this;
-        }else{
-            $this->statusCode = $code;
-            if(empty($reasonPhrase)){
-                $this->reasonPhrase = Status::getReasonPhrase($this->statusCode);
-            }else{
-                $this->reasonPhrase = $reasonPhrase;
-            }
-            return $this;
         }
+
+        $this->statusCode = $code;
+        if(empty($reasonPhrase)){
+            $this->reasonPhrase = Status::getReasonPhrase($this->statusCode);
+        }else{
+            $this->reasonPhrase = $reasonPhrase;
+        }
+        return $this;
     }
 
     /**

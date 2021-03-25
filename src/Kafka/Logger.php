@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Karthus\Kafka;
 
 use Karthus\Http\Request;
+use RuntimeException;
 
 class Logger{
     private $date       = 0;
@@ -57,7 +58,7 @@ class Logger{
     }
 
     public function setAllowedMySQL(int $allowed_mysql = 1): Logger{
-        $this->allowed_mysql    = intval($allowed_mysql);
+        $this->allowed_mysql    = $allowed_mysql;
         return $this;
     }
 
@@ -107,14 +108,14 @@ class Logger{
     /**
      * 执行
      */
-    public function execute(){
+    public function execute(): void {
         $_    = array(
             'uid'           => $this->uid,
             'date'          => $this->date,
             'event_time'    => $this->event_time,
             'ip'            => $this->request->getRemoteIP(),
             'request_id'    => $this->request->getRequestID(),
-            'code'          => intval($this->code),
+            'code'          => $this->code,
             'message'       => trim($this->msg),
             'ua'            => $this->request->getUserAgent(),
             'lang'          => $this->request->getAcceptLanguage(),
@@ -128,8 +129,8 @@ class Logger{
 
 
         $path = "/data/logs/{$this->path}/";
-        if(is_dir($path) === false){
-            @mkdir($path);
+        if((is_dir($path) === false) && !mkdir($path) && !is_dir($path)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $path));
         }
         $file = $path . date('Ymd') . '.log';
         @file_put_contents($file, json_encode($_, JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND | LOCK_EX);

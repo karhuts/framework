@@ -190,6 +190,18 @@ abstract class Controller {
         return $this->response;
     }
 
+    /**
+     * 输出HTML
+     *
+     * @param string $payload
+     */
+    protected function writeHtml(string $payload = '') {
+        $this->response()
+            ->withStatus(200)
+            ->withHeader('Content-type', 'text/html; charset=utf-8')
+            ->write($payload);
+        $this->response()->end();
+    }
 
     /**
      * 输出JSON
@@ -222,7 +234,6 @@ abstract class Controller {
             }
             return true;
         }
-
         return false;
     }
 
@@ -238,7 +249,8 @@ abstract class Controller {
      * @param string $className
      * @return SimpleXMLElement
      */
-    protected function xml($options = LIBXML_NOERROR | LIBXML_NOCDATA, string $className = 'SimpleXMLElement'): SimpleXMLElement {
+    protected function xml(int $options = LIBXML_NOERROR | LIBXML_NOCDATA,
+                           string $className = 'SimpleXMLElement'): SimpleXMLElement {
         //禁止引用外部xml实体
         libxml_disable_entity_loader(true);
         return simplexml_load_string($this->request()->getBody()->__toString(), $className, $options);

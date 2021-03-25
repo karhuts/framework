@@ -3,8 +3,8 @@ declare(strict_types=1);
 namespace Karthus\Task;
 
 class Package {
-    const ASYNC = 1;
-    const SYNC = 2;
+    public const ASYNC = 1;
+    public const SYNC = 2;
     protected $type;
     protected $task;
     protected $onFinish;

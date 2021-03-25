@@ -25,7 +25,7 @@ class Request extends Message implements RequestInterface {
                                 Stream $body = null,
                                 string $protocolVersion = '1.1') {
         $this->method = $method;
-        if($uri != null){
+        if($uri !== null){
             $this->uri = $uri;
         }
         parent::__construct($headers, $body, $protocolVersion);
@@ -40,10 +40,10 @@ class Request extends Message implements RequestInterface {
         }
         if($this->uri instanceof Uri){
             $target = $this->uri->getPath();
-            if ($target == '') {
+            if ($target === '') {
                 $target = '/';
             }
-            if ($this->uri->getQuery() != '') {
+            if ($this->uri->getQuery() !== '') {
                 $target .= '?' . $this->uri->getQuery();
             }
         }else{

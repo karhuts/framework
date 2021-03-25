@@ -19,7 +19,7 @@ class Router extends AbstractRouter{
      *
      * @param RouteCollector $routeCollector
      */
-    public function initialize(RouteCollector $routeCollector) {
+    public function initialize(RouteCollector $routeCollector): void{
         $routers    = Core::getInstance()->getRouters();
         if($routers){
             //开始进行路由初始化了
@@ -43,7 +43,7 @@ class Router extends AbstractRouter{
      * @param string $router
      * @param array  $config
      */
-    public function addRoute(string $router, array $config = []){
+    public function addRoute(string $router, array $config = []): void {
         if(empty($config)){
             return;
         }

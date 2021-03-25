@@ -22,8 +22,8 @@ interface LoggerInterface {
      * @param string      $category
      * @return string
      */
-    function logger(?string $msg,int $logLevel = self::LOG_LEVEL_INFO,
-                 string $category = 'DEBUG'):string ;
+    public function logger(?string $msg, int $logLevel = self::LOG_LEVEL_INFO,
+                           string $category = 'DEBUG'):string ;
 
     /**
      * 输出日志
@@ -33,6 +33,6 @@ interface LoggerInterface {
      * @param string      $category
      * @return mixed
      */
-    function console(?string $msg,int $logLevel = self::LOG_LEVEL_INFO,
-                     string $category = 'DEBUG');
+    public function console(?string $msg, int $logLevel = self::LOG_LEVEL_INFO,
+                            string $category = 'DEBUG');
 }

@@ -134,5 +134,6 @@ return [
         'template_tag_right'    => '}-->',
         // 是否需要每次编译
         'is_compile'            => true,
+        'is_view_filter'        => true,
     ],
 ];

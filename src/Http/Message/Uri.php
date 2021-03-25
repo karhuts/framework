@@ -220,20 +220,20 @@ class Uri implements UriInterface {
      *
      * @return string
      */
-    public function __toString() {
+    public function __toString(): string {
         $uri = '';
         // weak type checks to also accept null until we can add scalar type hints
-        if ($this->scheme != '') {
+        if ($this->scheme !== '') {
             $uri .= $this->scheme . ':';
         }
-        if ($this->getAuthority() != ''|| $this->scheme === 'file') {
+        if ($this->getAuthority() !== ''|| $this->scheme === 'file') {
             $uri .= '//' . $this->getAuthority();
         }
         $uri .= $this->path;
-        if ($this->query != '') {
+        if ($this->query !== '') {
             $uri .= '?' . $this->query;
         }
-        if ($this->fragment != '') {
+        if ($this->fragment !== '') {
             $uri .= '#' . $this->fragment;
         }
         return $uri;
