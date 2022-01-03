@@ -9,7 +9,7 @@ class Application {
     /**
      * @var string
      */
-    protected static $version = '1.0.5';
+    protected static $version = '3.0.1';
 
     /**
      * @return void
