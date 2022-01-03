@@ -1,126 +1,43 @@
 <?php
 declare(strict_types=1);
+
 namespace Karthus;
 
-use Exception;
-use Karthus\Component\Singleton;
-use Karthus\Config\AbstractConfig;
-use Karthus\Config\TableConfig;
-
 class Config {
-    /**
-     * @var AbstractConfig|TableConfig|null
-     */
-    private $conf;
-
     use Singleton;
 
+    private static $config = [];
+
     /**
-::     * Config constructor.
-     *
-     * @param AbstractConfig|null $config
+     * @param $keys
+     * @param null $default
+     * @return null|mixed
      */
-    public function __construct(?AbstractConfig $config = null) {
-        if($config === null){
-            $config = new TableConfig();
+    public function get($keys, $default = null) {
+        $keys = explode('.', strtolower($keys));
+        if (empty($keys)) {
+            return $default;
         }
-        $this->conf = $config;
-    }
 
-    /**
-     * @param AbstractConfig $config
-     * @return Config
-     */
-    public function storageHandler(AbstractConfig $config):Config {
-        $this->conf = $config;
-        return $this;
-    }
+        $file = array_shift($keys);
 
-    /**
-     * 获取配置项
-     * @param string $keyPath 配置项名称 支持点语法
-     * @return array|mixed|null|string
-     */
-    public function getConf($keyPath = '') {
-        if ($keyPath === '') {
-            return $this->toArray();
-        }
-        return $this->conf->getConf($keyPath);
-    }
-
-
-    /**
-     * @param $keyPath
-     * @param $data
-     * @return bool
-     */
-    public function setConf($keyPath, $data): bool {
-        return $this->conf->setConf($keyPath, $data);
-    }
-
-
-    /**
-     * @return array
-     */
-    public function toArray(): array {
-        return $this->conf->getConf();
-    }
-
-
-    /**
-     * @param array $conf
-     * @return bool
-     */
-    public function load(array $conf): bool {
-        return $this->conf->load($conf);
-    }
-
-    /**
-     * @param array $conf
-     * @return bool
-     */
-    public function merge(array $conf):bool {
-        return $this->conf->merge($conf);
-    }
-
-    /**
-     * 载入一个文件的配置项
-     * @param string $filePath 配置文件路径
-     * @param bool $merge 是否将内容合并入主配置
-     */
-    public function loadFile(string $filePath, $merge = false) {
-        if (is_file($filePath)) {
-            $confData = require($filePath);
-            if (is_array($confData) && !empty($confData)) {
-                $basename = strtolower(basename($filePath, '.php'));
-                if (!$merge) {
-                    $this->conf->setConf($basename, $confData);
-                } else {
-                    $this->conf->merge($confData);
-                }
+        if (empty(self::$config[$file])) {
+            if (! is_file(CONFIG_PATH . $file . '.php')) {
+                return $default;
             }
+            self::$config[$file] = include CONFIG_PATH . $file . '.php';
         }
-    }
+        $config = self::$config[$file];
 
-    /**
-     * @param string $file
-     * @throws Exception
-     */
-    public function loadConfig(string $file): void {
-        if(file_exists($file)){
-            $data = require($file);
-            if(is_array($data)){
-                $this->load($data);
+        while ($keys) {
+            $key = array_shift($keys);
+            if (! isset($config[$key])) {
+                $config = $default;
+                break;
             }
-        }else{
-            throw new Exception("config file : {$file} is miss");
+            $config = $config[$key];
         }
-    }
 
-    /**
-     * @return bool
-     */
-    public function clear():bool {
-        return $this->conf->clear();
+        return $config;
     }
 }
