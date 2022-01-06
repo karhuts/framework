@@ -12,7 +12,7 @@
         "http",
         "http-server"
     ],
-    "homepage": "https://git.ourbluecity.com/karthus/framework",
+    "homepage": "https://github.com/karhuts/framework",
     "require": {
         "php": ">=7.1",
         "nikic/fast-route": "^1.3"
@@ -26,15 +26,9 @@
     "authors": [
         {
             "name": "Min",
-            "email": "min@bluecity.com",
-            "homepage": "https://git.ourbluecity.com/min",
-            "role": "Developer"
-        },
-        {
-            "name": "Xu Zhaorong",
-            "email": "xuzhaorong@bluecity.com",
-            "homepage": "https://git.ourbluecity.com/xuzhaorong",
-            "role": "Developer"
+            "email": "294953530@qq.com",
+            "homepage": "https://github.com/minr",
+            "role": "Master"
         }
     ],
     "autoload": {
@@ -45,19 +39,10 @@
             "Karthus\\": "src/"
         }
     },
-    "repositories": [{
-        "type": "composer",
-        "url": "https://composer.blued.cn"
-    }],
     "support": {
-        "issues": "https://git.ourbluecity.com/min/karthus/issues",
-        "email": "php@blued.com",
-        "source": "https://git.ourbluecity.com/min/karthus/"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "0.1-dev"
-        }
+        "issues": "https://github.com/karhuts/framework/issues",
+        "email": "294953530@qq.com",
+        "source": "https://github.com/karhuts/framework"
     },
     "scripts": {
         "post-autoload-dump": [
