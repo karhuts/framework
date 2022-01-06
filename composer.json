@@ -22,7 +22,7 @@
         "ext-redis": "*",
         "swoole/ide-helper": ">=4.6.4"
     },
-    "license": "Apache License 2",
+    "license": "MIT",
     "authors": [
         {
             "name": "Min",
