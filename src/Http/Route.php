@@ -23,6 +23,7 @@ class Route {
     private static $instance;
     /** @var array */
     private static $config;
+    /** @var Dispatcher */
     private static $dispatcher;
 
     private function __construct() {}
@@ -64,7 +65,7 @@ class Route {
                 $response->status(405);
                 return $response->end();
             case Dispatcher::FOUND:
-                [$handler, $vars] = $routeInfo;
+                [, $handler, $vars] = $routeInfo;
                 if (is_string($handler)) {
                     $handler = explode('@', $handler);
                     if (count($handler) !== 2) {

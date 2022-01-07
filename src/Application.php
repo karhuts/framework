@@ -23,7 +23,7 @@ class Application {
 | |/ / _` | '__| __| '_ \| | | / __|
 |   < (_| | |  | |_| | | | |_| \__ \
 |_|\_\__,_|_|   \__|_| |_|\__,_|___/
-                                     Version: {$appVersion}, Swoole: {$swooleVersion}
+                                     \nVersion: {$appVersion}, Swoole: {$swooleVersion}\n\n
 EOL;
     }
 
@@ -53,8 +53,11 @@ EOL;
     public static function run(): void {
         self::welcome();
         $argv       = $_SERVER['argv'] ?? [];
-        $count      = count($argv);
-        $funcName   = $argv[$count - 1];
+        $funcName   = $argv[1] ?? "";
+        if($funcName === "") {
+            self::echoError("Useage bin/karthus.php [http:start]");
+            exit();
+        }
         [$schema, $option] = explode(':', $funcName);
         $className  = Http::class;
         if($schema === "http") {}
@@ -70,7 +73,7 @@ EOL;
                 new $className('stop');
                 break;
             default:
-                self::echoError("use $argv[0] [http:start]");
+                self::echoError("Useage bin/karthus.php [http:start]");
         }
     }
 }
