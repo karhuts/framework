@@ -1,10 +1,10 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Karthus;
 
 use Exception;
+use RuntimeException;
 
 class Listener {
     private static $instance;
@@ -27,14 +27,14 @@ class Listener {
     /**
      * @throws Exception
      */
-    public function listen($listener, ...$args) {
+    public function listen($listener, ...$args): void {
         $listeners = self::$config[$listener] ?? [];
         while ($listeners) {
             [$class, $func] = array_shift($listeners);
             try {
                 $class::getInstance()->{$func}(...$args);
             } catch (Exception $e) {
-                throw new \RuntimeException($e->getMessage());
+                throw new RuntimeException($e->getMessage());
             }
         }
     }

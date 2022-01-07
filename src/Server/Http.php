@@ -22,7 +22,10 @@ class Http {
     /** @var Route */
     protected $_route;
 
-    public function __construct() {
+    /**
+     * @param string $type
+     */
+    public function __construct(string $type = 'start') {
         $config = config('servers');
         $httpConfig = $config['http'];
         $this->_config = $httpConfig;
@@ -56,7 +59,17 @@ class Http {
             }
         }
 
-        $this->_server->start();
+        switch ($type) {
+            case 'start':
+                $this->_server->start();
+                break;
+            case 'stop':
+                $this->_server->shutdown();
+                break;
+            case 'reload':
+                $this->_server->reload();
+                break;
+        }
     }
 
     /**

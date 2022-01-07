@@ -18,12 +18,12 @@ class Application {
         $appVersion = self::$version;
         $swooleVersion = SWOOLE_VERSION;
         echo <<<EOL
-  ____    _                           
- / ___|  (_)  _ __ ___    _ __    ___ 
- \\___ \\  | | | '_ ` _ \\  | '_ \\  / __|
-  ___) | | | | | | | | | | |_) | \\__ \\
- |____/  |_| |_| |_| |_| | .__/  |___/
-                         |_|           Version: {$appVersion}, Swoole: {$swooleVersion}
+ _              _   _               
+| | ____ _ _ __| |_| |__  _   _ ___ 
+| |/ / _` | '__| __| '_ \| | | / __|
+|   < (_| | |  | |_| | | | |_| \__ \
+|_|\_\__,_|_|   \__|_| |_|\__,_|___/
+                                     Version: {$appVersion}, Swoole: {$swooleVersion}
 EOL;
     }
 
@@ -52,27 +52,22 @@ EOL;
      */
     public static function run(): void {
         self::welcome();
-        global $argv;
-        $count = count($argv);
-        $funcName = $argv[$count - 1];
-        [$schema, $option] = explode(':', $funcName);;
-        switch ($schema) {
-            case 'http':
-                $className = Http::class;
-                break;
-            default:
-                // 用户自定义server
-                $configs = config('servers', []);
-                if (isset($configs[$schema]['class_name'])) {
-                    $className = $configs[$schema]['class_name'];
-                } else {
-                    self::echoError("command $schema is not exist, you can use $argv[0] [http:start]");
-                    exit();
-                }
-        }
+        $argv       = $_SERVER['argv'] ?? [];
+        $count      = count($argv);
+        $funcName   = $argv[$count - 1];
+        [$schema, $option] = explode(':', $funcName);
+        $className  = Http::class;
+        if($schema === "http") {}
+
         switch ($option) {
             case 'start':
                 new $className();
+                break;
+            case 'reload':
+                new $className('reload');
+                break;
+            case 'stop':
+                new $className('stop');
                 break;
             default:
                 self::echoError("use $argv[0] [http:start]");

@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
+use Karthus\Collection;
 use Karthus\Config;
+use Karthus\Container;
 
 if (!function_exists('getInstance')) {
     /**
@@ -33,12 +35,12 @@ if (!function_exists('container')) {
      */
     function container($key = null, $value = null) {
         if ($key === null) {
-            return Container::instance();
+            return Container::getInstance();
         }
         if ($value === null) {
-            return Container::instance()->singleton($key);
+            return Container::getInstance()->singleton($key);
         }
-        return Container::instance()->set($key, $value);
+        return Container::getInstance()->set($key, $value);
     }
 }
 
@@ -49,17 +51,5 @@ if (!function_exists('collection')) {
      */
     function collection(array $data = []): Collection {
         return new Collection($data);
-    }
-}
-
-
-if (!function_exists('env')) {
-    /**
-     * @param $key
-     * @param $default
-     * @return mixed
-     */
-    function env($key, $default = null){
-        return container()->get(Env::class)->get($key, $default);
     }
 }

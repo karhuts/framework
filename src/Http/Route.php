@@ -19,12 +19,11 @@ use Swoole\Http\Response;
 use function FastRoute\simpleDispatcher;
 
 class Route {
-
+    /** @var self */
     private static $instance;
-
+    /** @var array */
     private static $config;
-
-    private static $dispatcher = null;
+    private static $dispatcher;
 
     private function __construct() {}
 

@@ -22,7 +22,7 @@ class Config {
         $file = array_shift($keys);
 
         if (empty(self::$config[$file])) {
-            if (! is_file(CONFIG_PATH . $file . '.php')) {
+            if (!is_file(CONFIG_PATH . $file . '.php')) {
                 return $default;
             }
             self::$config[$file] = include CONFIG_PATH . $file . '.php';

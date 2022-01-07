@@ -5,6 +5,9 @@ namespace Karthus;
 
 use Swoole\Coroutine;
 
+/**
+ * 上下文
+ */
 class Container {
     use Singleton;
 
