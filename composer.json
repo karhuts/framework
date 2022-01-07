@@ -2,7 +2,7 @@
     "name": "karthus/framework",
     "description": "A simple Framework For Swoole",
     "type": "library",
-    "version": "v3.0.1",
+    "version": "v3.0.2",
     "keywords": [
         "swoole",
         "framework",
