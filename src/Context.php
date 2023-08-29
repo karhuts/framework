@@ -1,87 +1,103 @@
 <?php
 declare(strict_types=1);
+namespace karthus;
 
-namespace Karthus;
+use Fiber;
+use SplObjectStorage;
+use StdClass;
+use WeakMap;
+use function property_exists;
 
-use Swoole\Coroutine;
+/**
+ * Class Context
+ * @package Webman
+ */
+class Context
+{
 
-class Context {
     /**
-     * @var array
+     * @var SplObjectStorage|WeakMap
      */
-    protected static $nonCoContext = [];
+    protected static $objectStorage;
 
     /**
-     * @param string $id
-     * @param $value
+     * @var StdClass
+     */
+    protected static $object;
+
+    /**
+     * @return StdClass
+     */
+    protected static function getObject(): StdClass
+    {
+        if (!static::$objectStorage) {
+            static::$objectStorage = class_exists(WeakMap::class) ? new WeakMap() : new SplObjectStorage();
+            static::$object = new StdClass;
+        }
+        $key = static::getKey();
+        if (!isset(static::$objectStorage[$key])) {
+            static::$objectStorage[$key] = new StdClass;
+        }
+        return static::$objectStorage[$key];
+    }
+
+    /**
      * @return mixed
      */
-    public static function set(string $id, $value) {
-        if (self::inCoroutine()) {
-            Coroutine::getContext()[$id] = $value;
-        } else {
-            static::$nonCoContext[$id] = $value;
-        }
-        return $value;
+    protected static function getKey()
+    {
+        return static::$object;
     }
 
     /**
-     * @param string $id
-     * @param $default
-     * @param $coroutineId
-     * @return mixed|null
+     * @param string|null $key
+     * @return mixed
      */
-    public static function get(string $id, $default = null, $coroutineId = null) {
-        if (self::inCoroutine()) {
-            if ($coroutineId !== null) {
-                return Coroutine::getContext($coroutineId)[$id] ?? $default;
-            }
-            return Coroutine::getContext()[$id] ?? $default;
+    public static function get(string $key = null)
+    {
+        $obj = static::getObject();
+        if ($key === null) {
+            return $obj;
         }
-
-        return static::$nonCoContext[$id] ?? $default;
+        return $obj->$key ?? null;
     }
 
     /**
-     * @param string $id
-     * @param $coroutineId
+     * @param string $key
+     * @param $value
+     * @return void
+     */
+    public static function set(string $key, $value): void
+    {
+        $obj = static::getObject();
+        $obj->$key = $value;
+    }
+
+    /**
+     * @param string $key
+     * @return void
+     */
+    public static function delete(string $key): void
+    {
+        $obj = static::getObject();
+        unset($obj->$key);
+    }
+
+    /**
+     * @param string $key
      * @return bool
      */
-    public static function has(string $id, $coroutineId = null): bool {
-        if (self::inCoroutine()) {
-            if ($coroutineId !== null) {
-                return isset(Coroutine::getContext($coroutineId)[$id]);
-            }
-            return isset(Coroutine::getContext()[$id]);
-        }
-
-        return isset(static::$nonCoContext[$id]);
+    public static function has(string $key): bool
+    {
+        $obj = static::getObject();
+        return property_exists($obj, $key);
     }
 
     /**
-     * Release the context when you are not in coroutine environment.
+     * @return void
      */
-    public static function destroy(string $id): void {
-        unset(static::$nonCoContext[$id]);
-    }
-
-    /**
-     * Retrieve the value and override it by closure.
-     */
-    public static function override(string $id, \Closure $closure) {
-        $value = null;
-        if (self::has($id)) {
-            $value = self::get($id);
-        }
-        $value = $closure($value);
-        self::set($id, $value);
-        return $value;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function inCoroutine(): bool {
-        return Coroutine::getCid() > 0;
+    public static function destroy(): void
+    {
+        unset(static::$objectStorage[static::getKey()]);
     }
 }

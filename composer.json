@@ -1,28 +1,47 @@
 {
     "name": "karthus/framework",
-    "description": "A simple Framework For Swoole",
+    "description": "A simple Framework For PHP",
     "type": "library",
-    "version": "v3.0.2",
+    "version": "v3.1.0",
     "keywords": [
-        "swoole",
         "framework",
-        "async",
         "karthus",
         "php",
         "http",
+        "router",
         "http-server"
     ],
     "homepage": "https://github.com/karhuts/framework",
     "require": {
-        "php": ">=7.1",
-        "nikic/fast-route": "^1.3"
+        "php": "~8.2.0",
+        "catfan/medoo": "^2.1",
+        "firebase/php-jwt": "^6.3",
+        "guzzlehttp/guzzle": "^7.7",
+        "hassankhan/config": "^3.0",
+        "illuminate/database": "^10.20",
+        "illuminate/events": "^10.20",
+        "illuminate/pagination": "^10.20",
+        "laminas/laminas-diactoros": "^2.21",
+        "laminas/laminas-httphandlerrunner": "^2.5",
+        "league/container": "^4.2",
+        "monolog/monolog": "^3.4",
+        "nikic/fast-route": "^1.3",
+        "overtrue/socialite": "^4.7",
+        "php-curl-class/php-curl-class": "^9.8",
+        "psr/container": "^2.0",
+        "psr/http-factory": "^1.0",
+        "psr/http-message": "^1.1",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "qcloud/cos-sdk-v5": "2.*",
+        "symfony/var-dumper": "^6.3",
+        "thingengineer/mysqli-database-class": "dev-master",
+        "vlucas/phpdotenv": "5.5.x-dev"
     },
     "require-dev": {
-        "ext-swoole": ">=4.1",
-        "ext-redis": "*",
-        "swoole/ide-helper": ">=4.6.4"
+        "friendsofphp/php-cs-fixer": "^3.0"
     },
-    "license": "MIT",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "Min",
@@ -36,7 +55,7 @@
             "src/functions.php"
         ],
         "psr-4": {
-            "Karthus\\": "src/"
+            "karthus\\": "src/"
         }
     },
     "support": {
@@ -46,10 +65,15 @@
     },
     "scripts": {
         "post-autoload-dump": [
-
+            "rm -rf runtime/container"
+        ],
+        "cs-fix": "php-cs-fixer fix $1",
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ]
     },
     "config": {
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "sort-packages": true
     }
 }

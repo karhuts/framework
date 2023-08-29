@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
-
-namespace Karthus;
+namespace karthus;
 
 trait Singleton {
     /**
@@ -10,11 +9,11 @@ trait Singleton {
     private static $instance;
 
     /**
-     * @param ...$args
+     * @param mixed ...$args
      * @return static
      */
-    public static function getInstance(...$args) {
-        if (!isset(self::$instance)) {
+    public static function getInstance(...$args): static {
+        if(!isset(self::$instance)){
             self::$instance = new static(...$args);
         }
         return self::$instance;
