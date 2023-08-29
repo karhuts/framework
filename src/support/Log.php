@@ -7,7 +7,7 @@ use Monolog\Handler\FormattableHandlerInterface;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Logger;
 use function array_values;
-use function config;
+use function karthus\config;
 use function is_array;
 
 /**

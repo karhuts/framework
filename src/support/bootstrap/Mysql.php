@@ -6,8 +6,9 @@ namespace karthus\support\bootstrap;
 use Illuminate\Container\Container as IlluminateContainer;
 use Illuminate\Database\Capsule\Manager;
 use karthus\Bootstrap;
+use function karthus\config;
 
-class DB implements Bootstrap {
+class Mysql implements Bootstrap {
 
     /**
      * @return void

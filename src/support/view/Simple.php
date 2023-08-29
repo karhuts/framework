@@ -5,6 +5,8 @@ namespace karthus\support\view;
 
 use karthus\support\view\Simple\View;
 use karthus\ViewInterface;
+use function karthus\request;
+use function karthus\config;
 
 class Simple implements ViewInterface {
     /**

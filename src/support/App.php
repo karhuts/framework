@@ -14,6 +14,11 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use RuntimeException;
+use function karthus\run_path;
+use function karthus\config;
+use function karthus\config_path;
+use function karthus\view_505;
+use function karthus\view_404;
 
 class App {
     /**
@@ -71,6 +76,8 @@ class App {
             // 路由匹配
             $response = Router::dispatch($request);
         } catch (RuntimeException $exception) {
+            print_r($exception);
+            exit();
             $response = view_505();
         } catch (NotFoundException $exception) {
             $response = view_404();

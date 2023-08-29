@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
+namespace karthus;
 
-use karthus\Config;
-use karthus\Context;
-use karthus\ErrorCode;
+use Closure;
+use karthus\route\Http\Constant;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\ServerRequest;
 use karthus\support\view\Simple;
+use Phar;
 
-const SESSION_KEY = 'SM-TOKEN';
 /**
  * Config path
  * @param string $path
@@ -102,7 +102,7 @@ function is_phar(): bool
  * @param array $extra
  * @return array
  */
-function http_responses_message(int $status = API_CODE_OK,
+function http_responses_message(int $status = Constant::API_CODE_OK,
                                 string $message = '',
                                 array $data = [],
                                 array $extra = []) : array {
@@ -227,7 +227,6 @@ function view_505(): HtmlResponse
  * @return string
  */
 function view_simple(string $template, array $vars = []): string{
-    $request = \request();
     return support\view\Simple::render($template, $vars);
 }
 
@@ -238,8 +237,7 @@ function view_simple(string $template, array $vars = []): string{
  */
 function assign(string $key, $value) : void
 {
-    $request = \request();
-    $handler = \config('view.handler');
+    $handler = config('view.handler');
     $handler::assign($key, $value);
 }
 

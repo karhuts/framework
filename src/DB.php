@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Database\Capsule\Manager;
 
 /**
- * Class Db
+ * Class DB
  * @package support
  * @method static array select(string $query, $bindings = [], $useReadPdo = true)
  * @method static int insert(string $query, $bindings = [])
@@ -18,6 +18,6 @@ use Illuminate\Database\Capsule\Manager;
  * @method static void rollBack($toLevel = null)
  * @method static void commit()
  */
-class Db extends Manager {
+class DB extends Manager {
 
 }
