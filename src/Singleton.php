@@ -1,8 +1,19 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  min@bluecity.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
+
 namespace karthus;
 
-trait Singleton {
+trait Singleton
+{
     /**
      * @var static
      */
@@ -10,10 +21,10 @@ trait Singleton {
 
     /**
      * @param mixed ...$args
-     * @return static
      */
-    public static function getInstance(...$args): static {
-        if(!isset(self::$instance)){
+    public static function getInstance(...$args): static
+    {
+        if (! isset(self::$instance)) {
             self::$instance = new static(...$args);
         }
         return self::$instance;

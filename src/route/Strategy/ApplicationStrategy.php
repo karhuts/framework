@@ -1,5 +1,14 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  min@bluecity.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
 
 namespace karthus\route\Strategy;
 
@@ -8,12 +17,13 @@ use karthus\route\ContainerAwareTrait;
 use karthus\route\Http\Exception\MethodNotAllowedException;
 use karthus\route\Http\Exception\NotFoundException;
 use karthus\route\Route;
-use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
-use Psr\Http\Server\{MiddlewareInterface, RequestHandlerInterface};
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 
-class ApplicationStrategy extends AbstractStrategy
-    implements ContainerAwareInterface
+class ApplicationStrategy extends AbstractStrategy implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
@@ -29,8 +39,7 @@ class ApplicationStrategy extends AbstractStrategy
 
     public function getThrowableHandler(): MiddlewareInterface
     {
-        return new class implements MiddlewareInterface
-        {
+        return new class() implements MiddlewareInterface {
             public function process(
                 ServerRequestInterface $request,
                 RequestHandlerInterface $handler
@@ -46,7 +55,6 @@ class ApplicationStrategy extends AbstractStrategy
 
     public function invokeRouteCallable(Route $route, ServerRequestInterface $request): ResponseInterface
     {
-
         $controller = $route->getCallable($this->getContainer());
         $response = $controller($request, $route->getParams());
         return $this->decorateResponse($response);
@@ -54,8 +62,7 @@ class ApplicationStrategy extends AbstractStrategy
 
     protected function throwThrowableMiddleware(Throwable $error): MiddlewareInterface
     {
-        return new class ($error) implements MiddlewareInterface
-        {
+        return new class($error) implements MiddlewareInterface {
             protected $error;
 
             public function __construct(Throwable $error)

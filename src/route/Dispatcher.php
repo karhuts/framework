@@ -1,16 +1,27 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  min@bluecity.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
+
 namespace karthus\route;
 
+use FastRoute\Dispatcher as FastRoute;
+use FastRoute\Dispatcher\GroupCountBased;
 use karthus\route\Http\Exception\MethodNotAllowedException;
 use karthus\route\Http\Exception\NotFoundException;
+use karthus\route\Middleware\MiddlewareAwareInterface;
+use karthus\route\Middleware\MiddlewareAwareTrait;
 use karthus\route\Strategy\ApplicationStrategy;
 use karthus\route\Strategy\StrategyAwareInterface;
 use karthus\route\Strategy\StrategyAwareTrait;
 use karthus\route\Strategy\StrategyInterface;
-use karthus\route\Middleware\{MiddlewareAwareTrait, MiddlewareAwareInterface};
-use FastRoute\Dispatcher as FastRoute;
-use FastRoute\Dispatcher\GroupCountBased;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -18,10 +29,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
 
-class Dispatcher implements
-    RequestHandlerInterface,
-    MiddlewareAwareInterface,
-    StrategyAwareInterface
+class Dispatcher implements RequestHandlerInterface, MiddlewareAwareInterface, StrategyAwareInterface
 {
     use MiddlewareAwareTrait;
     use StrategyAwareTrait;
@@ -30,8 +38,8 @@ class Dispatcher implements
     {
         $method = $request->getMethod();
         // 我解析一下 $uri
-        $uri    = $request->getUri()->getPath();
-        $match  = $router->dispatch($method, $uri);
+        $uri = $request->getUri()->getPath();
+        $match = $router->dispatch($method, $uri);
         switch ($match[0]) {
             case FastRoute::NOT_FOUND:
                 $this->setNotFoundDecoratorMiddleware();
@@ -43,7 +51,7 @@ class Dispatcher implements
             case FastRoute::FOUND:;
                 /** @var Route $route */
                 $route = $match[1]['route'];
-                $args = !empty($match[2]) ? $match[2] : null;
+                $args = ! empty($match[2]) ? $match[2] : null;
                 if ($args) {
                     $route->setParams($args);
                 }
@@ -55,24 +63,14 @@ class Dispatcher implements
         return $this->handle($request);
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $middleware = $this->shiftMiddleware();
         return $middleware->process($request, $this);
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @param Route $route
-     * @return ServerRequestInterface
-     */
     protected function requestWithRouteAttributes(ServerRequestInterface $request, Route $route): ServerRequestInterface
     {
-
         $routerParams = $route->getParams();
         foreach ($routerParams as $key => $value) {
             $request = $request->withAttribute($key, $value);
@@ -103,15 +101,11 @@ class Dispatcher implements
         $this->middleware($router);
     }
 
-    /**
-     * @param array $allowed
-     * @return void
-     */
     protected function setMethodNotAllowedDecoratorMiddleware(array $allowed): void
     {
         $strategy = $this->getStrategy();
 
-        if (!($strategy instanceof StrategyInterface)) {
+        if (! $strategy instanceof StrategyInterface) {
             throw new RuntimeException('Cannot determine strategy to use for dispatch of method not allowed route');
         }
 
@@ -119,9 +113,6 @@ class Dispatcher implements
         $this->prependMiddleware($middleware);
     }
 
-    /**
-     * @return void
-     */
     protected function setNotFoundDecoratorMiddleware(): void
     {
         if ($this->getStrategy() === null) {
@@ -130,7 +121,7 @@ class Dispatcher implements
         }
         $strategy = $this->getStrategy();
 
-        if (!($strategy instanceof StrategyInterface)) {
+        if (! $strategy instanceof StrategyInterface) {
             throw new RuntimeException('Cannot determine strategy to use for dispatch of not found route');
         }
 

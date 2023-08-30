@@ -1,57 +1,59 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  min@bluecity.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
+
 namespace karthus\route;
 
-use karthus\route\Strategy\StrategyAwareInterface;
-use karthus\route\Strategy\StrategyAwareTrait;
 use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteCollector;
-
+use karthus\route\Strategy\StrategyAwareInterface;
+use karthus\route\Strategy\StrategyAwareTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use function FastRoute\simpleDispatcher;
-use function array_values;
 
+use function array_values;
+use function FastRoute\simpleDispatcher;
 use function is_array;
 use function is_file;
 use function is_string;
 
-
 /**
- * Class Router
- * @package Webman
+ * Class Router.
  */
-class Router implements
-    StrategyAwareInterface,
-    RouteCollectionInterface,
-    RequestHandlerInterface
+class Router implements StrategyAwareInterface, RouteCollectionInterface, RequestHandlerInterface
 {
     use StrategyAwareTrait;
     use RouteCollectionTrait;
 
     /**
-     * @var callable $hook
+     * @var callable
      */
     protected static $hook;
-    /**
-     * @var string
-     */
-    protected static string $groupPrefix = "";
+
+    protected static string $groupPrefix = '';
+
     /**
      * @var array
      */
     protected static $patternMatchers = [
-        '/{(.+?):number}/'        => '{$1:[0-9]+}',
-        '/{(.+?):word}/'          => '{$1:[a-zA-Z]+}',
+        '/{(.+?):number}/' => '{$1:[0-9]+}',
+        '/{(.+?):word}/' => '{$1:[a-zA-Z]+}',
         '/{(.+?):alphanum_dash}/' => '{$1:[a-zA-Z0-9-_]+}',
-        '/{(.+?):slug}/'          => '{$1:[a-z0-9-]+}',
-        '/{(.+?):uuid}/'          => '{$1:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}+}'
+        '/{(.+?):slug}/' => '{$1:[a-z0-9-]+}',
+        '/{(.+?):uuid}/' => '{$1:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}+}',
     ];
 
     /**
-     * router group
-     * @var array
+     * router group.
      */
     protected static array $groups = [];
 
@@ -60,21 +62,15 @@ class Router implements
      */
     protected static $routeCollector;
 
-
     /**
      * @var GroupCountBased
      */
-    protected static $dispatcher = null;
-
+    protected static $dispatcher;
 
     /**
      * @var Route[]
      */
     protected static array $allRoutes = [];
-    /**
-     * @var Route
-     */
-    private static $instance;
 
     /**
      * @var Route[]
@@ -82,8 +78,11 @@ class Router implements
     protected array $routes = [];
 
     /**
-     * @param callable|string $path
-     * @param callable|null $callback
+     * @var Route
+     */
+    private static $instance;
+
+    /**
      * @return static
      */
     public static function group(callable|string $path, callable $callback = null): Router
@@ -96,7 +95,7 @@ class Router implements
         static::$groupPrefix = $previousGroupPrefix . $path;
         $previousInstance = static::$instance;
 
-        $instance = static::$instance = new static;
+        $instance = static::$instance = new static();
         static::$routeCollector->addGroup($path, $callback);
         static::$groupPrefix = $previousGroupPrefix;
         static::$instance = $previousInstance;
@@ -107,15 +106,10 @@ class Router implements
         return $instance;
     }
 
-    /**
-     * @param Route $route
-     * @return void
-     */
     public function addChild(Route $route): void
     {
         $this->children[] = $route;
     }
-
 
     /**
      * @return Route[]
@@ -126,17 +120,6 @@ class Router implements
     }
 
     /**
-     * @param RouteCollector $route
-     * @return void
-     */
-    private static function setCollector(RouteCollector $route): void
-    {
-        static::$routeCollector = $route;
-    }
-
-
-    /**
-     * @param $middleware
      * @return $this
      */
     public function middleware($middleware): Router
@@ -148,23 +131,12 @@ class Router implements
         return $this;
     }
 
-
-    /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     */
     public static function dispatch(ServerRequestInterface $request): ResponseInterface
     {
         $dispatcher = new Dispatcher();
         return $dispatcher->dispatchRequest(static::$dispatcher, $request);
     }
 
-    /**
-     * @param array|string $methods
-     * @param string $path
-     * @param $handler
-     * @return Route
-     */
     public static function addRoute(array|string $methods, string $path, $handler): Route
     {
         if (is_string($methods)) {
@@ -187,12 +159,10 @@ class Router implements
 
     /**
      * Load.
-     * @param mixed $paths
-     * @return void
      */
     public static function load(mixed $paths): void
     {
-        if (!is_array($paths)) {
+        if (! is_array($paths)) {
             return;
         }
 
@@ -207,41 +177,33 @@ class Router implements
         });
     }
 
-
-    /**
-     * @param string $path
-     * @return string
-     */
-    protected static function parseRoutePath(string $path): string
-    {
-        return preg_replace(array_keys(static::$patternMatchers), array_values(static::$patternMatchers), $path);
-    }
-
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         return static::dispatch($request);
     }
 
-    /**
-     * @param Route $route
-     */
     public function collect(Route $route): void
     {
         $this->routes[] = $route;
     }
 
-    /**
-     * @param callable $callback
-     * @return void
-     */
-    public static function hook(callable $callback): void {
+    public static function hook(callable $callback): void
+    {
         static::$hook = $callback;
     }
 
-    /**
-     * @return callable
-     */
-    public static function getHook(): callable {
+    public static function getHook(): callable
+    {
         return static::$hook;
+    }
+
+    protected static function parseRoutePath(string $path): string
+    {
+        return preg_replace(array_keys(static::$patternMatchers), array_values(static::$patternMatchers), $path);
+    }
+
+    private static function setCollector(RouteCollector $route): void
+    {
+        static::$routeCollector = $route;
     }
 }

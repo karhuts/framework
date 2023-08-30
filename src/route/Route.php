@@ -1,5 +1,14 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  min@bluecity.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
 
 namespace karthus\route;
 
@@ -16,54 +25,34 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
+
 use function array_merge;
 use function count;
 use function preg_replace_callback;
 use function str_replace;
 
-class Route implements
-    StrategyAwareInterface,
-    MiddlewareInterface,
-    MiddlewareAwareInterface
+class Route implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAwareInterface
 {
     use StrategyAwareTrait;
     use MiddlewareAwareTrait;
 
-    /**
-     * @var string|null
-     */
     protected ?string $name = null;
 
-    /**
-     * @var array
-     */
     protected array $methods = [];
 
-    /**
-     * @var string
-     */
     protected string $path = '';
 
     /**
      * @var callable|string
      */
-    protected $callback = null;
+    protected $callback;
 
-    /**
-     * @var array
-     */
     protected array $middlewares = [];
 
-    /**
-     * @var array
-     */
     protected array $params = [];
 
     /**
      * Router constructor.
-     * @param array $methods
-     * @param string $path
-     * @param callable|array $callback
      */
     public function __construct(array $methods, string $path, callable|array $callback)
     {
@@ -74,18 +63,14 @@ class Route implements
 
     /**
      * Get name.
-     * @return string|null
      */
     public function getName(): ?string
     {
         return $this->name ?? null;
     }
 
-
     /**
      * Middleware.
-     * @param mixed|null $middleware
-     * @return Route
      */
     public function middleware(mixed $middleware = null): Route
     {
@@ -98,7 +83,6 @@ class Route implements
 
     /**
      * GetPath.
-     * @return string
      */
     public function getPath(): string
     {
@@ -107,7 +91,6 @@ class Route implements
 
     /**
      * GetMethods.
-     * @return array
      */
     public function getMethods(): array
     {
@@ -116,7 +99,6 @@ class Route implements
 
     /**
      * GetCallback.
-     * @return callable|null
      */
     public function getCallback(): ?callable
     {
@@ -125,7 +107,6 @@ class Route implements
 
     /**
      * GetMiddleware.
-     * @return array
      */
     public function getMiddleware(): array
     {
@@ -134,9 +115,7 @@ class Route implements
 
     /**
      * Param.
-     * @param string|null $name
-     * @param $default
-     * @return array|mixed|null
+     * @return null|array|mixed
      */
     public function param(string $name = null, $default = null): mixed
     {
@@ -146,14 +125,9 @@ class Route implements
         return $this->params[$name] ?? $default;
     }
 
-    /**
-     * @param ContainerInterface|null $container
-     * @return callable
-     */
     public function getCallable(?ContainerInterface $container = null): callable
     {
         $callable = $this->callback;
-
 
         if (is_string($callable) && str_contains($callable, '::')) {
             $callable = explode('::', $callable);
@@ -171,7 +145,7 @@ class Route implements
             $callable = $this->resolve($callable, $container);
         }
 
-        if (!is_callable($callable)) {
+        if (! is_callable($callable)) {
             throw new RuntimeException('Could not resolve a callable for this route');
         }
 
@@ -180,7 +154,6 @@ class Route implements
 
     /**
      * SetParams.
-     * @param array $params
      * @return $this
      */
     public function setParams(array $params): Route
@@ -189,17 +162,13 @@ class Route implements
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getParams(): array {
+    public function getParams(): array
+    {
         return $this->params;
     }
 
     /**
      * Url.
-     * @param array $parameters
-     * @return string
      */
     public function url(array $parameters = []): string
     {
@@ -208,7 +177,7 @@ class Route implements
         }
         $path = str_replace(['[', ']'], '', $this->path);
         $path = preg_replace_callback('/\{(.*?)(?:\:[^\}]*?)*?\}/', function ($matches) use (&$parameters) {
-            if (!$parameters) {
+            if (! $parameters) {
                 return $matches[0];
             }
             if (isset($parameters[$matches[1]])) {
@@ -233,7 +202,7 @@ class Route implements
     ): ResponseInterface {
         $strategy = $this->getStrategy();
 
-        if (!($strategy instanceof StrategyInterface)) {
+        if (! $strategy instanceof StrategyInterface) {
             throw new RuntimeException('A strategy must be set to process a route');
         }
 
@@ -241,9 +210,6 @@ class Route implements
     }
 
     /**
-     * @param string $class
-     * @param ContainerInterface|null $container
-     * @return mixed
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */

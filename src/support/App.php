@@ -1,29 +1,36 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  min@bluecity.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
+
 namespace karthus\support;
 
+use Dotenv\Dotenv;
 use karthus\Bootstrap;
-use karthus\route\Http\Exception\Exception;
-use karthus\route\Http\Exception\MethodNotAllowedException;
-use karthus\route\Http\Exception\NotFoundException;
-use karthus\route\Router;
 use karthus\Config;
 use karthus\Context;
-use Dotenv\Dotenv;
+use karthus\route\Http\Exception\NotFoundException;
+use karthus\route\Router;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use RuntimeException;
-use function karthus\run_path;
+
 use function karthus\config;
 use function karthus\config_path;
-use function karthus\view_505;
+use function karthus\run_path;
 use function karthus\view_404;
+use function karthus\view_505;
 
-class App {
-    /**
-     * @return void
-     */
+class App
+{
     public static function run(): void
     {
         Config::clear();
@@ -52,19 +59,23 @@ class App {
 
         // 这里加载bootstrap了
         foreach (config('bootstrap', []) as $className) {
-            if (!class_exists($className)) {
-                $log = "Warning: Class $className setting in config/bootstrap.php not found\r\n";
+            if (! class_exists($className)) {
+                $log = "Warning: Class {$className} setting in config/bootstrap.php not found\r\n";
                 echo $log;
                 Log::error($log);
                 continue;
             }
-            /** @var Bootstrap $className */
+            /* @var Bootstrap $className */
             $className::run();
         }
 
         try {
             $request = ServerRequestFactory::fromGlobals(
-                $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES
+                $_SERVER,
+                $_GET,
+                $_POST,
+                $_COOKIE,
+                $_FILES
             );
 
             Context::set(ServerRequest::class, $request);
@@ -77,12 +88,12 @@ class App {
             $response = Router::dispatch($request);
         } catch (RuntimeException $exception) {
             print_r($exception);
-            exit();
+            exit;
             $response = view_505();
         } catch (NotFoundException $exception) {
             $response = view_404();
         }
 
-        (new SapiEmitter)->emit($response);
+        (new SapiEmitter())->emit($response);
     }
 }

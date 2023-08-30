@@ -1,24 +1,29 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  min@bluecity.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
 
 namespace karthus\support\view;
 
 use karthus\support\view\Simple\View;
 use karthus\ViewInterface;
-use function karthus\request;
+
 use function karthus\config;
+use function karthus\request;
 
-class Simple implements ViewInterface {
-    /**
-     * @var array
-     */
+class Simple implements ViewInterface
+{
     protected static array $vars = [];
-
 
     /**
      * Assign.
-     * @param array|string $name
-     * @param mixed|null $value
      */
     public static function assign(array|string $name, mixed $value = null): void
     {
@@ -28,7 +33,7 @@ class Simple implements ViewInterface {
     public static function render(string $template, array $vars): string
     {
         $request = request();
-        $options = config("view.options", []);
+        $options = config('view.options', []);
 
         $engine = new View($options);
         $vars = array_merge(static::$vars, $vars);
@@ -40,4 +45,3 @@ class Simple implements ViewInterface {
         return $content;
     }
 }
-

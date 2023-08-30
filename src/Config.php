@@ -1,5 +1,15 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  min@bluecity.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
+
 namespace karthus;
 
 use FilesystemIterator;
@@ -8,38 +18,24 @@ use RecursiveIteratorIterator;
 
 class Config
 {
-
-    /**
-     * @var array
-     */
     protected static array $config = [];
 
-    /**
-     * @var string
-     */
     protected static string $configPath = '';
 
-    /**
-     * @var bool
-     */
     protected static bool $loaded = false;
 
     /**
      * Load.
-     * @param string $configPath
-     * @param array $excludeFile
-     * @param string|null $key
-     * @return void
      */
     public static function load(string $configPath, array $excludeFile = [], string $key = null): void
     {
         static::$configPath = $configPath;
-        if (!$configPath) {
+        if (! $configPath) {
             return;
         }
         static::$loaded = false;
         $config = static::loadFromDir($configPath, $excludeFile);
-        if (!$config) {
+        if (! $config) {
             static::$loaded = true;
             return;
         }
@@ -55,9 +51,6 @@ class Config
 
     /**
      * This deprecated method will certainly be removed in the future.
-     * @param string $configPath
-     * @param array $excludeFile
-     * @return void
      * @deprecated
      */
     public static function reload(string $configPath, array $excludeFile = []): void
@@ -67,7 +60,6 @@ class Config
 
     /**
      * Clear.
-     * @return void
      */
     public static function clear(): void
     {
@@ -75,20 +67,7 @@ class Config
     }
 
     /**
-     * FormatConfig.
-     * @return void
-     */
-    protected static function formatConfig(): void
-    {
-        $config = static::$config;
-        static::$config = $config;
-    }
-
-    /**
      * LoadFromDir.
-     * @param string $configPath
-     * @param array $excludeFile
-     * @return array
      */
     public static function loadFromDir(string $configPath, array $excludeFile = []): array
     {
@@ -102,7 +81,7 @@ class Config
                 continue;
             }
             $appConfigFile = $file->getPath() . '/app.php';
-            if (!is_file($appConfigFile)) {
+            if (! is_file($appConfigFile)) {
                 continue;
             }
             $relativePath = str_replace($configPath . DIRECTORY_SEPARATOR, '', substr($filename, 0, -4));
@@ -126,9 +105,7 @@ class Config
 
     /**
      * Get.
-     * @param string|null $key
-     * @param mixed|null $default
-     * @return array|mixed|void|null
+     * @return null|array|mixed|void
      */
     public static function get(string $key = null, mixed $default = null)
     {
@@ -139,7 +116,7 @@ class Config
         $value = static::$config;
         $found = true;
         foreach ($keyArray as $index) {
-            if (!isset($value[$index])) {
+            if (! isset($value[$index])) {
                 if (static::$loaded) {
                     return $default;
                 }
@@ -155,10 +132,17 @@ class Config
     }
 
     /**
+     * FormatConfig.
+     */
+    protected static function formatConfig(): void
+    {
+        $config = static::$config;
+        static::$config = $config;
+    }
+
+    /**
      * Read.
-     * @param string $key
-     * @param mixed|null $default
-     * @return array|mixed|null
+     * @return null|array|mixed
      */
     protected static function read(string $key, mixed $default = null): mixed
     {
@@ -169,11 +153,11 @@ class Config
         $keys = $keyArray = explode('.', $key);
         foreach ($keyArray as $index => $section) {
             unset($keys[$index]);
-            if (is_file($file = "$path/$section.php")) {
+            if (is_file($file = "{$path}/{$section}.php")) {
                 $config = include $file;
                 return static::find($keys, $config, $default);
             }
-            if (!is_dir($path = "$path/$section")) {
+            if (! is_dir($path = "{$path}/{$section}")) {
                 return $default;
             }
         }
@@ -182,24 +166,20 @@ class Config
 
     /**
      * Find.
-     * @param array $keyArray
-     * @param mixed $stack
-     * @param mixed $default
      * @return array|mixed
      */
     protected static function find(array $keyArray, mixed $stack, mixed $default): mixed
     {
-        if (!is_array($stack)) {
+        if (! is_array($stack)) {
             return $default;
         }
         $value = $stack;
         foreach ($keyArray as $index) {
-            if (!isset($value[$index])) {
+            if (! isset($value[$index])) {
                 return $default;
             }
             $value = $value[$index];
         }
         return $value;
     }
-
 }

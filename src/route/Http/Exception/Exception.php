@@ -1,5 +1,14 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  min@bluecity.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
 
 namespace karthus\route\Http\Exception;
 
@@ -18,7 +27,7 @@ class Exception extends \Exception implements HttpExceptionInterface
     protected $message;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $status;
 
@@ -31,7 +40,7 @@ class Exception extends \Exception implements HttpExceptionInterface
     ) {
         $this->headers = $headers;
         $this->message = $message;
-        $this->status  = $status;
+        $this->status = $status;
 
         parent::__construct($message, $code, $previous);
     }
@@ -57,8 +66,8 @@ class Exception extends \Exception implements HttpExceptionInterface
 
         if ($response->getBody()->isWritable()) {
             $response->getBody()->write(json_encode([
-                'status_code'   => $this->status,
-                'reason_phrase' => $this->message
+                'status_code' => $this->status,
+                'reason_phrase' => $this->message,
             ]));
         }
 

@@ -1,7 +1,16 @@
 <?php
-declare(strict_types=1);
-namespace karthus\route\Middleware;
 
+declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  min@bluecity.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
+
+namespace karthus\route\Middleware;
 
 use InvalidArgumentException;
 use OutOfBoundsException;
@@ -66,7 +75,7 @@ trait MiddlewareAwareTrait
 
     public function shiftMiddleware(): MiddlewareInterface
     {
-        $middleware =  array_shift($this->middleware);
+        $middleware = array_shift($this->middleware);
 
         if ($middleware === null) {
             throw new OutOfBoundsException('Reached end of middleware stack. Does your controller return a response?');
@@ -76,6 +85,7 @@ trait MiddlewareAwareTrait
     }
 
     /**
+     * @param mixed $middleware
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */

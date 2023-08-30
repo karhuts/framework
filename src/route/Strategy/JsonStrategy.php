@@ -1,14 +1,29 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  min@bluecity.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
 
 namespace karthus\route\Strategy;
 
 use JsonSerializable;
-use karthus\route\Http\Exception\{Exception, MethodNotAllowedException, NotFoundException};
-use karthus\route\{ContainerAwareTrait, ContainerAwareInterface, Route};
-
-use Psr\Http\Message\{ResponseFactoryInterface, ResponseInterface, ServerRequestInterface};
-use Psr\Http\Server\{MiddlewareInterface, RequestHandlerInterface};
+use karthus\route\ContainerAwareInterface;
+use karthus\route\ContainerAwareTrait;
+use karthus\route\Http\Exception\Exception;
+use karthus\route\Http\Exception\MethodNotAllowedException;
+use karthus\route\Http\Exception\NotFoundException;
+use karthus\route\Route;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 
 class JsonStrategy extends AbstractStrategy implements ContainerAwareInterface, OptionsHandlerInterface
@@ -31,7 +46,7 @@ class JsonStrategy extends AbstractStrategy implements ContainerAwareInterface, 
         $this->jsonFlags = $jsonFlags;
 
         $this->addResponseDecorator(static function (ResponseInterface $response): ResponseInterface {
-            if (false === $response->hasHeader('content-type')) {
+            if ($response->hasHeader('content-type') === false) {
                 $response = $response->withHeader('content-type', 'application/json');
             }
 
@@ -52,7 +67,7 @@ class JsonStrategy extends AbstractStrategy implements ContainerAwareInterface, 
     public function getOptionsCallable(array $methods): callable
     {
         return function () use ($methods): ResponseInterface {
-            $options  = implode(', ', $methods);
+            $options = implode(', ', $methods);
             $response = $this->responseFactory->createResponse();
             $response = $response->withHeader('allow', $options);
             return $response->withHeader('access-control-allow-methods', $options);
@@ -61,8 +76,7 @@ class JsonStrategy extends AbstractStrategy implements ContainerAwareInterface, 
 
     public function getThrowableHandler(): MiddlewareInterface
     {
-        return new class ($this->responseFactory->createResponse()) implements MiddlewareInterface
-        {
+        return new class($this->responseFactory->createResponse()) implements MiddlewareInterface {
             protected $response;
 
             public function __construct(ResponseInterface $response)
@@ -84,8 +98,8 @@ class JsonStrategy extends AbstractStrategy implements ContainerAwareInterface, 
                     }
 
                     $response->getBody()->write(json_encode([
-                        'status_code'   => 500,
-                        'reason_phrase' => $exception->getMessage()
+                        'status_code' => 500,
+                        'reason_phrase' => $exception->getMessage(),
                     ]));
 
                     $response = $response->withAddedHeader('content-type', 'application/json');
@@ -111,14 +125,14 @@ class JsonStrategy extends AbstractStrategy implements ContainerAwareInterface, 
 
     protected function buildJsonResponseMiddleware(Exception $exception): MiddlewareInterface
     {
-        return new class ($this->responseFactory->createResponse(), $exception) implements MiddlewareInterface
-        {
+        return new class($this->responseFactory->createResponse(), $exception) implements MiddlewareInterface {
             protected $response;
+
             protected $exception;
 
             public function __construct(ResponseInterface $response, Exception $exception)
             {
-                $this->response  = $response;
+                $this->response = $response;
                 $this->exception = $exception;
             }
 
@@ -137,6 +151,6 @@ class JsonStrategy extends AbstractStrategy implements ContainerAwareInterface, 
             return false;
         }
 
-        return (is_array($response) || is_object($response) || $response instanceof JsonSerializable);
+        return is_array($response) || is_object($response) || $response instanceof JsonSerializable;
     }
 }

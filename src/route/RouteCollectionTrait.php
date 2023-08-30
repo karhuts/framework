@@ -1,17 +1,32 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  min@bluecity.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
+
 namespace karthus\route;
 
 trait RouteCollectionTrait
 {
+    public const GET = 'GET';
 
-    public const GET = "GET";
-    public const POST = "POST";
-    public const DELETE = "DELETE";
-    public const PUT = "PUT";
-    public const PATCH = "PATCH";
-    public const HEAD = "HEAD";
-    public const OPTIONS = "OPTIONS";
+    public const POST = 'POST';
+
+    public const DELETE = 'DELETE';
+
+    public const PUT = 'PUT';
+
+    public const PATCH = 'PATCH';
+
+    public const HEAD = 'HEAD';
+
+    public const OPTIONS = 'OPTIONS';
 
     abstract public static function addRoute(array|string $methods, string $path, $handler): Route;
 
@@ -50,20 +65,13 @@ trait RouteCollectionTrait
         return static::addRoute(static::PUT, $path, $handler);
     }
 
-    /**
-     * @param array $method
-     * @param string $path
-     * @param $handler
-     * @return Route
-     */
-    public static function add(array $method, string $path, $handler): Route {
+    public static function add(array $method, string $path, $handler): Route
+    {
         return static::addRoute($method, $path, $handler);
     }
 
     /**
-     * @param string $path
      * @param callable|mixed $callback
-     * @return Route
      */
     public static function any(string $path, mixed $callback): Route
     {
