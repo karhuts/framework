@@ -87,9 +87,7 @@ class App
             // 路由匹配
             $response = Router::dispatch($request);
         } catch (RuntimeException $exception) {
-            print_r($exception);
-            exit;
-            $response = view_505();
+            $response = view_505($exception->getMessage());
         } catch (NotFoundException $exception) {
             $response = view_404();
         }

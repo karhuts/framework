@@ -120,6 +120,7 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
     }
 
     /**
+     * @param mixed $middleware
      * @return $this
      */
     public function middleware($middleware): Router

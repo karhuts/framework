@@ -94,7 +94,7 @@ function http_responses_message(
     array $extra = []
 ): array {
     if ($message === '') {
-        $message = ErrorCode::$MSG[$status] ?? 'OK';
+        $message = Constant::statusMessage($status);
     }
     return [
         'code' => $status,
@@ -117,6 +117,7 @@ function http_get_body(): array
 
 /**
  * Get config.
+ * @param null|mixed $default
  * @return null|array|mixed
  */
 function config(string $key = null, $default = null): mixed
@@ -185,8 +186,9 @@ function view_404(): HtmlResponse
     return view('404')->withStatus(404);
 }
 
-function view_505(): HtmlResponse
+function view_505(string $message = ""): HtmlResponse
 {
+    assign("message", $message);
     return view('505')->withStatus(505);
 }
 

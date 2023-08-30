@@ -73,7 +73,7 @@ class Pager
         $page = ($page > $page_num) ? $page_num : $page;
         $url = ! str_contains($url, '?') ? $url . '?' : $url;
         $this->isAjax = $isAjax;
-        return $this->pager_html((int) $page_num, $url, $page, $default_style, $endhtml, !!$show_end);
+        return $this->pager_html((int) $page_num, $url, $page, $default_style, $endhtml, (bool) $show_end);
     }
 
     /**
@@ -109,12 +109,12 @@ class Pager
             $html .= $this->get_select_html($page_num, $url, $page);
             if ($default_style === true) {
                 if ($endhtml) {
-                    $html .= "<li>$endhtml</li>";
+                    $html .= "<li>{$endhtml}</li>";
                 }
                 $html .= '</div>';
             } else {
                 if ($endhtml) {
-                    $html .= "<li class='page-item'>$endhtml</li>";
+                    $html .= "<li class='page-item'>{$endhtml}</li>";
                 }
                 $html .= '</ul>';
             }
@@ -139,11 +139,11 @@ class Pager
         $html = '';
         for ($i = $start; $i <= $end; ++$i) {
             if ($i === $page) {
-                $html .= "<li class=\"page-item active\"><a class='page-link' href='javascript:void(0);'>$i</a></li>";
+                $html .= "<li class=\"page-item active\"><a class='page-link' href='javascript:void(0);'>{$i}</a></li>";
             } elseif ($this->isAjax) {
-                $html .= "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='return common_page($(this))' data-url=\"$url&page=$i\" data-id='$i'>$i</a></li>";
+                $html .= "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='return common_page($(this))' data-url=\"{$url}&page={$i}\" data-id='{$i}'>{$i}</a></li>";
             } else {
-                $html .= "<li class='page-item'><a class='page-link' href='$url&page=$i'>$i</a></li>";
+                $html .= "<li class='page-item'><a class='page-link' href='{$url}&page={$i}'>{$i}</a></li>";
             }
         }
         return $html;
@@ -151,8 +151,6 @@ class Pager
 
     /**
      * 分页-分页总页数显示.
-     * @param int $page_num
-     * @return string
      */
     private function get_total_num_html(int $page_num): string
     {
@@ -161,7 +159,6 @@ class Pager
         } // 是否开启
         return "&nbsp;&nbsp;共{$page_num}页";
     }
-
 
     /**
      * 分页-分页首页和尾页显示.
@@ -222,9 +219,9 @@ class Pager
         }
         $back_page = $page - 1;
         if ($this->isAjax) {
-            $back = "<li class='page-item'><a class='page-link' href='javascript:void(0)' data-url=\"$url&page=$back_page\" onclick='return common_page($(this))' data-id='{$back_page}'>{$prevText}</a></li>";
+            $back = "<li class='page-item'><a class='page-link' href='javascript:void(0)' data-url=\"{$url}&page={$back_page}\" onclick='return common_page($(this))' data-id='{$back_page}'>{$prevText}</a></li>";
         } else {
-            $back = "<li class='page-item'><a class='page-link' href='$url&page=$back_page'>$prevText</a></li>";
+            $back = "<li class='page-item'><a class='page-link' href='{$url}&page={$back_page}'>{$prevText}</a></li>";
         }
         if ($page === 1) {
             $back = '';

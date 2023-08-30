@@ -1,5 +1,15 @@
 <?php
+
 declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  min@bluecity.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
+
 namespace karthus;
 
 use Illuminate\Events\Dispatcher;
@@ -7,10 +17,7 @@ use Illuminate\Redis\Connections\Connection;
 use Illuminate\Redis\RedisManager;
 
 /**
- * Class Redis
- * @package support
- *
- * Strings methods
+ * Class Redis.
  * @method static int append($key, $value)
  * @method static int bitCount($key)
  * @method static int decr($key, $value = 1)
@@ -33,7 +40,7 @@ use Illuminate\Redis\RedisManager;
  * @method static bool setNx($key, $value)
  * @method static string setRange($key, $offset, $value)
  * @method static int strLen($key)
- * Keys methods
+ *                                 Keys methods
  * @method static int del(...$keys)
  * @method static int unlink(...$keys)
  * @method static false|string dump($key)
@@ -57,7 +64,7 @@ use Illuminate\Redis\RedisManager;
  * @method static int ttl($key)
  * @method static int pttl($key)
  * @method static void restore($key, $ttl, $value)
- * Hashes methods
+ *                                                 Hashes methods
  * @method static false|int hSet($key, $hashKey, $value)
  * @method static bool hSetNx($key, $hashKey, $value)
  * @method static false|string hGet($key, $hashKey)
@@ -73,7 +80,7 @@ use Illuminate\Redis\RedisManager;
  * @method static array hMGet($key, $memberKeys)
  * @method static array hScan($key, $iterator, $pattern = '', $count = 0)
  * @method static int hStrLen($key, $hashKey)
- * Lists methods
+ *                                            Lists methods
  * @method static array blPop($keys, $timeout)
  * @method static array brPop($keys, $timeout)
  * @method static false|string bRPopLPush($srcKey, $dstKey, $timeout)
@@ -91,7 +98,7 @@ use Illuminate\Redis\RedisManager;
  * @method static false|int rPush($key, ...$entries)
  * @method static false|int rPushX($key, $value)
  * @method static false|int lLen($key)
- * Sets methods
+ *                                     Sets methods
  * @method static int sAdd($key, $value)
  * @method static int sCard($key)
  * @method static array sDiff($keys)
@@ -107,7 +114,7 @@ use Illuminate\Redis\RedisManager;
  * @method static array sUnion(...$keys)
  * @method static false|int sUnionStore($dst, ...$keys)
  * @method static false|array sScan($key, $iterator, $pattern = '', $count = 0)
- * Sorted sets methods
+ *                                                                              Sorted sets methods
  * @method static array bzPopMin($keys, $timeout)
  * @method static array bzPopMax($keys, $timeout)
  * @method static int zAdd($key, $score, $value)
@@ -130,18 +137,18 @@ use Illuminate\Redis\RedisManager;
  * @method static double zScore($key, $member)
  * @method static int zunionstore($keyOutput, $arrayZSetKeys, $arrayWeights = [], $aggregateFunction = '')
  * @method static false|array zScan($key, $iterator, $pattern = '', $count = 0)
- * HyperLogLogs methods
+ *                                                                              HyperLogLogs methods
  * @method static int pfAdd($key, $values)
  * @method static int pfCount($keys)
  * @method static bool pfMerge($dstKey, $srcKeys)
- * Geocoding methods
+ *                                                Geocoding methods
  * @method static int geoAdd($key, $longitude, $latitude, $member, ...$items)
  * @method static array geoHash($key, ...$members)
  * @method static array geoPos($key, ...$members)
  * @method static double geoDist($key, $members, $unit = '')
  * @method static int|array geoRadius($key, $longitude, $latitude, $radius, $unit, $options = [])
  * @method static array geoRadiusByMember($key, $member, $radius, $units, $options = [])
- * Streams methods
+ *                                                                                       Streams methods
  * @method static int xAck($stream, $group, $arrMessages)
  * @method static string xAdd($strKey, $strId, $arrMessage, $iMaxLen = 0, $booApproximate = false)
  * @method static array xClaim($strKey, $strGroup, $strConsumer, $minIdleTime, $arrIds, $arrOptions = [])
@@ -155,20 +162,20 @@ use Illuminate\Redis\RedisManager;
  * @method static array xReadGroup($strGroup, $strConsumer, $arrStreams, $iCount = 0, $iBlock = null)
  * @method static array xRevRange($strStream, $strEnd, $strStart, $iCount = 0)
  * @method static int xTrim($strStream, $iMaxLen, $booApproximate = null)
- * Pub/sub methods
+ *                                                                        Pub/sub methods
  * @method static mixed pSubscribe($patterns, $callback)
  * @method static mixed publish($channel, $message)
  * @method static mixed subscribe($channels, $callback)
  * @method static mixed pubSub($keyword, $argument = null)
- * Generic methods
+ *                                                         Generic methods
  * @method static mixed rawCommand(...$commandAndArgs)
- * Transactions methods
+ *                                                     Transactions methods
  * @method static \Redis multi()
  * @method static mixed exec()
  * @method static mixed discard()
  * @method static mixed watch($keys)
  * @method static mixed unwatch($keys)
- * Scripting methods
+ *                                     Scripting methods
  * @method static mixed eval($script, $numkeys, $keyOrArg1 = null, $keyOrArgN = null)
  * @method static mixed evalSha($scriptSha, $numkeys, ...$arguments)
  * @method static mixed script($command, ...$scripts)
@@ -178,7 +185,7 @@ use Illuminate\Redis\RedisManager;
  * @method static mixed _prefix($value)
  * @method static mixed _serialize($value)
  * @method static mixed _unserialize($value)
- * Introspection methods
+ *                                           Introspection methods
  * @method static bool isConnected()
  * @method static mixed getHost()
  * @method static mixed getPort()
@@ -188,21 +195,32 @@ use Illuminate\Redis\RedisManager;
  * @method static mixed getPersistentID()
  * @method static mixed getAuth()
  */
-class Redis {
+class Redis
+{
     protected const PHPREDIS = 'phpredis';
+
     protected const PREREDIS = 'predis';
+
     /**
      * @var ?RedisManager
      */
     protected static ?RedisManager $instance = null;
 
+    /**
+     * @return mixed
+     */
+    public static function __callStatic(string $name, array $arguments)
+    {
+        return static::connection()->{$name}(...$arguments);
+    }
+
     public static function getInstance(): ?RedisManager
     {
-        if (!static::$instance) {
+        if (! static::$instance) {
             $config = config('redis');
             $client = $config['client'] ?? static::PHPREDIS;
 
-            if (!in_array($client, [static::PHPREDIS, static::PREREDIS])) {
+            if (! in_array($client, [static::PHPREDIS, static::PREREDIS])) {
                 $client = self::PHPREDIS;
             }
 
@@ -211,25 +229,12 @@ class Redis {
         return static::$instance;
     }
 
-    /**
-     * @param string $name
-     * @return Connection
-     */
-    public static function connection(string $name = 'default'): Connection {
+    public static function connection(string $name = 'default'): Connection
+    {
         $connection = static::getInstance()->connection($name);
         if (class_exists(Dispatcher::class)) {
             $connection->setEventDispatcher(new Dispatcher());
         }
         return $connection;
-    }
-
-    /**
-     * @param string $name
-     * @param array $arguments
-     * @return mixed
-     */
-    public static function __callStatic(string $name, array $arguments)
-    {
-        return static::connection()->{$name}(... $arguments);
     }
 }

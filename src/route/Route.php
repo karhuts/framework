@@ -115,6 +115,7 @@ class Route implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAw
 
     /**
      * Param.
+     * @param null|mixed $default
      * @return null|array|mixed
      */
     public function param(string $name = null, $default = null): mixed
