@@ -22,7 +22,7 @@ class Pager
 
     private int $show_num = 9; // 分页中显示多少个
 
-    private int $isAjax = 0; // 是否是AJAX翻页
+    private bool $isAjax = false; // 是否是AJAX翻页
 
     private array $conf = [
         'first_last' => 0, // 首页-尾页 0-关闭 1-开启
@@ -33,14 +33,14 @@ class Pager
     ];
 
     private string $style_config = '<style type="text/css">
-	.danlan_pages {font:12px/1.6em Helvetica, Arial, sans-serif;overflow:hidden; text-align:center; font-family:Verdana;margin-bottom:5px;  }
-	.danlan_pages a, .pages{ margin:0 1px; padding:1px 6px; border:1px solid #E4E4E4; text-decoration:none!important; }
-	.danlan_pages a:hover { border-color:#369; }
-	.danlan_pages strong { margin:0 1px; padding:2px 6px; border-color:#369; background:#369; color:#FFF; text-decoration:none!important; }
-	.danlan_pages .back { padding:4px 6px 1px 20px!important; padding:4px 6px 2 20px;  font-family:simsun; }
-	.danlan_pages .next { padding:4px 20px 1px 6px!important; padding:4px 20px 2 6px; font-family:simsun; }
-	.danlan_pages .first { padding:4px 6px 1px 4px!important; padding:4px 6px 2 4px;  font-family:simsun; }
-	.danlan_pages .last { padding:4px 4px 1px 6px!important; padding:4px 4px 2 6px; font-family:simsun; }
+	.karthus_pages {font:12px/1.6em Helvetica, Arial, sans-serif;overflow:hidden; text-align:center; font-family:Verdana,serif;margin-bottom:5px;  }
+	.karthus_pages a, .pages{ margin:0 1px; padding:1px 6px; border:1px solid #E4E4E4; text-decoration:none!important; }
+	.karthus_pages a:hover { border-color:#369; }
+	.karthus_pages strong { margin:0 1px; padding:2px 6px; border-color:#369; background:#369; color:#FFF; text-decoration:none!important; }
+	.karthus_pages .back { padding:4px 6px 2px 20px!important;  font-family:simsun,serif; }
+	.karthus_pages .next {  padding:4px 20px 2px 6px!important; font-family:simsun,serif; }
+	.karthus_pages .first { padding:4px 6px 2px 4px!important;  font-family:simsun,serif; }
+	.karthus_pages .last { padding:4px 4px 2px 6px!important; font-family:simsun,serif; }
 	</style>';
 
     public function __construct(array $config = [])
@@ -73,7 +73,7 @@ class Pager
         $page = ($page > $page_num) ? $page_num : $page;
         $url = ! str_contains($url, '?') ? $url . '?' : $url;
         $this->isAjax = $isAjax;
-        return $this->pager_html($page_num, $url, $page, $default_style, $endhtml, $show_end);
+        return $this->pager_html((int) $page_num, $url, $page, $default_style, $endhtml, !!$show_end);
     }
 
     /**
@@ -96,7 +96,7 @@ class Pager
             [$back, $next] = $this->get_pager_next_back_html($url, $page, $page_num);
             [$first, $last] = $this->get_first_last_html($page_num, $url, $show_end);
             if ($default_style === true) {
-                $html = $this->style_config . "<div class='danlan_pages'>";
+                $html = $this->style_config . "<div class='karthus_pages'>";
             } else {
                 $html = '<ul class="pagination m-0">';
             }
@@ -109,12 +109,12 @@ class Pager
             $html .= $this->get_select_html($page_num, $url, $page);
             if ($default_style === true) {
                 if ($endhtml) {
-                    $html .= "<li>{$endhtml}</li>";
+                    $html .= "<li>$endhtml</li>";
                 }
                 $html .= '</div>';
             } else {
                 if ($endhtml) {
-                    $html .= "<li class='page-item'>{$endhtml}</li>";
+                    $html .= "<li class='page-item'>$endhtml</li>";
                 }
                 $html .= '</ul>';
             }
@@ -124,7 +124,7 @@ class Pager
     }
 
     /**
-     *	分页-获取分页数字的列表.
+     * 分页-获取分页数字的列表.
      * @param int $start 开始数
      * @param int $end 结束数
      * @param string $url URL地址
@@ -139,19 +139,20 @@ class Pager
         $html = '';
         for ($i = $start; $i <= $end; ++$i) {
             if ($i === $page) {
-                $html .= "<li class=\"page-item active\"><a class='page-link' href='javascript:void(0);'>{$i}</a></li>";
+                $html .= "<li class=\"page-item active\"><a class='page-link' href='javascript:void(0);'>$i</a></li>";
             } elseif ($this->isAjax) {
-                $html .= "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='return common_page($(this))' data-url=\"{$url}&page={$i}\" data-id='{$i}'>{$i}</a></li>";
+                $html .= "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='return common_page($(this))' data-url=\"$url&page=$i\" data-id='$i'>$i</a></li>";
             } else {
-                $html .= "<li class='page-item'><a class='page-link' href='{$url}&page={$i}'>{$i}</a></li>";
+                $html .= "<li class='page-item'><a class='page-link' href='$url&page=$i'>$i</a></li>";
             }
         }
         return $html;
     }
 
     /**
-     *	分页-分页总页数显示.
-     * @param int $page_num 页数
+     * 分页-分页总页数显示.
+     * @param int $page_num
+     * @return string
      */
     private function get_total_num_html(int $page_num): string
     {
@@ -161,13 +162,15 @@ class Pager
         return "&nbsp;&nbsp;共{$page_num}页";
     }
 
+
     /**
-     *	分页-分页首页和尾页显示.
+     * 分页-分页首页和尾页显示.
      * @param int $page_num 页数
      * @param string $url URL地址
+     * @param bool $show_end 是否显示尾页
      * @return string[]
      */
-    private function get_first_last_html(int $page_num, string $url, int $show_end = 1): array
+    private function get_first_last_html(int $page_num, string $url, bool $show_end = true): array
     {
         $last = $first = '';
         // 是否开启
@@ -178,12 +181,12 @@ class Pager
             $first = "<li class='page-item'>
                         <a class='page-link' href='javascript:void(0)' data-url=\"{$url}&page=1\" data-id='1' onclick='return common_page($(this))'>首页</a>
                       </li>";
-            if ($show_end === 1) {
+            if ($show_end === true) {
                 $last = "<li class='page-item'><a class='page-link' href='javascript:void(0)' data-url=\"{$url}&page={$page_num}\" onclick='return common_page($(this))' data-id='{$page_num}'>尾页</a></li>";
             }
         } else {
             $first = "<li class='page-item'><a class='page-link' href='{$url}&page=1'>首页</a></li>";
-            if ($show_end === 1) {
+            if ($show_end === true) {
                 $last = "<li class='page-item'><a class='page-link' href='{$url}&page={$page_num}'>尾页</a></li>";
             }
         }
@@ -219,9 +222,9 @@ class Pager
         }
         $back_page = $page - 1;
         if ($this->isAjax) {
-            $back = "<li class='page-item'><a class='page-link' href='javascript:void(0)' data-url=\"{$url}&page={$back_page}\" onclick='return common_page($(this))' data-id='{$back_page}'>{$prevText}</a></li>";
+            $back = "<li class='page-item'><a class='page-link' href='javascript:void(0)' data-url=\"$url&page=$back_page\" onclick='return common_page($(this))' data-id='{$back_page}'>{$prevText}</a></li>";
         } else {
-            $back = "<li class='page-item'><a class='page-link' href='{$url}&page={$back_page}'>{$prevText}</a></li>";
+            $back = "<li class='page-item'><a class='page-link' href='$url&page=$back_page'>$prevText</a></li>";
         }
         if ($page === 1) {
             $back = '';
