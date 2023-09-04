@@ -83,7 +83,9 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
     private static $instance;
 
     /**
-     * @return static
+     * @param callable|string $path
+     * @param callable|null $callback
+     * @return Router
      */
     public static function group(callable|string $path, callable $callback = null): Router
     {

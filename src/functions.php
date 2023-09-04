@@ -21,12 +21,38 @@ use Laminas\Diactoros\ServerRequest;
 use Phar;
 
 /**
+ * Public path
+ * @param string $path
+ * @return string
+ */
+function public_path(string $path = ''): string
+{
+    static $publicPath = '';
+    if (!$publicPath) {
+        $publicPath = config('app.public_path') ? : run_path('public');
+    }
+    return path_combine($publicPath, $path);
+}
+
+
+/**
  * Config path.
  */
 function config_path(string $path = ''): string
 {
     return path_combine(ROOT . DIRECTORY_SEPARATOR . 'config', $path);
 }
+
+/**
+ * App path
+ * @param string $path
+ * @return string
+ */
+function app_path(string $path = ''): string
+{
+    return path_combine(ROOT . DIRECTORY_SEPARATOR . 'app', $path);
+}
+
 
 /**
  * if the param $path equal false,will return this program current execute directory.
