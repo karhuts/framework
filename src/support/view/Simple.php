@@ -6,7 +6,7 @@ declare(strict_types=1);
  *
  * @link     https://github.com/karhuts
  * @document https://github.com/karhuts/framework
- * @contact  min@bluecity.com
+ * @contact  294953530@qq.com
  * @license  https://github.com/karhuts/framework/blob/master/LICENSE
  */
 

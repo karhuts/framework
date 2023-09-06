@@ -2,7 +2,7 @@
     "name": "karthus/framework",
     "description": "A simple Framework For PHP",
     "type": "library",
-    "version": "v3.1.8",
+    "version": "v3.1.10",
     "keywords": [
         "framework",
         "karthus",
@@ -14,6 +14,7 @@
     "homepage": "https://github.com/karhuts/framework",
     "require": {
         "php": "~8.2.0",
+        "composer/composer": "^2.6",
         "illuminate/database": "^10.20",
         "illuminate/events": "^10.21",
         "illuminate/pagination": "^10.20",
@@ -62,5 +63,8 @@
     "config": {
         "optimize-autoloader": true,
         "sort-packages": true
-    }
+    },
+    "bin": [
+        "bin/karthus"
+    ]
 }

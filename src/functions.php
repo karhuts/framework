@@ -6,7 +6,7 @@ declare(strict_types=1);
  *
  * @link     https://github.com/karhuts
  * @document https://github.com/karhuts/framework
- * @contact  min@bluecity.com
+ * @contact  294953530@qq.com
  * @license  https://github.com/karhuts/framework/blob/master/LICENSE
  */
 
@@ -21,38 +21,32 @@ use Laminas\Diactoros\ServerRequest;
 use Phar;
 
 /**
- * Public path
- * @param string $path
- * @return string
+ * Public path.
  */
 function public_path(string $path = ''): string
 {
     static $publicPath = '';
-    if (!$publicPath) {
-        $publicPath = config('app.public_path') ? : run_path('public');
+    if (! $publicPath) {
+        $publicPath = config('app.public_path') ?: run_path('public');
     }
     return path_combine($publicPath, $path);
 }
-
 
 /**
  * Config path.
  */
 function config_path(string $path = ''): string
 {
-    return path_combine(ROOT . DIRECTORY_SEPARATOR . 'config', $path);
+    return path_combine(BASE_PATH . DIRECTORY_SEPARATOR . 'config', $path);
 }
 
 /**
- * App path
- * @param string $path
- * @return string
+ * App path.
  */
 function app_path(string $path = ''): string
 {
-    return path_combine(ROOT . DIRECTORY_SEPARATOR . 'app', $path);
+    return path_combine(BASE_PATH . DIRECTORY_SEPARATOR . 'app', $path);
 }
-
 
 /**
  * if the param $path equal false,will return this program current execute directory.
@@ -62,7 +56,7 @@ function base_path(bool|string $path = ''): string
     if ($path === false) {
         return run_path();
     }
-    return path_combine(ROOT, $path);
+    return path_combine(BASE_PATH, $path);
 }
 
 function cache_path(string|bool $path = ''): string
@@ -80,7 +74,7 @@ function run_path(string $path = ''): string
 {
     static $runPath = '';
     if (! $runPath) {
-        $runPath = is_phar() ? dirname(Phar::running(false)) : config('app.runtime_path', ROOT);
+        $runPath = is_phar() ? dirname(Phar::running(false)) : config('app.runtime_path', BASE_PATH);
     }
     return path_combine($runPath, $path);
 }
@@ -212,9 +206,9 @@ function view_404(): HtmlResponse
     return view('404')->withStatus(404);
 }
 
-function view_505(string $message = ""): HtmlResponse
+function view_505(string $message = ''): HtmlResponse
 {
-    assign("message", $message);
+    assign('message', $message);
     return view('505')->withStatus(505);
 }
 
@@ -242,4 +236,69 @@ function redirect(
     assign('is_error', $is_error);
     assign('url', $url);
     return view('redirect');
+}
+
+/**
+ * 通过 name 获取 classname.
+ */
+function nameToClass(string $name): string
+{
+    $class = preg_replace_callback(['/-([a-zA-Z])/', '/_([a-zA-Z])/'], function ($matches) {
+        return strtoupper($matches[1]);
+    }, $name);
+
+    if (! ($pos = strrpos($class, '/'))) {
+        $class = ucfirst($class);
+    } else {
+        $path = substr($class, 0, $pos);
+        $class = ucfirst(substr($class, $pos + 1));
+        $class = "{$path}/{$class}";
+    }
+    return $class;
+}
+
+function nameToNamespace(string $name): string
+{
+    $namespace = ucfirst($name);
+    $namespace = preg_replace_callback(['/-([a-zA-Z])/', '/(\/[a-zA-Z])/'], function ($matches) {
+        return strtoupper($matches[1]);
+    }, $namespace);
+    return str_replace('/', '\\', ucfirst($namespace));
+}
+
+function classToName($class): string
+{
+    $class = lcfirst($class);
+    return preg_replace_callback(['/([A-Z])/'], function ($matches) {
+        return '_' . strtolower($matches[1]);
+    }, $class);
+}
+
+function guessPath(string $base_path, string|bool $name, false $return_full_path = false): false|string
+{
+    if (! is_dir($base_path)) {
+        return false;
+    }
+    if (! is_string($name)) {
+        return false;
+    }
+    $names = explode('/', trim(strtolower($name), '/'));
+    $realname = [];
+    $path = $base_path;
+    foreach ($names as $name) {
+        $finded = false;
+        foreach (scandir($path) ?: [] as $tmp_name) {
+            if (strtolower($tmp_name) === $name && is_dir("{$path}/{$tmp_name}")) {
+                $path = "{$path}/{$tmp_name}";
+                $realname[] = $tmp_name;
+                $finded = true;
+                break;
+            }
+        }
+        if (! $finded) {
+            return false;
+        }
+    }
+    $realname = implode(DIRECTORY_SEPARATOR, $realname);
+    return $return_full_path ? get_realpath($base_path . DIRECTORY_SEPARATOR . $realname) : $realname;
 }

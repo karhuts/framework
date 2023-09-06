@@ -6,7 +6,7 @@ declare(strict_types=1);
  *
  * @link     https://github.com/karhuts
  * @document https://github.com/karhuts/framework
- * @contact  min@bluecity.com
+ * @contact  294953530@qq.com
  * @license  https://github.com/karhuts/framework/blob/master/LICENSE
  */
 
@@ -31,7 +31,7 @@ use function karthus\view_505;
 
 class App
 {
-    public static function run(): void
+    public static function init(): void
     {
         Config::clear();
         if (class_exists(Dotenv::class) && file_exists(run_path('.env'))) {
@@ -68,6 +68,11 @@ class App
             /* @var Bootstrap $className */
             $className::run();
         }
+    }
+
+    public static function run(): void
+    {
+        static::init();
 
         try {
             $request = ServerRequestFactory::fromGlobals(

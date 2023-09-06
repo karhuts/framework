@@ -6,7 +6,7 @@ declare(strict_types=1);
  *
  * @link     https://github.com/karhuts
  * @document https://github.com/karhuts/framework
- * @contact  min@bluecity.com
+ * @contact  294953530@qq.com
  * @license  https://github.com/karhuts/framework/blob/master/LICENSE
  */
 
@@ -82,11 +82,6 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
      */
     private static $instance;
 
-    /**
-     * @param callable|string $path
-     * @param callable|null $callback
-     * @return Router
-     */
     public static function group(callable|string $path, callable $callback = null): Router
     {
         if ($callback === null) {

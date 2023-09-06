@@ -6,7 +6,7 @@ declare(strict_types=1);
  *
  * @link     https://github.com/karhuts
  * @document https://github.com/karhuts/framework
- * @contact  min@bluecity.com
+ * @contact  294953530@qq.com
  * @license  https://github.com/karhuts/framework/blob/master/LICENSE
  */
 
@@ -60,7 +60,7 @@ class Constant
     ];
 
     /**
-     * NOTE: Keep this in sync with the status code list
+     * NOTE: Keep this in sync with the status code list.
      * @var array|string[]
      */
     protected static array $statusMessage = [
@@ -136,7 +136,7 @@ class Constant
     /**
      * MIME types were copied from https://github.com/nginx/nginx/blob/67d2a9541826ecd5db97d604f23460210fd3e517/conf/mime.types with the following updates:
      * - Use "application/xml" instead of "text/xml" as recommended per https://datatracker.ietf.org/doc/html/rfc7303#section-4.1
-     * - Use "text/javascript" instead of "application/javascript" as recommended per https://www.rfc-editor.org/rfc/rfc9239#name-text-javascript
+     * - Use "text/javascript" instead of "application/javascript" as recommended per https://www.rfc-editor.org/rfc/rfc9239#name-text-javascript.
      * @var array|string[]
      */
     protected static array $mimeExtensions = [
@@ -253,9 +253,7 @@ class Constant
     ];
 
     /**
-     * returns the correct message for the provided HTTP statuscode
-     * @param int $status
-     * @return string
+     * returns the correct message for the provided HTTP statuscode.
      */
     public static function statusMessage(int $status): string
     {

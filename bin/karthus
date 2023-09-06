@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+use karthus\command;
+use function karthus\app_path;
+const BASE_PATH = __DIR__;
+
+include_once BASE_PATH . '/vendor/autoload.php';
+// 一般要初始化一些配置
+karthus\support\App::init();
+
+$cli = new Command();
+$cli->setName('karthus cli');
+$cli->installInternalCommands()
+    ->installCommands(app_path() . "/command");
+
+$cli->run();
