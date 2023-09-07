@@ -80,11 +80,6 @@ trait RouteConditionHandlerTrait
         return $this;
     }
 
-    /**
-     * @param Route $route
-     * @param ServerRequestInterface $request
-     * @return bool
-     */
     protected function isExtraConditionMatch(Route $route, ServerRequestInterface $request): bool
     {
         $path = $route->getPath();

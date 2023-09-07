@@ -37,13 +37,13 @@ class MakeCommand extends Command
 
         // make:command 不支持子目录
         $name = str_replace(['\\', '/'], '', $name);
-        $command_str = app_path() . '/command';
+        $command_str = app_path('command');
         $items = explode(':', $name);
         $name = '';
         foreach ($items as $item) {
             $name .= ucfirst($item);
         }
-        $file = app_path() . "/{$command_str}/{$name}.php";
+        $file = "{$command_str}/{$name}.php";
         $upper = $command_str === 'Command';
         $namespace = $upper ? 'App\Command' : 'app\command';
         $this->createCommand($name, $namespace, $file, $command);
@@ -67,7 +67,16 @@ class MakeCommand extends Command
         $desc = str_replace(':', ' ', $command);
         $command_content = <<<EOF
 <?php
-
+declare(strict_types=1);
+/**
+ * This file is part of Karthus.
+ *
+ * @link     https://github.com/karhuts
+ * @document https://github.com/karhuts/framework
+ * @contact  294953530@qq.com
+ * @license  https://github.com/karhuts/framework/blob/master/LICENSE
+ */
+ 
 namespace {$namespace};
 
 use Symfony\\Component\\Console\\Command\\Command;
