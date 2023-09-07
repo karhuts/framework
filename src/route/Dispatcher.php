@@ -29,17 +29,21 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
 
-class Dispatcher implements RequestHandlerInterface, MiddlewareAwareInterface, StrategyAwareInterface
+class Dispatcher extends GroupCountBased implements RequestHandlerInterface, MiddlewareAwareInterface, StrategyAwareInterface
 {
     use MiddlewareAwareTrait;
     use StrategyAwareTrait;
 
-    public function dispatchRequest(GroupCountBased $router, ServerRequestInterface $request): ResponseInterface
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function dispatchRequest(ServerRequestInterface $request): ResponseInterface
     {
         $method = $request->getMethod();
         // 我解析一下 $uri
         $uri = $request->getUri()->getPath();
-        $match = $router->dispatch($method, $uri);
+        $match = $this->dispatch($method, $uri);
         switch ($match[0]) {
             case FastRoute::NOT_FOUND:
                 $this->setNotFoundDecoratorMiddleware();
@@ -48,9 +52,9 @@ class Dispatcher implements RequestHandlerInterface, MiddlewareAwareInterface, S
                 $allowed = (array) $match[1];
                 $this->setMethodNotAllowedDecoratorMiddleware($allowed);
                 break;
-            case FastRoute::FOUND:;
+            case FastRoute::FOUND:
                 /** @var Route $route */
-                $route = $match[1]['route'];
+                $route = $match[1];
                 $args = ! empty($match[2]) ? $match[2] : null;
                 if ($args) {
                     $route->setParams($args);

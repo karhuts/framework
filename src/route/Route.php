@@ -31,12 +31,11 @@ use function count;
 use function preg_replace_callback;
 use function str_replace;
 
-class Route implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAwareInterface
+class Route implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAwareInterface, RouteConditionHandlerInterface
 {
     use StrategyAwareTrait;
     use MiddlewareAwareTrait;
-
-    protected ?string $name = null;
+    use RouteConditionHandlerTrait;
 
     protected array $methods = [];
 
@@ -51,22 +50,26 @@ class Route implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAw
 
     protected array $params = [];
 
+    protected bool $group = false;
+
     /**
      * Router constructor.
      */
-    public function __construct(array $methods, string $path, callable|array $callback)
-    {
+    public function __construct(
+        array $methods,
+        string $path,
+        callable|array $callback,
+        bool $group = false
+    ) {
         $this->methods = $methods;
         $this->path = $path;
         $this->callback = $callback;
+        $this->group = (bool) $group;
     }
 
-    /**
-     * Get name.
-     */
-    public function getName(): ?string
+    public function isGroup(): bool
     {
-        return $this->name ?? null;
+        return (bool) $this->group;
     }
 
     /**
@@ -97,10 +100,7 @@ class Route implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAw
         return $this->methods;
     }
 
-    /**
-     * GetCallback.
-     */
-    public function getCallback(): ?callable
+    public function getCallback(): callable|array
     {
         return $this->callback;
     }
@@ -115,10 +115,9 @@ class Route implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAw
 
     /**
      * Param.
-     * @param null|mixed $default
      * @return null|array|mixed
      */
-    public function param(string $name = null, $default = null): mixed
+    public function param(string $name = null, mixed $default = null): mixed
     {
         if ($name === null) {
             return $this->params;
@@ -126,6 +125,10 @@ class Route implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAw
         return $this->params[$name] ?? $default;
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function getCallable(?ContainerInterface $container = null): callable
     {
         $callable = $this->callback;

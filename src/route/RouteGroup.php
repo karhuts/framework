@@ -16,15 +16,13 @@ use karthus\route\Middleware\MiddlewareAwareInterface;
 use karthus\route\Middleware\MiddlewareAwareTrait;
 use karthus\route\Strategy\StrategyAwareInterface;
 use karthus\route\Strategy\StrategyAwareTrait;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
-class RouteGroup implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAwareInterface
+class RouteGroup implements MiddlewareAwareInterface, RouteCollectionInterface, RouteConditionHandlerInterface, StrategyAwareInterface
 {
-    use StrategyAwareTrait;
     use MiddlewareAwareTrait;
+    use RouteCollectionTrait;
+    use RouteConditionHandlerTrait;
+    use StrategyAwareTrait;
 
     /**
      * @var callable
@@ -48,18 +46,9 @@ class RouteGroup implements StrategyAwareInterface, MiddlewareInterface, Middlew
         $this->prefix = sprintf('/%s', ltrim($prefix, '/'));
     }
 
-    public function __invoke(): void
+    public static function addRoute(array|string $methods, string $path, $handler): Route
     {
-        ($this->callback)($this);
-    }
-
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
-        return $handler->handle($request);
-    }
-
-    public function getPrefix(): string
-    {
-        return $this->prefix;
+        print_r(func_get_args());
+        exit;
     }
 }

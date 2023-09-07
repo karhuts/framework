@@ -201,8 +201,10 @@ function view(string $template, array $vars = []): HtmlResponse
     return new Response\HtmlResponse($data, 200);
 }
 
-function view_404(): HtmlResponse
+function view_404(string $message = ''): HtmlResponse
 {
+    $message = $message ?? '很抱歉，找不到您要查找的页面';
+    assign('message', $message);
     return view('404')->withStatus(404);
 }
 

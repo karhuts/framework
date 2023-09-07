@@ -12,8 +12,11 @@ declare(strict_types=1);
 
 namespace karthus\route;
 
+use FastRoute\DataGenerator;
 use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\RouteCollector;
+use FastRoute\RouteParser;
+use karthus\route\Strategy\ApplicationStrategy;
 use karthus\route\Strategy\StrategyAwareInterface;
 use karthus\route\Strategy\StrategyAwareTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -21,7 +24,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 use function array_values;
-use function FastRoute\simpleDispatcher;
 use function is_array;
 use function is_file;
 use function is_string;
@@ -29,10 +31,11 @@ use function is_string;
 /**
  * Class Router.
  */
-class Router implements StrategyAwareInterface, RouteCollectionInterface, RequestHandlerInterface
+class Router implements StrategyAwareInterface, RouteCollectionInterface, RequestHandlerInterface, RouteConditionHandlerInterface
 {
     use StrategyAwareTrait;
     use RouteCollectionTrait;
+    use RouteConditionHandlerTrait;
 
     /**
      * @var callable
@@ -41,10 +44,9 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
 
     protected static string $groupPrefix = '';
 
-    /**
-     * @var array
-     */
-    protected static $patternMatchers = [
+    protected $routesData;
+
+    protected static array $patternMatchers = [
         '/{(.+?):number}/' => '{$1:[0-9]+}',
         '/{(.+?):word}/' => '{$1:[a-zA-Z]+}',
         '/{(.+?):alphanum_dash}/' => '{$1:[a-zA-Z0-9-_]+}',
@@ -57,10 +59,7 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
      */
     protected static array $groups = [];
 
-    /**
-     * @var RouteCollector
-     */
-    protected static $routeCollector;
+    protected static ?RouteCollector $routeCollector;
 
     /**
      * @var GroupCountBased
@@ -77,35 +76,23 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
      */
     protected array $routes = [];
 
+    private static array $middlewares = [];
+
     /**
      * @var Route
      */
     private static $instance;
 
-    public static function group(callable|string $path, callable $callback = null): Router
+    public static function group(callable|string $path, callable $callback = null): Route
     {
         if ($callback === null) {
             $callback = $path;
             $path = '';
         }
-        $previousGroupPrefix = static::$groupPrefix;
-        static::$groupPrefix = $previousGroupPrefix . $path;
-        $previousInstance = static::$instance;
 
-        $instance = static::$instance = new static();
-        static::$routeCollector->addGroup($path, $callback);
-        static::$groupPrefix = $previousGroupPrefix;
-        static::$instance = $previousInstance;
-
-        if ($previousInstance) {
-            $previousInstance->addChild($instance);
-        }
-        return $instance;
-    }
-
-    public function addChild(Route $route): void
-    {
-        $this->children[] = $route;
+        $group = new Route(['GROUP'], $path, $callback, true);
+        static::$allRoutes[] = $group;
+        return $group;
     }
 
     /**
@@ -117,10 +104,9 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
     }
 
     /**
-     * @param mixed $middleware
      * @return $this
      */
-    public function middleware($middleware): Router
+    public function middleware(mixed $middleware): Router
     {
         foreach ($this->routes as $route) {
             $route->middleware($middleware);
@@ -129,10 +115,18 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
         return $this;
     }
 
+    /**
+     * @throws Http\Exception\RouterDomainNotMatchException
+     * @throws Http\Exception\RouterPortNotMatchException
+     * @throws Http\Exception\RouterSchemeNotMatchException
+     */
     public static function dispatch(ServerRequestInterface $request): ResponseInterface
     {
-        $dispatcher = new Dispatcher();
-        return $dispatcher->dispatchRequest(static::$dispatcher, $request);
+        $router = new static();
+        $router->prepareRoutes($request);
+
+        $dispatcher = (new Dispatcher($router->routesData))->setStrategy($router->getStrategy() ?? (new ApplicationStrategy()));
+        return $dispatcher->dispatchRequest($request);
     }
 
     public static function addRoute(array|string $methods, string $path, $handler): Route
@@ -141,17 +135,12 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
             $methods = [$methods];
         }
 
-        $path = static::parseRoutePath($path);
-        $route = new Route($methods, $path, $handler);
-        static::$allRoutes[] = $route;
-
-        $callback = $handler;
-        static::$routeCollector->addRoute($methods, $path, ['callback' => $callback, 'route' => $route]);
-
-        if (static::$instance) {
-            static::$instance->collect($route);
+        $path = static::$groupPrefix . $path;
+        $route = new Route($methods, $path, $handler, false);
+        if (static::$middlewares) {
+            $route->middleware(static::$middlewares);
         }
-
+        static::$allRoutes[] = $route;
         return $route;
     }
 
@@ -164,25 +153,23 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
             return;
         }
 
-        static::$dispatcher = simpleDispatcher(function (RouteCollector $route) use ($paths) {
-            Router::setCollector($route);
-            foreach ($paths as $configPath) {
-                $routeConfigFile = $configPath . '/route.php';
-                if (is_file($routeConfigFile)) {
-                    require_once $routeConfigFile;
-                }
+        Router::setCollector();
+        foreach ($paths as $configPath) {
+            $routeConfigFile = $configPath . '/route.php';
+            if (is_file($routeConfigFile)) {
+                require_once $routeConfigFile;
             }
-        });
+        }
     }
 
+    /**
+     * @throws Http\Exception\RouterDomainNotMatchException
+     * @throws Http\Exception\RouterPortNotMatchException
+     * @throws Http\Exception\RouterSchemeNotMatchException
+     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         return static::dispatch($request);
-    }
-
-    public function collect(Route $route): void
-    {
-        $this->routes[] = $route;
     }
 
     public static function hook(callable $callback): void
@@ -195,13 +182,50 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
         return static::$hook;
     }
 
+    /**
+     * @throws Http\Exception\RouterDomainNotMatchException
+     * @throws Http\Exception\RouterPortNotMatchException
+     * @throws Http\Exception\RouterSchemeNotMatchException
+     */
+    protected function prepareRoutes(ServerRequestInterface $request): void
+    {
+        // 先搞 group
+        $routes = static::$allRoutes;
+        // 遍历路由规则
+        foreach ($routes as $key => $route) {
+            if ($route->isGroup()) {
+                static::$groupPrefix = $route->getPath();
+                static::$middlewares = $route->getMiddleware();
+                $route->getCallback()();
+                unset(static::$allRoutes[$key]);
+            }
+        }
+        $routes = static::$allRoutes;
+        $collector = static::$routeCollector;
+        foreach ($routes as $route) {
+            if ($this->isExtraConditionMatch($route, $request) === false) {
+                continue;
+            }
+            if ($route->getStrategy() === null) {
+                $strategy = $this->getStrategy() ?? new ApplicationStrategy();
+                $route->setStrategy($strategy);
+            }
+            $path = static::parseRoutePath($route->getPath());
+            $collector->addRoute($route->getMethods(), $path, $route);
+        }
+        $this->routesData = $collector->getData();
+    }
+
     protected static function parseRoutePath(string $path): string
     {
         return preg_replace(array_keys(static::$patternMatchers), array_values(static::$patternMatchers), $path);
     }
 
-    private static function setCollector(RouteCollector $route): void
+    private static function setCollector(): void
     {
-        static::$routeCollector = $route;
+        static::$routeCollector = static::$routeCollector ?? new RouteCollector(
+            new RouteParser\Std(),
+            new DataGenerator\GroupCountBased()
+        );
     }
 }

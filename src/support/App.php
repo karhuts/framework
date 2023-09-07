@@ -17,6 +17,9 @@ use karthus\Bootstrap;
 use karthus\Config;
 use karthus\Context;
 use karthus\route\Http\Exception\NotFoundException;
+use karthus\route\Http\Exception\RouterDomainNotMatchException;
+use karthus\route\Http\Exception\RouterPortNotMatchException;
+use karthus\route\Http\Exception\RouterSchemeNotMatchException;
 use karthus\route\Router;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
@@ -94,6 +97,12 @@ class App
         } catch (RuntimeException $exception) {
             $response = view_505($exception->getMessage());
         } catch (NotFoundException $exception) {
+            $response = view_404();
+        } catch (RouterDomainNotMatchException $e) {
+            $response = view_404($e->getMessage());
+        } catch (RouterPortNotMatchException $e) {
+            $response = view_404();
+        } catch (RouterSchemeNotMatchException $e) {
             $response = view_404();
         }
 
