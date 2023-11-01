@@ -1,5 +1,8 @@
 #!/usr/bin/env php
 <?php
+
+use Composer\Composer;
+use Composer\Repository\InstalledRepository;
 use karthus\command;
 use function karthus\app_path;
 const BASE_PATH = __DIR__;
@@ -8,8 +11,16 @@ include_once BASE_PATH . '/vendor/autoload.php';
 // 一般要初始化一些配置
 karthus\support\App::init();
 
+// 获取已安装的仓库管理器
+$composer = new Composer();
+$repositoryManager = $composer->getRepositoryManager();
+$installedRepo = new InstalledRepository($composer, $repositoryManager->getLocalRepository());
+// 获取已安装的包列表
+$packages = $installedRepo->getPackages();
+
 $cli = new Command();
 $cli->setName('karthus cli');
+$cli->setVersion();
 $cli->installInternalCommands()
     ->installCommands(app_path() . "/command");
 
