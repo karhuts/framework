@@ -1,8 +1,9 @@
 #!/usr/bin/env php
 <?php
 
-use Composer\Composer;
-use Composer\Repository\InstalledRepository;
+use Composer\Factory;
+use Composer\IO\NullIO;
+use Composer\Json\JsonFile;
 use karthus\command;
 use function karthus\app_path;
 const BASE_PATH = __DIR__;
@@ -11,17 +12,30 @@ include_once BASE_PATH . '/vendor/autoload.php';
 // 一般要初始化一些配置
 karthus\support\App::init();
 
-// 获取已安装的仓库管理器
-$composer = new Composer();
-$repositoryManager = $composer->getRepositoryManager();
-$installedRepo = new InstalledRepository($composer, $repositoryManager->getLocalRepository());
-// 获取已安装的包列表
-$packages = $installedRepo->getPackages();
+// 创建 Composer 实例
+$composer = Factory::create(new NullIO(), 'composer.json');
+// 获取 Composer 配置
+$config = $composer->getConfig();
+$installed = $config->get('vendor-dir') . '/composer/installed.json';
+
+// 获取 lock 文件路径
+$lockFile = JsonFile::parseJson(file_get_contents($installed));
+$packages = $lockFile['packages'] ?? [];
+foreach ($packages as $package) {
+    // 提取包名和版本号
+    $packageName = $package['name'];
+    $version = $package['version'];
+    if ($packageName === 'karthus/framework') {
+        break;
+    }
+}
 
 $cli = new Command();
 $cli->setName('karthus cli');
-$cli->setVersion();
-$cli->installInternalCommands()
-    ->installCommands(app_path() . "/command");
-
-$cli->run();
+$cli->setVersion($version);
+try {
+    $cli->installInternalCommands()
+        ->installCommands(app_path() . "/command")
+        ->run();
+} catch (Exception $e) {
+}
