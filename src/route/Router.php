@@ -103,6 +103,16 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
         return static::$allRoutes;
     }
 
+    public function permissions(string|array $permission): Router {
+        if (is_string($permission)) {
+            $permission = explode(',', $permission);
+        }
+        foreach ($this->routes as $route) {
+            $route->permissions($permission);
+        }
+        return $this;
+    }
+
     /**
      * @return $this
      */
