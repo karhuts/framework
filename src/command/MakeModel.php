@@ -254,11 +254,11 @@ EOF;
     protected function getType(string $type): string
     {
         if (str_contains($type, 'int')) {
-            return 'integer';
+            return 'int';
         }
         return match ($type) {
             'varchar', 'string', 'text', 'date', 'time', 'guid', 'datetimetz', 'datetime', 'decimal', 'enum' => 'string',
-            'boolean' => 'integer',
+            'boolean' => 'int',
             'float' => 'float',
             default => 'mixed',
         };
