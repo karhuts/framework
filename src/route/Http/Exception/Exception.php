@@ -16,20 +16,14 @@ use Psr\Http\Message\ResponseInterface;
 
 class Exception extends \Exception implements HttpExceptionInterface
 {
-    /**
-     * @var array
-     */
-    protected $headers = [];
+    protected array $headers = [];
 
     /**
      * @var string
      */
     protected $message;
 
-    /**
-     * @var int
-     */
-    protected $status;
+    protected int $status;
 
     public function __construct(
         int $status,

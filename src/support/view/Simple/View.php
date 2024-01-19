@@ -39,7 +39,7 @@ class View extends Template
      * @param string $key KEY值-模板中的变量名称
      * @param null|array|bool|int|object|string $value value值
      */
-    public function assign(string $key, object|int|bool|array|string|null $value): void
+    public function assign(string $key, null|array|bool|int|object|string $value): void
     {
         $this->view[$key] = $value;
     }

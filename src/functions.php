@@ -15,10 +15,12 @@ namespace karthus;
 use Closure;
 use karthus\route\Http\Constant;
 use karthus\support\view\Simple;
-use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\ServerRequest;
 use Phar;
+use Symfony\Component\Console\Output\OutputInterface;
+
+use function get_realpath;
 
 /**
  * Public path.
@@ -59,7 +61,7 @@ function base_path(bool|string $path = ''): string
     return path_combine(BASE_PATH, $path);
 }
 
-function cache_path(string|bool $path = ''): string
+function cache_path(bool|string $path = ''): string
 {
     if ($path === false) {
         return runtime_path('cache');
@@ -198,7 +200,7 @@ function view(string $template, array $vars = []): HtmlResponse
     $data = match ($handler) {
         Simple::class => view_simple($template, $vars),
     };
-    return new Response\HtmlResponse($data, 200);
+    return new HtmlResponse($data, 200);
 }
 
 function view_404(string $message = ''): HtmlResponse
@@ -216,7 +218,7 @@ function view_505(string $message = ''): HtmlResponse
 
 function view_simple(string $template, array $vars = []): string
 {
-    return support\view\Simple::render($template, $vars);
+    return Simple::render($template, $vars);
 }
 
 function assign(string $key, $value): void
@@ -276,7 +278,7 @@ function classToName($class): string
     }, $class);
 }
 
-function guessPath(string $base_path, string|bool $name, false $return_full_path = false): false|string
+function guessPath(string $base_path, bool|string $name, false $return_full_path = false): false|string
 {
     if (! is_dir($base_path)) {
         return false;
@@ -303,4 +305,25 @@ function guessPath(string $base_path, string|bool $name, false $return_full_path
     }
     $realname = implode(DIRECTORY_SEPARATOR, $realname);
     return $return_full_path ? get_realpath($base_path . DIRECTORY_SEPARATOR . $realname) : $realname;
+}
+
+function console_info(OutputInterface $output, string $msg = ''): void
+{
+    $output->writeln('');
+    $output->writeln("  <bg=blue>INFO</> {$msg}");
+    $output->writeln('');
+}
+
+function console_error(OutputInterface $output, string $msg = ''): void
+{
+    $output->writeln('');
+    $output->writeln("  <bg=#c0392b>ERROR</> {$msg}");
+    $output->writeln('');
+}
+
+function console_success(OutputInterface $output, string $msg = ''): void
+{
+    $output->writeln('');
+    $output->writeln("  <bg=green>SUCCESS</> {$msg}");
+    $output->writeln('');
 }

@@ -23,13 +23,14 @@ use Throwable;
 use function karthus\app_path;
 use function karthus\classToName;
 use function karthus\config;
+use function karthus\console_info;
 use function karthus\nameToClass;
 
 class MakeModel extends Command
 {
     protected static $defaultName = 'make:model';
 
-    protected static $defaultDescription = 'Make model';
+    protected static $defaultDescription = 'Create a new Eloquent model class';
 
     protected function configure(): void
     {
@@ -42,7 +43,6 @@ class MakeModel extends Command
         $name = $input->getArgument('name');
         $name = nameToClass($name);
         $type = $input->getArgument('type');
-        $output->writeln("Make model {$name}");
         if (! ($pos = strrpos($name, '/'))) {
             $name = ucfirst($name);
             $model_str = app_path('model');
@@ -84,6 +84,8 @@ class MakeModel extends Command
         } else {
             $this->createModel($name, $namespace, $file);
         }
+
+        console_info($output, "Model [{$file}] created successfully.  ");
 
         return self::SUCCESS;
     }

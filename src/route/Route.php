@@ -47,6 +47,7 @@ class Route implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAw
     protected $callback;
 
     protected array $middlewares = [];
+
     protected array $permissions = [];
 
     protected array $params = [];
@@ -59,7 +60,7 @@ class Route implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAw
     public function __construct(
         array $methods,
         string $path,
-        callable|array $callback,
+        array|callable $callback,
         bool $group = false
     ) {
         $this->methods = $methods;
@@ -86,10 +87,10 @@ class Route implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAw
     }
 
     /**
-     * @param array $permission
      * @return $this
      */
-    public function permissions(array $permission): Route {
+    public function permissions(array $permission): Route
+    {
         if (empty($permission)) {
             return $this;
         }
@@ -113,7 +114,7 @@ class Route implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAw
         return $this->methods;
     }
 
-    public function getCallback(): callable|array
+    public function getCallback(): array|callable
     {
         return $this->callback;
     }
@@ -126,7 +127,8 @@ class Route implements StrategyAwareInterface, MiddlewareInterface, MiddlewareAw
         return $this->middlewares;
     }
 
-    public function getPermissions(): array {
+    public function getPermissions(): array
+    {
         return $this->permissions;
     }
 

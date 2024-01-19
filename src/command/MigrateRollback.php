@@ -12,10 +12,8 @@ declare(strict_types=1);
 
 namespace karthus\command;
 
-use DirectoryIterator;
 use Illuminate\Database\Schema\Builder;
 use karthus\DB;
-use SplFileInfo;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -24,15 +22,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 use function karthus\base_path;
 use function karthus\runtime_path;
 
-use const FILE_APPEND;
-use const LOCK_EX;
 use const PHP_EOL;
 
-class Migrate extends Command
+class MigrateRollback extends Command
 {
-    protected static $defaultName = 'migrate';
+    protected static $defaultName = 'migrate:rollback';
 
-    protected static $defaultDescription = 'Run the database migrations';
+    protected static $defaultDescription = 'Rollback the last database migration';
 
     protected ?string $connection = null;
 
@@ -48,45 +44,20 @@ class Migrate extends Command
         $this->connection = $input->getOption('database');
         $migrationLogFile = $this->getMigrationLogFile();
         $rows = $this->fetchMigrationRows($migrationLogFile);
-        $latestBatchNum = empty($rows) ? 0 : (int) $rows[count($rows) - 1][0];
-        $existMigrations = array_column($rows, 1);
-        $needMigrations = [];
+        $latestBatchNum = empty($rows) ? 1 : (int) $rows[count($rows) - 1][0];
+        $needRollbacks = empty($rows) ? [] : array_values(array_filter($rows, fn ($row) => intval($row[0]) === $latestBatchNum));
+        $needRollbacks = array_reverse($needRollbacks);
 
-        $schema = $this->getSchemaBuilder();
-        $dir = new DirectoryIterator(base_path('database/migrations'));
-        $dir->rewind();
-        foreach ($dir as $fileInfo) {
-            print_r($fileInfo);
-            /* @var $fileInfo SplFileInfo */
-            if (! $fileInfo->isDot()
-                && $fileInfo->isFile()
-                && ($basename = $fileInfo->getBasename('.php'))
-                && ! in_array($basename, $existMigrations)
-            ) {
-                $needMigrations[] = [$fileInfo->getRealPath(), $basename];
+        if (! empty($needRollbacks)) {
+            $schema = $this->getSchemaBuilder();
+            foreach ($needRollbacks as $needRollback) {
+                $obj = require base_path('database/migrations/' . $needRollback[1] . '.php');
+                $obj->down($schema);
             }
-        }
 
-        if (! empty($needMigrations)) {
-            sort($needMigrations);
-            foreach ($needMigrations as $file) {
-                $obj = require $file[0];
-                $obj->up($schema);
-            }
-            $appendContent = join(
-                PHP_EOL,
-                array_map(
-                    fn ($item) => join(',', [
-                        $latestBatchNum + 1,
-                        $item[1],
-                    ]),
-                    $needMigrations
-                )
-            );
-            if ($latestBatchNum > 0) {
-                $appendContent = PHP_EOL . $appendContent;
-            }
-            file_put_contents($migrationLogFile, $appendContent, FILE_APPEND | LOCK_EX);
+            $logRows = array_filter($rows, fn ($row) => intval($row[0]) < $latestBatchNum);
+            $content = join(PHP_EOL, array_map(fn ($row) => join(',', $row), $logRows));
+            file_put_contents($migrationLogFile, $content);
         }
         $output->writeln('<info>success!</info>');
         return self::SUCCESS;

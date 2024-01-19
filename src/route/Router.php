@@ -103,7 +103,8 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
         return static::$allRoutes;
     }
 
-    public function permissions(string|array $permission): Router {
+    public function permissions(array|string $permission): Router
+    {
         if (is_string($permission)) {
             $permission = explode(',', $permission);
         }
@@ -162,7 +163,6 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
         if (! is_array($paths)) {
             return;
         }
-
         Router::setCollector();
         foreach ($paths as $configPath) {
             $routeConfigFile = $configPath . '/route.php';
@@ -197,7 +197,7 @@ class Router implements StrategyAwareInterface, RouteCollectionInterface, Reques
      * @throws Http\Exception\RouterPortNotMatchException
      * @throws Http\Exception\RouterSchemeNotMatchException
      */
-    protected function prepareRoutes(ServerRequestInterface $request): void
+    public function prepareRoutes(ServerRequestInterface $request): void
     {
         // 先搞 group
         $routes = static::$allRoutes;

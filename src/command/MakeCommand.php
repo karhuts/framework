@@ -18,12 +18,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function karthus\app_path;
+use function karthus\console_info;
 
 class MakeCommand extends Command
 {
     protected static $defaultName = 'make:command';
 
-    protected static $defaultDescription = 'Make command';
+    protected static $defaultDescription = 'Create a new Artisan command';
 
     protected function configure(): void
     {
@@ -33,8 +34,6 @@ class MakeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $command = $name = trim($input->getArgument('name'));
-        $output->writeln("Make command [{$name}] OK");
-
         // make:command 不支持子目录
         $name = str_replace(['\\', '/'], '', $name);
         $command_str = app_path('command');
@@ -48,6 +47,7 @@ class MakeCommand extends Command
         $namespace = $upper ? 'App\Command' : 'app\command';
         $this->createCommand($name, $namespace, $file, $command);
 
+        console_info($output, "Console command [{$file}] created successfully.");
         return self::SUCCESS;
     }
 
@@ -84,6 +84,7 @@ use Symfony\\Component\\Console\\Input\\InputInterface;
 use Symfony\\Component\\Console\\Input\\InputOption;
 use Symfony\\Component\\Console\\Input\\InputArgument;
 use Symfony\\Component\\Console\\Output\\OutputInterface;
+use function karthus\\console_info;
 
 
 class {$name} extends Command
@@ -107,7 +108,7 @@ class {$name} extends Command
     protected function execute(InputInterface \$input, OutputInterface \$output): int
     {
         \$name = \$input->getArgument('name');
-        \$output->writeln('Hello {$command}');
+        console_info(\$output, 'Hello {$command}');
         return self::SUCCESS;
     }
 

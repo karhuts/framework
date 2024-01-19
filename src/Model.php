@@ -14,6 +14,4 @@ namespace karthus;
 
 use Illuminate\Database\Eloquent\Model as bModel;
 
-class Model extends bModel
-{
-}
+class Model extends bModel {}

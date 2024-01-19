@@ -14,8 +14,10 @@ namespace karthus\support;
 
 use Dotenv\Dotenv;
 use karthus\Bootstrap;
+use karthus\cache\FileCache;
 use karthus\Config;
 use karthus\Context;
+use karthus\route\Cache\Router as cRouter;
 use karthus\route\Http\Exception\NotFoundException;
 use karthus\route\Http\Exception\RouterDomainNotMatchException;
 use karthus\route\Http\Exception\RouterPortNotMatchException;
@@ -90,9 +92,21 @@ class App
 
             // 加载路由咯
             $paths = [config_path()];
-            Router::load($paths);
+            // 路由缓存
+            $is_router_cache = config('app.router_cache_enable', false);
+            if ($is_router_cache === true) {
+                $cache_file = config('app.router_cache_file', '');
+                $cacheStore = new FileCache($cache_file, $ttl = 86400);
 
-            // 路由匹配
+                cRouter::withCache($cacheStore);
+                cRouter::withBuilder(function () use ($paths) {
+                    Router::load($paths);
+                });
+                cRouter::dispatch($request);
+            } else {
+                // 路由匹配
+                Router::load($paths);
+            }
             $response = Router::dispatch($request);
         } catch (RuntimeException $exception) {
             $response = view_505($exception->getMessage());

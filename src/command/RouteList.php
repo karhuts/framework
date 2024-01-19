@@ -18,13 +18,14 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
 use function karthus\config_path;
 
 class RouteList extends Command
 {
     protected static $defaultName = 'route:list';
 
-    protected static $defaultDescription = 'Route list';
+    protected static $defaultDescription = 'List all registered routes';
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -33,7 +34,6 @@ class RouteList extends Command
         // 加载路由咯
         $paths = [config_path()];
         Router::load($paths);
-        // todo 加载路由配置信息
         foreach (Router::getRoutes() as $route) {
             foreach ($route->getMethods() as $method) {
                 $cb = $route->getCallback();

@@ -19,13 +19,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use function karthus\app_path;
 use function karthus\config;
+use function karthus\console_info;
 use function karthus\guessPath;
 
 class MakeController extends Command
 {
     protected static $defaultName = 'make:controller';
 
-    protected static $defaultDescription = 'Make controller';
+    protected static $defaultDescription = 'Create a new controller class';
 
     protected function configure(): void
     {
@@ -35,9 +36,7 @@ class MakeController extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $name = $input->getArgument('name');
-        $output->writeln("Make controller {$name}");
         $suffix = config('app.controller_suffix', '');
-
         if ($suffix && ! strpos($name, $suffix)) {
             $name .= $suffix;
         }
@@ -61,6 +60,7 @@ class MakeController extends Command
         }
         $this->createController($name, $namespace, $file);
 
+        console_info($output, "Controller [{$file}] created successfully.");
         return self::SUCCESS;
     }
 

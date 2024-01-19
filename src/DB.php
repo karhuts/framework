@@ -27,6 +27,4 @@ use Illuminate\Database\Capsule\Manager;
  * @method static void rollBack($toLevel = null)
  * @method static void commit()
  */
-class DB extends Manager
-{
-}
+class DB extends Manager {}

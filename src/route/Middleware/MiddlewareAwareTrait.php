@@ -21,10 +21,7 @@ use Psr\Http\Server\MiddlewareInterface;
 
 trait MiddlewareAwareTrait
 {
-    /**
-     * @var array
-     */
-    protected $middleware = [];
+    protected array $middleware = [];
 
     public function getMiddlewareStack(): iterable
     {
@@ -85,11 +82,10 @@ trait MiddlewareAwareTrait
     }
 
     /**
-     * @param mixed $middleware
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    protected function resolveMiddleware($middleware, ?ContainerInterface $container = null): MiddlewareInterface
+    protected function resolveMiddleware(mixed $middleware, ?ContainerInterface $container = null): MiddlewareInterface
     {
         if ($container === null && is_string($middleware) && class_exists($middleware)) {
             $middleware = new $middleware();
