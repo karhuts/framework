@@ -56,7 +56,6 @@ class Migrate extends Command
         $dir = new DirectoryIterator(base_path('database/migrations'));
         $dir->rewind();
         foreach ($dir as $fileInfo) {
-            print_r($fileInfo);
             /* @var $fileInfo SplFileInfo */
             if (! $fileInfo->isDot()
                 && $fileInfo->isFile()

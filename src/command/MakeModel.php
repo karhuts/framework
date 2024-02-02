@@ -73,11 +73,11 @@ class MakeModel extends Command
             if (isset($database['default']) && str_starts_with($database['default'], 'plugin.')) {
                 $database = false;
             }
-            $thinkorm = config('thinkorm');
-            if (isset($thinkorm['default']) && str_starts_with($thinkorm['default'], 'plugin.')) {
-                $thinkorm = false;
+            $thinkORM = config('thinkorm');
+            if (isset($thinkORM['default']) && str_starts_with($thinkORM['default'], 'plugin.')) {
+                $thinkORM = false;
             }
-            $type = ! $database && $thinkorm ? 'tp' : 'laravel';
+            $type = ! $database && $thinkORM ? 'tp' : 'laravel';
         }
         if ($type == 'tp') {
             $this->createTpModel($name, $namespace, $file);
@@ -259,9 +259,9 @@ EOF;
             return 'int';
         }
         return match ($type) {
-            'varchar', 'string', 'text', 'date', 'time', 'guid', 'datetimetz', 'datetime', 'decimal', 'enum' => 'string',
+            'varchar', 'string', 'text', 'date', 'time', 'guid', 'datetimetz', 'datetime', 'decimal', 'enum', 'json', 'char' => 'string',
             'boolean' => 'int',
-            'float' => 'float',
+            'float', 'double' => 'float',
             default => 'mixed',
         };
     }
