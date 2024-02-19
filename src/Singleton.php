@@ -15,11 +15,13 @@ namespace karthus;
 trait Singleton
 {
     /**
+     * The instance of the class
      * @var static
      */
     private static $instance;
 
     /**
+     * @return static
      * @param mixed ...$args
      */
     public static function getInstance(...$args): static
