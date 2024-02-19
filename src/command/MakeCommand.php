@@ -87,15 +87,14 @@ use function karthus\\console_info;
 
 class {$name} extends Command
 {
-    protected static \$defaultName = '{$command}';
-    protected static \$defaultDescription = '{$desc}';
-
     /**
      * @return void
      */
     protected function configure(): void
     {
-        \$this->addArgument('name', InputArgument::OPTIONAL, 'Name description');
+        \$this->setName('{$command}')
+            ->setDescription('{$desc}')
+            ->addArgument('name', InputArgument::OPTIONAL, 'Name description');
     }
 
     /**
