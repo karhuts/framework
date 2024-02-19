@@ -30,17 +30,15 @@ use const PHP_EOL;
 
 class Migrate extends Command
 {
-    protected static $defaultName = 'migrate';
-
-    protected static $defaultDescription = 'Run the database migrations';
-
     protected ?string $connection = null;
 
     protected function configure(): void
     {
-        $this->addOption('database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use, [default: "default"]');
-        $this->addOption('force', null, InputOption::VALUE_OPTIONAL, 'Force the operation to run when in production');
-        $this->addOption('step', null, InputOption::VALUE_OPTIONAL, 'Force the migrations to be run so they can be rolled back individually');
+        $this->setName('migrate')
+            ->setDescription('Run the database migrations')
+            ->addOption('database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use, [default: "default"]')
+            ->addOption('force', null, InputOption::VALUE_OPTIONAL, 'Force the operation to run when in production')
+            ->addOption('step', null, InputOption::VALUE_OPTIONAL, 'Force the migrations to be run so they can be rolled back individually');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

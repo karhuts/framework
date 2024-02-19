@@ -22,13 +22,11 @@ use function karthus\console_info;
 
 class MakeCommand extends Command
 {
-    protected static $defaultName = 'make:command';
-
-    protected static $defaultDescription = 'Create a new Artisan command';
-
     protected function configure(): void
     {
-        $this->addArgument('name', InputArgument::REQUIRED, 'Command name');
+        $this->setName('make:command')
+            ->setDescription('Create a new Artisan command')
+            ->addArgument('name', InputArgument::REQUIRED, 'Command name');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

@@ -23,9 +23,11 @@ use function karthus\config_path;
 
 class RouteList extends Command
 {
-    protected static $defaultName = 'route:list';
-
-    protected static $defaultDescription = 'List all registered routes';
+    protected function configure(): void
+    {
+        $this->setName('route:list')
+            ->setDescription('List all registered routes');
+    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

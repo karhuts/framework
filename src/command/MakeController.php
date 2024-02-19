@@ -24,13 +24,11 @@ use function karthus\guessPath;
 
 class MakeController extends Command
 {
-    protected static $defaultName = 'make:controller';
-
-    protected static $defaultDescription = 'Create a new controller class';
-
     protected function configure(): void
     {
-        $this->addArgument('name', InputArgument::REQUIRED, 'Controller name');
+        $this->setName('make:controller')
+            ->setDescription('Create a new controller class')
+            ->addArgument('name', InputArgument::REQUIRED, 'Controller name');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

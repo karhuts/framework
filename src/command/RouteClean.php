@@ -18,9 +18,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RouteClean extends Command
 {
-    protected static $defaultName = 'route:clean';
-
-    protected static $defaultDescription = 'Remove the route cache file';
+    protected function configure(): void
+    {
+        $this->setName('route:clean')
+            ->setDescription('Remove the route cache file');
+    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

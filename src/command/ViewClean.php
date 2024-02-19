@@ -18,9 +18,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ViewClean extends Command
 {
-    protected static $defaultName = 'view:clean';
-
-    protected static $defaultDescription = 'Clear all compiled view files';
+    protected function configure():void
+    {
+        $this->setName('view:clean')
+            ->setDescription('Clear all compiled view files');
+    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

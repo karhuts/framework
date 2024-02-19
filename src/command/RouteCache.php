@@ -27,9 +27,11 @@ use function Opis\Closure\serialize;
 
 class RouteCache extends Command
 {
-    protected static $defaultName = 'route:cache';
-
-    protected static $defaultDescription = 'Create a route cache file for faster route registration';
+    protected function configure(): void
+    {
+        $this->setName('route:cache')
+            ->setDescription('Create a route cache file for faster route registration');
+    }
 
     /**
      * @throws InvalidArgumentException

@@ -26,17 +26,15 @@ use const PHP_EOL;
 
 class MigrateRollback extends Command
 {
-    protected static $defaultName = 'migrate:rollback';
-
-    protected static $defaultDescription = 'Rollback the last database migration';
-
     protected ?string $connection = null;
 
     protected function configure(): void
     {
-        $this->addOption('database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use, [default: "default"]');
-        $this->addOption('force', null, InputOption::VALUE_OPTIONAL, 'Force the operation to run when in production');
-        $this->addOption('step', null, InputOption::VALUE_OPTIONAL, 'Force the migrations to be run so they can be rolled back individually');
+        $this->setName('migrate:rollback')
+            ->setDescription('Rollback the last database migration')
+            ->addOption('database', null, InputOption::VALUE_OPTIONAL, 'The database connection to use, [default: "default"]')
+            ->addOption('force', null, InputOption::VALUE_OPTIONAL, 'Force the operation to run when in production')
+            ->addOption('step', null, InputOption::VALUE_OPTIONAL, 'Force the migrations to be run so they can be rolled back individually');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

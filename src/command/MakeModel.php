@@ -28,14 +28,12 @@ use function karthus\nameToClass;
 
 class MakeModel extends Command
 {
-    protected static $defaultName = 'make:model';
-
-    protected static $defaultDescription = 'Create a new Eloquent model class';
-
     protected function configure(): void
     {
-        $this->addArgument('name', InputArgument::REQUIRED, 'Model name');
-        $this->addArgument('type', InputArgument::OPTIONAL, 'Type');
+        $this->setName('make:model')
+            ->setDescription('Create a new Eloquent model class')
+            ->addArgument('name', InputArgument::REQUIRED, 'Model name')
+            ->addArgument('type', InputArgument::OPTIONAL, 'Type');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

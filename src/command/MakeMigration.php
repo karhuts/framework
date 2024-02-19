@@ -24,15 +24,13 @@ use function karthus\console_info;
 
 class MakeMigration extends Command
 {
-    protected static $defaultName = 'make:migration';
-
-    protected static $defaultDescription = 'Create a new migration file';
-
     protected function configure(): void
     {
-        $this->addArgument('name', InputArgument::OPTIONAL, 'The name of the migration');
-        $this->addOption('create', 'CREATE', InputOption::VALUE_OPTIONAL, ' The table to be created');
-        $this->addOption('table', 'TABLE', InputOption::VALUE_OPTIONAL, 'The table to migrate');
+        $this->setName('make:migration')
+            ->setDescription('Create a new migration file')
+            ->addArgument('name', InputArgument::OPTIONAL, 'The name of the migration')
+            ->addOption('create', 'CREATE', InputOption::VALUE_OPTIONAL, ' The table to be created')
+            ->addOption('table', 'TABLE', InputOption::VALUE_OPTIONAL, 'The table to migrate');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
