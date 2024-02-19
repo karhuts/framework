@@ -190,7 +190,7 @@ EOF;
         if (! is_dir($path)) {
             mkdir($path, 0777, true);
         }
-        $table = Util::classToName($class);
+        $table = classToName($class);
         $table_val = 'null';
         $pk = 'id';
         $properties = '';
