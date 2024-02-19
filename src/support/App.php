@@ -18,6 +18,7 @@ use karthus\cache\FileCache;
 use karthus\Config;
 use karthus\Context;
 use karthus\route\Cache\Router as cRouter;
+use karthus\Exception\Exception;
 use karthus\route\Http\Exception\NotFoundException;
 use karthus\route\Http\Exception\RouterDomainNotMatchException;
 use karthus\route\Http\Exception\RouterPortNotMatchException;
@@ -26,8 +27,10 @@ use karthus\route\Router;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
+use Psr\SimpleCache\InvalidArgumentException;
 use RuntimeException;
 
+use Throwable;
 use function karthus\config;
 use function karthus\config_path;
 use function karthus\run_path;
@@ -38,6 +41,8 @@ class App
 {
     public static function init(): void
     {
+        // 最最最开始，进行错误捕捉分析的注册
+        static::registerException();
         Config::clear();
         if (class_exists(Dotenv::class) && file_exists(run_path('.env'))) {
             if (method_exists(Dotenv::class, 'createUnsafeImmutable')) {
@@ -75,6 +80,22 @@ class App
         }
     }
 
+    /**
+     * 注册异常处理
+     * @return void
+     */
+    public static function registerException(): void
+    {
+        set_exception_handler(function (Throwable $exception) {
+            restore_exception_handler();
+            Exception::errorTpl($exception);
+        });
+    }
+
+    /**
+     * 运行应用
+     * @return void
+     */
     public static function run(): void
     {
         static::init();
@@ -112,12 +133,10 @@ class App
             $response = view_505($exception->getMessage());
         } catch (NotFoundException $exception) {
             $response = view_404();
-        } catch (RouterDomainNotMatchException $e) {
+        } catch (RouterDomainNotMatchException|RouterPortNotMatchException|RouterSchemeNotMatchException $e) {
             $response = view_404($e->getMessage());
-        } catch (RouterPortNotMatchException $e) {
-            $response = view_404();
-        } catch (RouterSchemeNotMatchException $e) {
-            $response = view_404();
+        } catch (InvalidArgumentException $e) {
+            $response = view_505($e->getMessage());
         }
 
         (new SapiEmitter())->emit($response);

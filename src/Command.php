@@ -21,6 +21,10 @@ use Symfony\Component\Console\Command\Command as sCommand;
 
 class Command extends Application
 {
+    /**
+     * Install internal commands
+     * @return $this
+     */
     public function installInternalCommands(): self
     {
         $this->installCommands(
@@ -31,6 +35,12 @@ class Command extends Application
         return $this;
     }
 
+    /**
+     * Install commands
+     * @param $path
+     * @param string $namespace
+     * @return $this
+     */
     public function installCommands($path, string $namespace = 'app\command'): self
     {
         // 如果path 不存在
