@@ -4,6 +4,7 @@ namespace karthus\exception;
 
 use Error;
 use JetBrains\PhpStorm\NoReturn;
+use karthus\support\bootstrap\Mysql;
 use karthus\support\Log;
 use Throwable;
 use function karthus\config;
@@ -66,17 +67,24 @@ class Exception extends Error
             $trace = $e->getTrace();
             $runTrace = $e->getTrace();
             krsort($runTrace);
-            $traceMessageHtml = null;
+            $traceMessageHtml = "";
+            $sqlTraceHtml = '';
             $k = 1;
             foreach ($runTrace as $v) {
                 $traceMessageHtml.='<tr class="bg1"><td>'.$k.'</td><td>'.$v['file'].'</td><td>'.$v['line'].'</td><td>'.self::getLineCode($v['file'], $v['line']).'</td></tr>';
                 $k++;
             }
             unset($k, $trace, $runTrace, $trace);
-            if (isset($InitPHP_conf['sqlcontrolarr']) && is_array($InitPHP_conf['sqlcontrolarr'])) {
-                $sqlTraceHtml = '';
-                foreach ($InitPHP_conf['sqlcontrolarr'] as $k => $v) {
-                    $sqlTraceHtml.='<tr class="bg1"><td>'.($k+1).'</td><td>'.$v['sql'].'</td><td>'.$v['queryTime'].'s</td><td>'.$v['affectedRows'].'</td></tr>';
+            $queries = Mysql::getQueries();
+            if ($queries) {
+                foreach ($queries as $k => $v) {
+                    $bindings = $v['bindings'];
+                    $b = "<ul>";
+                    foreach ($bindings as $kk => $vv) {
+                        $b .= "<li>$vv</li>";
+                    }
+                    $b .= "</ul>";
+                    $sqlTraceHtml.='<tr class="bg1"><td>'.($k+1).'</td><td>'.$v['query'].'</td><td>'.$v['time'].'s</td><td>'.$b.'</td></tr>';
                 }
             }
             $error_html_content = <<<EOT
@@ -170,7 +178,7 @@ class Exception extends Error
   </head>
   <body>
     <div id="container">
-      <h1>BLUED DEBUG</h1>
+      <h1>Karthus/framework DEBUG</h1>
       <div class="info">$msg</div>
       <div class="info">
         <p><strong>PHP Trace</strong></p>
@@ -189,7 +197,7 @@ class Exception extends Error
             <td style="width: 2%">No.</td>
             <td style="width: 73%">SQL</td>
             <td style="width: 10%">Cost Time</td>
-            <td style="width: 15%">Affected Rows</td>
+            <td style="width: 15%">Params</td>
           </tr>
           $sqlTraceHtml
         </table>
@@ -213,7 +221,9 @@ EOT;
      */
     private static function isAjax(): bool
     {
-        if ($_SERVER['HTTP_X_REQUESTED_WITH'] && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            $_SERVER['HTTP_X_REQUESTED_WITH'] &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
             return true;
         }
         return false;

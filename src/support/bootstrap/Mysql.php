@@ -20,6 +20,7 @@ use function karthus\config;
 
 class Mysql implements Bootstrap
 {
+    protected static bool $enable = false;
     public static function run(): void
     {
         if (! class_exists(Manager::class)) {
@@ -46,6 +47,21 @@ class Mysql implements Bootstrap
         $manager->setAsGlobal();
         $manager->bootEloquent();
 
-        // / TODO db-paginator????
+        $enable_log = config('database.enable_log');
+        static::$enable = (bool) $enable_log;
+        if ($enable_log) {
+            $manager->getConnection()->enableQueryLog();
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public static function getQueries(): array
+    {
+        if (static::$enable === false) {
+            return [];
+        }
+        return Manager::connection()->getQueryLog();
     }
 }
