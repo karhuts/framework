@@ -20,6 +20,8 @@ use Laminas\Diactoros\ServerRequest;
 use Phar;
 use Symfony\Component\Console\Output\OutputInterface;
 
+defined('BASE_PATH') || define('BASE_PATH', dirname(__DIR__, 1));
+
 use function get_realpath;
 
 /**
@@ -142,7 +144,7 @@ function http_get_body(): array
  * @param null|mixed $default
  * @return null|array|mixed
  */
-function config(string $key = null, $default = null): mixed
+function config(?string $key = null, mixed $default = null): mixed
 {
     return Config::get($key, $default);
 }
@@ -304,7 +306,7 @@ function guessPath(string $base_path, bool|string $name, false $return_full_path
         }
     }
     $realname = implode(DIRECTORY_SEPARATOR, $realname);
-    return $return_full_path ? get_realpath($base_path . DIRECTORY_SEPARATOR . $realname) : $realname;
+    return $return_full_path ? realpath($base_path . DIRECTORY_SEPARATOR . $realname) : $realname;
 }
 
 function console_info(OutputInterface $output, string $msg = ''): void

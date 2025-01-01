@@ -275,6 +275,8 @@ class Pager
             $start = $page - $temp;
             $end = $page - $temp + $this->show_num - 1;
         }
+        $start = (int) $start;
+        $end = (int) $end;
         return [$start, $end];
     }
 }
